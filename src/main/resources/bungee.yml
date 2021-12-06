@@ -1,0 +1,4 @@
+name: TestPlugin
+main: me.deltaorion.extapi.TestPlugin
+version: 1.0
+author: username

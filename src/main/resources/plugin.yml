@@ -1,0 +1,10 @@
+name: ExtAPI
+version: ${project.version}
+main: me.deltaorion.extapi.ExtAPI
+api-version: 1.18
+authors: [ DeltaOrion, Ceedric_ ]
+description: Grand API for the Externus Server
+commands:
+  versiontest:
+  sendertest:
+  servertest:
