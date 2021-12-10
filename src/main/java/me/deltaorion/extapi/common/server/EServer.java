@@ -1,6 +1,7 @@
 package me.deltaorion.extapi.common.server;
 
 import me.deltaorion.extapi.common.entity.sender.Sender;
+import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
 import me.deltaorion.extapi.common.version.MinecraftVersion;
 import org.bukkit.Server;
@@ -23,4 +24,11 @@ public interface EServer {
     public int getMaxPlayer();
 
     public boolean isPlayerOnline(UUID uuid);
+
+    public EPlugin getPlugin(String name);
+
+    public boolean isPluginEnabled(String name);
+
+    public Object getServerObject();
+
 }

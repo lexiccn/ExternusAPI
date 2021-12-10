@@ -1,14 +1,18 @@
 package me.deltaorion.extapi.common.plugin;
 
+import me.deltaorion.extapi.common.depend.Dependency;
+import me.deltaorion.extapi.common.depend.DependencyManager;
 import me.deltaorion.extapi.common.entity.sender.Sender;
 import me.deltaorion.extapi.common.logger.PluginLogger;
 import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
 import me.deltaorion.extapi.common.server.EServer;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Set;
 
-public interface EPlugin {
+public interface EPlugin extends DependencyManager {
 
     EServer getEServer();
 
@@ -36,5 +40,38 @@ public interface EPlugin {
 
     void saveResource(String resourcePath, boolean replace);
 
+    /**
+     * Retrieves the plugin logger. This allows messages to be logged to the server console with varying degrees of severity.
+     * Logged messages include the plugin name and the date they were logged.
+     * Messages can be logged on 3 degrees of severity, info, warn or severe.
+     *
+     * @return The plugin logger.
+     */
+
     PluginLogger getPluginLogger();
+
+    /**
+     * Checks whether this plugin, the one that is wrapped is enabled or not.
+     *
+     * @return
+     */
+    public boolean isPluginEnabled();
+
+    /**
+     * Returns an object containing the actual plugin. To gain access to most functionality one should cast it to the
+     * appropiate plugin class. For example if the plugin stored was a java plugin to get the plugin object one should
+     * cast it to a {@link org.bukkit.plugin.java.JavaPlugin}
+     *
+     * @return The plugin object wrapped in this class.
+     */
+
+    public Object getPluginObject();
+
+    /**
+     * Disables this plugin. That being the plugin that is wrapped.
+     *
+     */
+
+    void disablePlugin();
+
 }

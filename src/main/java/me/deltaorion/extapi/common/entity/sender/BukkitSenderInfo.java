@@ -4,8 +4,10 @@ import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.server.BukkitServer;
 import me.deltaorion.extapi.common.server.EServer;
+import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -13,15 +15,16 @@ import java.util.UUID;
 public class BukkitSenderInfo implements SenderInfo {
     private final CommandSender sender;
     private final EPlugin plugin;
-    private final BukkitServer bukkitServer;
+    private final Server server;
 
     public BukkitSenderInfo(EPlugin plugin, CommandSender sender) {
         this.sender = sender;
         this.plugin = plugin;
-        if(!(plugin instanceof BukkitPlugin))
-            throw new IllegalArgumentException("Must use bungee plugin for bungee senders");
 
-        this.bukkitServer = (BukkitServer) plugin.getEServer();
+        if(!((plugin.getEServer().getServerObject()) instanceof Server))
+            throw new IllegalArgumentException("Must use bukkit plugin for bukkit senders");
+
+        this.server = (Server) plugin.getEServer().getServerObject();
     }
 
 
@@ -42,12 +45,10 @@ public class BukkitSenderInfo implements SenderInfo {
 
     @Override
     public void sendMessage(String message) {
-        if(sender instanceof Player || sender instanceof ConsoleCommandSender || sender instanceof ConsoleCommandSender) {
+        if(sender instanceof Player || sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender) {
             sender.sendMessage(message);
         } else {
-            plugin.getScheduler().scheduleSyncDelayedTask( () -> {
-                sender.sendMessage(message);
-            });
+            plugin.getScheduler().scheduleSyncDelayedTask( () -> sender.sendMessage(message));
         }
     }
 
@@ -58,7 +59,7 @@ public class BukkitSenderInfo implements SenderInfo {
 
     @Override
     public void dispatchCommand(String commandLine) {
-        bukkitServer.getServer().dispatchCommand(sender,commandLine);
+        server.dispatchCommand(sender,commandLine);
     }
 
     @Override
@@ -68,11 +69,7 @@ public class BukkitSenderInfo implements SenderInfo {
 
     @Override
     public boolean isConsole() {
-        if(sender instanceof Player) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(sender instanceof Player);
     }
 
     @Override

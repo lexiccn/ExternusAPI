@@ -1,7 +1,8 @@
 package me.deltaorion.extapi.common.server;
-
 import me.deltaorion.extapi.common.entity.sender.Sender;
-import me.deltaorion.extapi.common.entity.sender.SimpleSender;
+import me.deltaorion.extapi.common.plugin.BukkitPlugin;
+import me.deltaorion.extapi.common.plugin.BukkitPluginWrapper;
+import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.version.MinecraftVersion;
 import me.deltaorion.extapi.common.version.VersionFactory;
 import org.bukkit.Server;
@@ -49,6 +50,21 @@ public class BukkitServer implements EServer {
     @Override
     public boolean isPlayerOnline(UUID uuid) {
         return server.getPlayer(uuid).isOnline();
+    }
+
+    @Override
+    public EPlugin getPlugin(String name) {
+        return new BukkitPluginWrapper(server.getPluginManager().getPlugin(name));
+    }
+
+    @Override
+    public boolean isPluginEnabled(String name) {
+        return getServer().getPluginManager().isPluginEnabled(name);
+    }
+
+    @Override
+    public Object getServerObject() {
+        return server;
     }
 
     public Server getServer() {

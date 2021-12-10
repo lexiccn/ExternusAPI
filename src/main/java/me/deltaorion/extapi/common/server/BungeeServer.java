@@ -1,5 +1,7 @@
 package me.deltaorion.extapi.common.server;
 
+import me.deltaorion.extapi.common.plugin.BungeePluginWrapper;
+import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.version.MinecraftVersion;
 import me.deltaorion.extapi.common.version.VersionFactory;
 import net.md_5.bungee.api.ProxyServer;
@@ -16,7 +18,11 @@ public class BungeeServer implements EServer {
 
     public BungeeServer(ProxyServer proxyServer) {
         this.proxyServer = proxyServer;
-        this.minecraftVersion = VersionFactory.parse(proxyServer.getVersion());
+        if(this.proxyServer!=null) {
+            this.minecraftVersion = VersionFactory.parse(proxyServer.getVersion());
+        } else {
+            this.minecraftVersion = null;
+        }
     }
 
     @Override
@@ -48,5 +54,20 @@ public class BungeeServer implements EServer {
     @Override
     public boolean isPlayerOnline(UUID uuid) {
         return proxyServer.getPlayer(uuid) != null;
+    }
+
+    @Override
+    public EPlugin getPlugin(String name) {
+        return new BungeePluginWrapper(proxyServer.getPluginManager().getPlugin(name));
+    }
+
+    @Override
+    public boolean isPluginEnabled(String name) {
+        return proxyServer.getPluginManager().getPlugin(name) != null;
+    }
+
+    @Override
+    public Object getServerObject() {
+        return proxyServer;
     }
 }

@@ -2,31 +2,45 @@ package me.deltaorion.extapi.test;
 
 import me.deltaorion.extapi.common.entity.sender.Sender;
 import me.deltaorion.extapi.common.plugin.EPlugin;
+import me.deltaorion.extapi.common.scheduler.SchedulerTask;
 import me.deltaorion.extapi.common.server.EServer;
+import me.deltaorion.testdepend.TestDepend;
+import org.bukkit.event.Cancellable;
 
 import java.util.concurrent.TimeUnit;
 
 public class JointTests {
+
     public static void testSender(Sender sender) {
         sender.sendMessage("Name: " + sender.getName());
         sender.sendMessage("UUID: " + sender.getUniqueId());
         sender.sendMessage("Permission abc? " +sender.hasPermission("abc"));
         sender.sendMessage("OP: " + sender.isOP());
         sender.sendMessage("Valid: " + sender.isValid());
+        sender.sendMessage("Dispatching Command... ");
+        sender.performCommand("help");
     }
 
     public static void serverTest(EServer eServer, EPlugin plugin, Sender sender) {
         plugin.getScheduler().runTaskLater(() -> {
             sender.sendMessage("This happens 1 second later");
         },1, TimeUnit.SECONDS);
+
+        plugin.getScheduler().runTaskAsynchronously(() -> {
+            sender.sendMessage("This runs async");
+        });
+
+        SchedulerTask schedulerTask =  plugin.getScheduler().runTaskTimer(() -> {
+            sender.sendMessage("This will happen 3 times with an interval of 1 second");
+        },3L,1L,TimeUnit.SECONDS);
+
+        plugin.getScheduler().runTaskLaterAsynchronously(schedulerTask::cancel,6L,TimeUnit.SECONDS);
+
         sender.sendMessage("Version: " + eServer.getVersion());
         sender.sendMessage("Brand: " + eServer.getBrand());
         sender.sendMessage("Online Players: " + eServer.getOnlinePlayers());
         sender.sendMessage("Max-Player: " + eServer.getMaxPlayer());
         sender.sendMessage("Player Online: " + eServer.isPlayerOnline(sender.getUniqueId()));
-        plugin.getPluginLogger().warn("warn");
-        plugin.getPluginLogger().severe("severe");
-        plugin.getPluginLogger().info("info");
-        sender.sendMessage(plugin.getDataDirectory());
     }
+
 }

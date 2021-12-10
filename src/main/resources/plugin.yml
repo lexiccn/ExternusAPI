@@ -8,3 +8,4 @@ commands:
   versiontest:
   sendertest:
   servertest:
+  dependtest:

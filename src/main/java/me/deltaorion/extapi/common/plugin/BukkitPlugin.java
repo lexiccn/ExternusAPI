@@ -1,57 +1,91 @@
 package me.deltaorion.extapi.common.plugin;
 
-import me.deltaorion.extapi.common.entity.sender.BukkitSenderInfo;
+import me.deltaorion.extapi.common.depend.Dependency;
 import me.deltaorion.extapi.common.entity.sender.Sender;
-import me.deltaorion.extapi.common.entity.sender.SimpleSender;
 import me.deltaorion.extapi.common.logger.PluginLogger;
-import me.deltaorion.extapi.common.scheduler.BukkitSchedulerAdapter;
 import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
-import me.deltaorion.extapi.common.server.BukkitServer;
 import me.deltaorion.extapi.common.server.EServer;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Set;
 
 public class BukkitPlugin extends JavaPlugin implements EPlugin {
 
-    private final EServer eServer;
+    private final BukkitPluginWrapper wrapper;
 
     public BukkitPlugin() {
-        this.eServer = new BukkitServer(getServer());
+        wrapper = new BukkitPluginWrapper(this);
     }
 
     @Override
     public EServer getEServer() {
-        return eServer;
+        return wrapper.getEServer();
     }
 
     @Override
     public SchedulerAdapter getScheduler() {
-        return new BukkitSchedulerAdapter(this);
+        return wrapper.getScheduler();
     }
 
     @Override
     public Sender wrapSender(Object commandSender) {
-        if(!(commandSender instanceof CommandSender))
-            throw new IllegalArgumentException("Must wrap a bukkit command sender");
-
-        return new SimpleSender(new BukkitSenderInfo(this, (CommandSender) commandSender));
+        return wrapper.wrapSender(commandSender);
     }
 
     @Override
     public Path getDataDirectory() {
-        return getDataFolder().toPath().toAbsolutePath();
+        return wrapper.getDataDirectory();
     }
 
     @Override
     public InputStream getResourceStream(String path) {
-        return getClass().getClassLoader().getResourceAsStream(path);
+        return wrapper.getResourceStream(path);
     }
 
     @Override
     public PluginLogger getPluginLogger() {
-        return this.getPluginLogger();
+        return wrapper.getPluginLogger();
+    }
+
+    @Override
+    public boolean isPluginEnabled() {
+        return wrapper.isPluginEnabled();
+    }
+
+    @Override
+    public Object getPluginObject() {
+        return wrapper.getPlugin();
+    }
+
+    @Override
+    public void disablePlugin() {
+        wrapper.disablePlugin();
+    }
+
+    @Override
+    public void registerDependency(String name, boolean required) {
+        wrapper.registerDependency(name,required);
+    }
+
+
+    @Override
+    public Dependency getDependency(String name) {
+        return wrapper.getDependency(name);
+    }
+
+    @Override
+    public boolean hasDependency(String name) {
+        return wrapper.hasDependency(name);
+    }
+
+    @Override
+    public Set<String> getDependencies() {
+        return wrapper.getDependencies();
+    }
+
+    public JavaPlugin getPlugin() {
+        return wrapper.getPlugin();
     }
 }
