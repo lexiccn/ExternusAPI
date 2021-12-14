@@ -32,11 +32,10 @@ public class BukkitDependencyTest implements CommandExecutor {
         String flag = args[0];
         boolean required = flag.equalsIgnoreCase("essential");
 
-        String DEPENDENCY = "TestDepend";
-
         if(!plugin.hasDependency(DEPENDENCY))
             plugin.registerDependency(DEPENDENCY,required);
 
+        s.sendMessage("Server Check: "+plugin.getEServer().isPluginEnabled(DEPENDENCY));
         s.sendMessage("Active: " + plugin.getDependency(DEPENDENCY).isActive());
         s.sendMessage("Required: " + plugin.getDependency(DEPENDENCY).isRequired());
         s.sendMessage("Check the console IF the depedency is active");

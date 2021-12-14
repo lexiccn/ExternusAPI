@@ -1,30 +1,28 @@
 package me.deltaorion.extapi.common.entity.sender;
-
-import me.deltaorion.extapi.common.plugin.BukkitPlugin;
-import me.deltaorion.extapi.common.plugin.EPlugin;
-import me.deltaorion.extapi.common.server.BukkitServer;
 import me.deltaorion.extapi.common.server.EServer;
+import me.deltaorion.extapi.locale.translator.Translator;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Locale;
 import java.util.UUID;
 
 public class BukkitSenderInfo implements SenderInfo {
     private final CommandSender sender;
-    private final EPlugin plugin;
     private final Server server;
+    private final EServer eServer;
 
-    public BukkitSenderInfo(EPlugin plugin, CommandSender sender) {
+    public BukkitSenderInfo(EServer server, CommandSender sender) {
         this.sender = sender;
-        this.plugin = plugin;
+        this.eServer = server;
 
-        if(!((plugin.getEServer().getServerObject()) instanceof Server))
+        if(!((server.getServerObject()) instanceof Server))
             throw new IllegalArgumentException("Must use bukkit plugin for bukkit senders");
 
-        this.server = (Server) plugin.getEServer().getServerObject();
+        this.server = (Server) server.getServerObject();
     }
 
 
@@ -47,19 +45,28 @@ public class BukkitSenderInfo implements SenderInfo {
     public void sendMessage(String message) {
         if(sender instanceof Player || sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender) {
             sender.sendMessage(message);
-        } else {
-            plugin.getScheduler().scheduleSyncDelayedTask( () -> sender.sendMessage(message));
         }
     }
 
     @Override
     public EServer getEServer() {
-        return plugin.getEServer();
+        return eServer;
     }
 
     @Override
     public void dispatchCommand(String commandLine) {
         server.dispatchCommand(sender,commandLine);
+    }
+
+    @Override
+    public Locale getLocale() {
+        if(sender instanceof Player) {
+            Player player = (Player) sender;
+            System.out.println(player.spigot().getLocale());
+            return Translator.parseLocale(player.spigot().getLocale());
+        } else {
+            return EServer.DEFAULT_LOCALE;
+        }
     }
 
     @Override

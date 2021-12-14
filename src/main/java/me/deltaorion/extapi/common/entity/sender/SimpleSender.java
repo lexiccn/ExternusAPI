@@ -1,7 +1,9 @@
 package me.deltaorion.extapi.common.entity.sender;
 
 import me.deltaorion.extapi.common.server.EServer;
+import me.deltaorion.extapi.locale.message.Message;
 
+import java.util.Locale;
 import java.util.UUID;
 
 public class SimpleSender implements Sender {
@@ -38,25 +40,27 @@ public class SimpleSender implements Sender {
 
     @Override
     public void sendMessage(boolean message) {
-        if(message) {
-            sendMessage("true");
-        } else {
-            sendMessage("false");
-        }
+        senderInfo.sendMessage(String.valueOf(message));
     }
 
     @Override
     public void sendMessage(Object message) {
-        if(message==null) {
-            sendMessage("null");
-        } else {
-            sendMessage(message.toString());
-        }
+        senderInfo.sendMessage(String.valueOf(message));
     }
 
     @Override
     public void sendMessage(double message) {
         sendMessage(String.valueOf(message));
+    }
+
+    @Override
+    public void sendMessage(float message) {
+        senderInfo.sendMessage(String.valueOf(message));
+    }
+
+    @Override
+    public void sendMessage(Message message, Object... args) {
+        senderInfo.sendMessage(message.toString(getLocale(),args));
     }
 
     @Override
@@ -82,5 +86,10 @@ public class SimpleSender implements Sender {
     @Override
     public boolean isOP() {
         return senderInfo.isOP();
+    }
+
+    @Override
+    public Locale getLocale() {
+        return senderInfo.getLocale();
     }
 }

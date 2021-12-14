@@ -36,6 +36,7 @@ public class BungeeDependencyTest extends Command {
         if(!plugin.hasDependency(DEPENDENCY))
             plugin.registerDependency(DEPENDENCY,required);
 
+        s.sendMessage("Server Check: "+plugin.getEServer().isPluginEnabled(DEPENDENCY));
         s.sendMessage("Active: " + plugin.getDependency(DEPENDENCY).isActive());
         s.sendMessage("Required: " + plugin.getDependency(DEPENDENCY).isRequired());
         s.sendMessage("Check the console IF the depedency is active");

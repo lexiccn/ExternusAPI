@@ -1,9 +1,13 @@
 package me.deltaorion.extapi.common.server;
 
+import me.deltaorion.extapi.common.entity.sender.BungeeSenderInfo;
+import me.deltaorion.extapi.common.entity.sender.Sender;
+import me.deltaorion.extapi.common.entity.sender.SimpleSender;
 import me.deltaorion.extapi.common.plugin.BungeePluginWrapper;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.version.MinecraftVersion;
 import me.deltaorion.extapi.common.version.VersionFactory;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -46,6 +50,20 @@ public class BungeeServer implements EServer {
     }
 
     @Override
+    public List<Sender> getOnlineSenders() {
+        List<Sender> players = new ArrayList<>();
+        for(ProxiedPlayer player : proxyServer.getPlayers()) {
+            players.add(new SimpleSender(new BungeeSenderInfo(player,this)));
+        }
+        return players;
+    }
+
+    @Override
+    public Sender getConsoleSender() {
+        return new SimpleSender(new BungeeSenderInfo(proxyServer.getConsole(),this));
+    }
+
+    @Override
     public int getMaxPlayer() {
         return proxyServer.getConfig().getPlayerLimit();
     }
@@ -69,5 +87,10 @@ public class BungeeServer implements EServer {
     @Override
     public Object getServerObject() {
         return proxyServer;
+    }
+
+    @Override
+    public String translateColorCodes(String raw) {
+        return ChatColor.translateAlternateColorCodes('&',raw);
     }
 }

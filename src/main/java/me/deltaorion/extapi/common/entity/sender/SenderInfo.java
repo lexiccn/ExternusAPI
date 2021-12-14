@@ -2,6 +2,7 @@ package me.deltaorion.extapi.common.entity.sender;
 
 import me.deltaorion.extapi.common.server.EServer;
 
+import java.util.Locale;
 import java.util.UUID;
 
 public interface SenderInfo {
@@ -21,4 +22,6 @@ public interface SenderInfo {
     EServer getEServer();
 
     void dispatchCommand(String commandLine);
+
+    Locale getLocale();
 }

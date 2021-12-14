@@ -1,16 +1,16 @@
 package me.deltaorion.extapi.common.plugin;
 
-import me.deltaorion.extapi.common.depend.Dependency;
 import me.deltaorion.extapi.common.depend.DependencyManager;
 import me.deltaorion.extapi.common.entity.sender.Sender;
 import me.deltaorion.extapi.common.logger.PluginLogger;
 import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
 import me.deltaorion.extapi.common.server.EServer;
-import org.jetbrains.annotations.Nullable;
+import me.deltaorion.extapi.locale.translator.PluginTranslator;
 
+import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Path;
-import java.util.Set;
 
 public interface EPlugin extends DependencyManager {
 
@@ -37,6 +37,8 @@ public interface EPlugin extends DependencyManager {
      */
 
     InputStream getResourceStream(String path);
+
+    URL getResourceURL(String path);
 
     void saveResource(String resourcePath, boolean replace);
 
@@ -73,5 +75,7 @@ public interface EPlugin extends DependencyManager {
      */
 
     void disablePlugin();
+
+    PluginTranslator getTranslator();
 
 }

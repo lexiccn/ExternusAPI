@@ -1,5 +1,8 @@
 package me.deltaorion.extapi.common.entity.sender;
 
+import me.deltaorion.extapi.locale.message.Message;
+
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -23,6 +26,10 @@ public interface Sender {
 
     void sendMessage(double message);
 
+    void sendMessage(float message);
+
+    void sendMessage(Message message, Object... args);
+
     boolean hasPermission(String permission);
 
     void performCommand(String commandLine);
@@ -32,5 +39,7 @@ public interface Sender {
     boolean isValid();
 
     boolean isOP();
+
+    Locale getLocale();
 
 }

@@ -1,11 +1,15 @@
 package me.deltaorion.extapi.common.server;
+import me.deltaorion.extapi.common.entity.sender.BukkitSenderInfo;
 import me.deltaorion.extapi.common.entity.sender.Sender;
-import me.deltaorion.extapi.common.plugin.BukkitPlugin;
+import me.deltaorion.extapi.common.entity.sender.SimpleSender;
 import me.deltaorion.extapi.common.plugin.BukkitPluginWrapper;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.version.MinecraftVersion;
 import me.deltaorion.extapi.common.version.VersionFactory;
+import org.bukkit.ChatColor;
 import org.bukkit.Server;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -43,12 +47,29 @@ public class BukkitServer implements EServer {
     }
 
     @Override
+    public List<Sender> getOnlineSenders() {
+        List<Sender> senders = new ArrayList<>();
+        for(Player player : server.getOnlinePlayers()) {
+            senders.add(new SimpleSender(new BukkitSenderInfo(this,player)));
+        }
+        return senders;
+    }
+
+    @Override
+    public Sender getConsoleSender() {
+        return new SimpleSender(new BukkitSenderInfo(this, server.getConsoleSender()));
+    }
+
+    @Override
     public int getMaxPlayer() {
         return server.getMaxPlayers();
     }
 
     @Override
     public boolean isPlayerOnline(UUID uuid) {
+        if(uuid.equals(EServer.CONSOLE_UUID))
+            return false;
+
         return server.getPlayer(uuid).isOnline();
     }
 
@@ -65,6 +86,11 @@ public class BukkitServer implements EServer {
     @Override
     public Object getServerObject() {
         return server;
+    }
+
+    @Override
+    public String translateColorCodes(String raw) {
+        return ChatColor.translateAlternateColorCodes('&',raw);
     }
 
     public Server getServer() {

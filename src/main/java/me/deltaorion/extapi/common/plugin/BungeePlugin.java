@@ -5,9 +5,12 @@ import me.deltaorion.extapi.common.entity.sender.Sender;
 import me.deltaorion.extapi.common.logger.PluginLogger;
 import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
 import me.deltaorion.extapi.common.server.EServer;
+import me.deltaorion.extapi.locale.translator.PluginTranslator;
 import net.md_5.bungee.api.plugin.Plugin;
 
+import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Set;
 
@@ -46,6 +49,11 @@ public class BungeePlugin extends Plugin implements EPlugin {
     }
 
     @Override
+    public URL getResourceURL(String path) {
+        return wrapper.getResourceURL(path);
+    }
+
+    @Override
     public void saveResource(String resourcePath, boolean replace) {
         wrapper.saveResource(resourcePath,replace);
     }
@@ -68,6 +76,11 @@ public class BungeePlugin extends Plugin implements EPlugin {
     @Override
     public void disablePlugin() {
         wrapper.disablePlugin();
+    }
+
+    @Override
+    public PluginTranslator getTranslator() {
+        return wrapper.getTranslator();
     }
 
     @Override

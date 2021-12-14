@@ -11,10 +11,14 @@ import me.deltaorion.extapi.common.scheduler.BungeeSchedulerAdapter;
 import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
 import me.deltaorion.extapi.common.server.BungeeServer;
 import me.deltaorion.extapi.common.server.EServer;
+import me.deltaorion.extapi.locale.translator.PluginTranslator;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Set;
 
@@ -25,6 +29,7 @@ public class BungeePluginWrapper implements EPlugin{
     private final PluginLogger logger;
     private final BungeeSchedulerAdapter schedulerAdapter;
     private final SimpleDependencyManager dependencies;
+    private final PluginTranslator translator;
 
 
     public BungeePluginWrapper(Plugin wrapped) {
@@ -34,11 +39,13 @@ public class BungeePluginWrapper implements EPlugin{
             this.logger = new JavaPluginLogger(wrapped.getLogger());
             this.schedulerAdapter = new BungeeSchedulerAdapter(wrapped);
             this.dependencies = new SimpleDependencyManager(this);
+            this.translator = new PluginTranslator(this,"en-yml");
         } else {
             this.eServer = null;
             this.logger = null;
             this.schedulerAdapter = null;
             this.dependencies = null;
+            translator = null;
         }
     }
 
@@ -57,7 +64,7 @@ public class BungeePluginWrapper implements EPlugin{
         if(!(commandSender instanceof CommandSender))
             throw new IllegalArgumentException("Command Sender must be a net.md5 command sender");
 
-        return new SimpleSender(new BungeeSenderInfo((CommandSender) commandSender,this));
+        return new SimpleSender(new BungeeSenderInfo((CommandSender) commandSender,getEServer()));
     }
 
     @Override
@@ -68,6 +75,11 @@ public class BungeePluginWrapper implements EPlugin{
     @Override
     public InputStream getResourceStream(String path) {
         return wrapped.getClass().getClassLoader().getResourceAsStream(path);
+    }
+
+    @Override
+    public URL getResourceURL(String path) {
+        return wrapped.getClass().getClassLoader().getResource(path);
     }
 
     @Override
@@ -128,6 +140,11 @@ public class BungeePluginWrapper implements EPlugin{
         wrapped.getProxy().getPluginManager().unregisterCommands(wrapped);
         wrapped.getProxy().getPluginManager().unregisterListeners(wrapped);
         this.logger.warn("Disabling Bungee Plugins is not fully supported. All commands and listeners have been de-registered.");
+    }
+
+    @Override
+    public PluginTranslator getTranslator() {
+        return translator;
     }
 
     @Override

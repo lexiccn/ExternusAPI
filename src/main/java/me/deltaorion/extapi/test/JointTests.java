@@ -4,7 +4,10 @@ import me.deltaorion.extapi.common.entity.sender.Sender;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.scheduler.SchedulerTask;
 import me.deltaorion.extapi.common.server.EServer;
+import me.deltaorion.extapi.locale.message.Message;
+import me.deltaorion.extapi.locale.translator.Translator;
 import me.deltaorion.testdepend.TestDepend;
+import org.bukkit.ChatColor;
 import org.bukkit.event.Cancellable;
 
 import java.util.concurrent.TimeUnit;
@@ -17,6 +20,7 @@ public class JointTests {
         sender.sendMessage("Permission abc? " +sender.hasPermission("abc"));
         sender.sendMessage("OP: " + sender.isOP());
         sender.sendMessage("Valid: " + sender.isValid());
+        sender.sendMessage("Locale: "+sender.getLocale());
         sender.sendMessage("Dispatching Command... ");
         sender.performCommand("help");
     }
@@ -41,6 +45,51 @@ public class JointTests {
         sender.sendMessage("Online Players: " + eServer.getOnlinePlayers());
         sender.sendMessage("Max-Player: " + eServer.getMaxPlayer());
         sender.sendMessage("Player Online: " + eServer.isPlayerOnline(sender.getUniqueId()));
+        sender.sendMessage("Grabbing Console ... - Check Console");
+        Sender console = eServer.getConsoleSender();
+        console.sendMessage("Hello World!");
+    }
+
+    public static void translationTest(Sender sender) {
+        sender.sendMessage(Translator.translate("hello", Translator.parseLocale("en_PT")));
+        sender.sendMessage(Translator.translate("world.hello",Translator.parseLocale("en_PT")));
+
+        Message middle = Message.valueOf("Gam%srs Unite!");
+        sender.sendMessage(middle.toString("e"));
+
+        Message end = Message.valueOf("Gamer%s");
+        sender.sendMessage(end.toString("s"));
+
+        Message start = Message.valueOf("%s Unite!");
+        sender.sendMessage(start.toString("Gamers"));
+
+        Message translatable = Message.valueOfTranslatable("hello");
+        sender.sendMessage(translatable);
+        sender.sendMessage(translatable.toString(Translator.parseLocale("en_PT")));
+
+        Message everything = Message.valueOfBuilder(builder -> {
+            builder.appendTranslatable("hello")
+                    .append(" &e %s %s %s ")
+                    .style(ChatColor.BLACK)
+                    .append(" Gamer");
+        });
+
+        sender.sendMessage(everything.toString("gamer %s",true,6.5));
+        sender.sendMessage(everything.toString("abc"));
+
+        Message defArgs = Message.valueOfBuilder( builder -> {
+            builder.append("hello ")
+                    .append("%s")
+                    .defArg("world");
+        });
+
+        sender.sendMessage(defArgs);
+        sender.sendMessage(defArgs.toString("gamer"));
+
+        everything.setDefaults("a",7.5f,"b");
+
+        sender.sendMessage(everything.toString("abc"));
+        sender.sendMessage(everything.toString("a.b","bc","e"));
     }
 
 }

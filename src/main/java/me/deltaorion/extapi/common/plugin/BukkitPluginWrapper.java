@@ -11,11 +11,16 @@ import me.deltaorion.extapi.common.scheduler.BukkitSchedulerAdapter;
 import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
 import me.deltaorion.extapi.common.server.BukkitServer;
 import me.deltaorion.extapi.common.server.EServer;
+import me.deltaorion.extapi.locale.translator.PluginTranslator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Set;
 
@@ -26,6 +31,7 @@ public class BukkitPluginWrapper implements EPlugin {
     private final PluginLogger pluginLogger;
     private final SchedulerAdapter schedulerAdapter;
     private final SimpleDependencyManager dependencies;
+    private final PluginTranslator translator;
 
     public BukkitPluginWrapper(JavaPlugin wrapped) {
         this.wrapped = wrapped;
@@ -34,11 +40,13 @@ public class BukkitPluginWrapper implements EPlugin {
             pluginLogger = new JavaPluginLogger(wrapped.getLogger());
             schedulerAdapter = new BukkitSchedulerAdapter(wrapped);
             dependencies = new SimpleDependencyManager(this);
+            translator = new PluginTranslator(this,"en.yml");
         } else {
             this.eServer = null;
             this.pluginLogger = null;
             schedulerAdapter = null;
             this.dependencies = null;
+            translator = null;
         }
     }
 
@@ -61,7 +69,7 @@ public class BukkitPluginWrapper implements EPlugin {
         if(!(commandSender instanceof CommandSender))
             throw new IllegalArgumentException("Must wrap a bukkit command sender");
 
-        return new SimpleSender(new BukkitSenderInfo(this, (CommandSender) commandSender));
+        return new SimpleSender(new BukkitSenderInfo(getEServer(), (CommandSender) commandSender));
     }
 
     @Override
@@ -72,6 +80,11 @@ public class BukkitPluginWrapper implements EPlugin {
     @Override
     public InputStream getResourceStream(String path) {
         return wrapped.getClass().getClassLoader().getResourceAsStream(path);
+    }
+
+    @Override
+    public URL getResourceURL(String path) {
+        return wrapped.getClass().getClassLoader().getResource(path);
     }
 
     @Override
@@ -101,6 +114,11 @@ public class BukkitPluginWrapper implements EPlugin {
     @Override
     public void disablePlugin() {
         this.wrapped.getServer().getPluginManager().disablePlugin(wrapped);
+    }
+
+    @Override
+    public PluginTranslator getTranslator() {
+        return translator;
     }
 
     @Override

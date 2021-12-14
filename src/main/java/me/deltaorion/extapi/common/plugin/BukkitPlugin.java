@@ -5,9 +5,12 @@ import me.deltaorion.extapi.common.entity.sender.Sender;
 import me.deltaorion.extapi.common.logger.PluginLogger;
 import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
 import me.deltaorion.extapi.common.server.EServer;
+import me.deltaorion.extapi.locale.translator.PluginTranslator;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Set;
 
@@ -45,6 +48,11 @@ public class BukkitPlugin extends JavaPlugin implements EPlugin {
     }
 
     @Override
+    public URL getResourceURL(String path) {
+        return wrapper.getResourceURL(path);
+    }
+
+    @Override
     public PluginLogger getPluginLogger() {
         return wrapper.getPluginLogger();
     }
@@ -62,6 +70,11 @@ public class BukkitPlugin extends JavaPlugin implements EPlugin {
     @Override
     public void disablePlugin() {
         wrapper.disablePlugin();
+    }
+
+    @Override
+    public PluginTranslator getTranslator() {
+        return wrapper.getTranslator();
     }
 
     @Override
