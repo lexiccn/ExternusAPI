@@ -10,3 +10,4 @@ commands:
   servertest:
   dependtest:
   localetest:
+  parsetest:

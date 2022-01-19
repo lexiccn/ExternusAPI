@@ -1,5 +1,8 @@
 package me.deltaorion.extapi.test;
 
+import me.deltaorion.extapi.command.parser.ArgumentParser;
+import me.deltaorion.extapi.command.parser.ParserRegistry;
+import me.deltaorion.extapi.command.parser.SimpleParserRegistry;
 import me.deltaorion.extapi.common.depend.Dependency;
 import me.deltaorion.extapi.common.depend.DependencyManager;
 import me.deltaorion.extapi.common.depend.SimpleDependencyManager;
@@ -17,10 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.Locale;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class TestPlugin implements EPlugin {
@@ -31,11 +31,13 @@ public class TestPlugin implements EPlugin {
     private final PluginLogger logger = new JavaPluginLogger(Logger.getLogger("Test-Plugin"));
     private final PluginTranslator translator;
     private boolean enabled = true;
+    private final ParserRegistry registry;
 
     public TestPlugin(EServer server) {
         this.server = server;
         this.manager = new SimpleDependencyManager(this);
         this.translator = new PluginTranslator(this,"en.yml");
+        this.registry = new SimpleParserRegistry();
     }
 
     @Override
@@ -154,5 +156,21 @@ public class TestPlugin implements EPlugin {
     @Override
     public void onPluginEnable() {
 
+    }
+
+    @Override
+    public <T> void registerParser(@NotNull Class<T> clazz, @NotNull ArgumentParser<T> parser) {
+        registry.registerParser(clazz,parser);
+    }
+
+    @NotNull
+    @Override
+    public <T> Collection<ArgumentParser<T>> getParser(@NotNull Class<T> clazz) {
+        return registry.getParser(clazz);
+    }
+
+    @Override
+    public <T> void clearParsers(@NotNull Class<T> clazz) {
+        this.registry.clearParsers(clazz);
     }
 }

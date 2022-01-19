@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.common.plugin;
 
+import me.deltaorion.extapi.command.parser.ArgumentParser;
 import me.deltaorion.extapi.common.depend.Dependency;
 import me.deltaorion.extapi.common.logger.PluginLogger;
 import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Set;
 
 public abstract class WrapperManager implements EPlugin {
@@ -143,5 +145,29 @@ public abstract class WrapperManager implements EPlugin {
         if(wrapper==null)
             throw new IllegalStateException(ERR_MSG);
         return wrapper.getDependencies();
+    }
+
+    @Override
+    public <T> void registerParser(@NotNull Class<T> clazz, @NotNull ArgumentParser<T> parser) {
+        if(wrapper==null)
+            throw new IllegalStateException(ERR_MSG);
+        wrapper.registerParser(clazz,parser);
+    }
+
+    @NotNull
+    @Override
+    public <T> Collection<ArgumentParser<T>> getParser(@NotNull Class<T> clazz) {
+        if(wrapper==null)
+            throw new IllegalStateException(ERR_MSG);
+
+        return wrapper.getParser(clazz);
+    }
+
+    @Override
+    public <T> void clearParsers(@NotNull Class<T> clazz) {
+        if(wrapper==null)
+            throw new IllegalStateException(ERR_MSG);
+
+        wrapper.clearParsers(clazz);
     }
 }

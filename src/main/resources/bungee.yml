@@ -1,4 +1,4 @@
-name: TestPlugin
-main: me.deltaorion.extapi.TestPlugin
+name: TestExtAPI
+main: me.deltaorion.extapi.TestBungee
 version: 1.0
 author: username

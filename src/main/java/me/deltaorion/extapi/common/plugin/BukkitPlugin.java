@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.common.plugin;
 
+import me.deltaorion.extapi.command.parser.ArgumentParser;
 import me.deltaorion.extapi.common.depend.Dependency;
 import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.common.logger.PluginLogger;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Set;
 
 public class BukkitPlugin extends JavaPlugin implements EPlugin {
@@ -116,4 +118,19 @@ public class BukkitPlugin extends JavaPlugin implements EPlugin {
         return manager.getDependencies();
     }
 
+    @Override
+    public <T> void registerParser(@NotNull Class<T> clazz, @NotNull ArgumentParser<T> parser) {
+        manager.registerParser(clazz,parser);
+    }
+
+    @NotNull
+    @Override
+    public <T> Collection<ArgumentParser<T>> getParser(@NotNull Class<T> clazz) {
+        return manager.getParser(clazz);
+    }
+
+    @Override
+    public <T> void clearParsers(@NotNull Class<T> clazz) {
+        manager.clearParsers(clazz);
+    }
 }

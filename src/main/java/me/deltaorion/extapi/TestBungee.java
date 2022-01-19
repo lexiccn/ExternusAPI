@@ -7,7 +7,7 @@ import me.deltaorion.extapi.test.cmd.sender.SenderTestBungee;
 import me.deltaorion.extapi.test.cmd.server.ServerTestBungee;
 import me.deltaorion.extapi.test.cmd.version.BungeeVersionTest;
 
-public class TestPlugin extends BungeePlugin {
+public class TestBungee extends BungeePlugin {
 
     @Override
     public void onPluginEnable() {

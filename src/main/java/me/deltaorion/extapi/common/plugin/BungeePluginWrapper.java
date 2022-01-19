@@ -1,5 +1,9 @@
 package me.deltaorion.extapi.common.plugin;
 
+import me.deltaorion.extapi.command.parser.ArgumentParser;
+import me.deltaorion.extapi.command.parser.ArgumentParsers;
+import me.deltaorion.extapi.command.parser.ParserRegistry;
+import me.deltaorion.extapi.command.parser.SimpleParserRegistry;
 import me.deltaorion.extapi.common.depend.Dependency;
 import me.deltaorion.extapi.common.depend.SimpleDependencyManager;
 import me.deltaorion.extapi.common.sender.BungeeSenderInfo;
@@ -12,8 +16,10 @@ import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
 import me.deltaorion.extapi.common.server.BungeeServer;
 import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.locale.translator.PluginTranslator;
+import me.deltaorion.extapi.test.TestEnum;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Set;
 
 public class BungeePluginWrapper implements EPlugin {
@@ -32,6 +39,7 @@ public class BungeePluginWrapper implements EPlugin {
     @NotNull private final BungeeSchedulerAdapter schedulerAdapter;
     @Nullable private SimpleDependencyManager dependencies;
     @Nullable private PluginTranslator translator;
+    @NotNull private final ParserRegistry registry;
     private boolean isEnabled;
 
 
@@ -42,12 +50,18 @@ public class BungeePluginWrapper implements EPlugin {
         this.eServer = new BungeeServer(wrapped.getProxy());
         this.logger = new JavaPluginLogger(wrapped.getLogger());
         this.schedulerAdapter = new BungeeSchedulerAdapter(wrapped);
-
+        this.registry = new SimpleParserRegistry();
     }
 
     private void init() {
         this.dependencies = new SimpleDependencyManager(this);
         this.translator = new PluginTranslator(this,"en.yml");
+        registerDefaults();
+    }
+
+    private void registerDefaults() {
+        this.registry.registerParser(TestEnum.class, ArgumentParsers.TEST_PARSER());
+        this.registry.registerParser(ProxiedPlayer.class,ArgumentParsers.BUNGEE_PLAYER_PARSER(wrapped));
     }
 
     public static BungeePluginWrapper of(@NotNull Plugin wrapped) {
@@ -149,6 +163,9 @@ public class BungeePluginWrapper implements EPlugin {
     @NotNull
     @Override
     public PluginTranslator getTranslator() {
+        if(translator==null)
+            throw new IllegalStateException("Invalid Object Construction detected");
+
         return translator;
     }
 
@@ -164,25 +181,49 @@ public class BungeePluginWrapper implements EPlugin {
 
     @Override
     public void registerDependency(String name, boolean required) {
+        if(dependencies==null)
+            throw new IllegalStateException("Invalid Object Construction detected");
         dependencies.registerDependency(name,required);
     }
 
     @Override
     public Dependency getDependency(String name) {
+        if(dependencies==null)
+            throw new IllegalStateException("Invalid Object Construction detected");
         return dependencies.getDependency(name);
     }
 
     @Override
     public boolean hasDependency(String name) {
+        if(dependencies==null)
+            throw new IllegalStateException("Invalid Object Construction detected");
         return dependencies.hasDependency(name);
     }
 
     @Override
     public Set<String> getDependencies() {
+        if(dependencies==null)
+            throw new IllegalStateException("Invalid Object Construction detected");
         return dependencies.getDependencies();
     }
 
     public Plugin getPlugin() {
         return this.wrapped;
+    }
+
+    @Override
+    public <T> void registerParser(@NotNull Class<T> clazz, @NotNull ArgumentParser<T> parser) {
+        registry.registerParser(clazz,parser);
+    }
+
+    @NotNull
+    @Override
+    public <T> Collection<ArgumentParser<T>> getParser(@NotNull Class<T> clazz) {
+        return registry.getParser(clazz);
+    }
+
+    @Override
+    public <T> void clearParsers(@NotNull Class<T> clazz) {
+        this.registry.clearParsers(clazz);
     }
 }

@@ -35,37 +35,37 @@ public class TestSender implements Sender {
 
     @Override
     public void sendMessage(String message) {
-        System.out.println(message);
+        System.out.println("server -> "+getName()+": "+message);
     }
 
     @Override
     public void sendMessage(int message) {
-        System.out.println(message);
+        sendMessage(String.valueOf(message));
     }
 
     @Override
     public void sendMessage(boolean message) {
-        System.out.println(message);
+        sendMessage(String.valueOf(message));
     }
 
     @Override
     public void sendMessage(Object message) {
-        System.out.println(message);
+        sendMessage(String.valueOf(message));
     }
 
     @Override
     public void sendMessage(double message) {
-        System.out.println(message);
+        sendMessage(String.valueOf(message));
     }
 
     @Override
     public void sendMessage(float message) {
-        System.out.println(message);
+        sendMessage(String.valueOf(message));
     }
 
     @Override
     public void sendMessage(Message message, Object... args) {
-        System.out.println(message.toString(locale,args));
+        sendMessage(message.toString(locale,args));
     }
 
     @Override

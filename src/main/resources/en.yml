@@ -2,3 +2,12 @@ hello: 'Hello World'
 hello-arg: 'Hello %s'
 world:
   hello: 'World'
+command:
+  notInteger: "&cArgument '%s' is not an integer"
+  notNumber: "&cArgument '%s' is not a number"
+  notBoolean: "&cArgument '%s' is not either true or false"
+  notOnlinePlayer: "&cPlayer '%s' does not exist or is not online"
+  notEnum: "&cArgument '%s' is not correct. Please enter a valid %s"
+  notDuration: "&cArgument '%s' is not a valid duration"
+  invalidArgumentOther: "&cArgument '%s' is not correct"
+  invalidUsage: '&cInvalid Usage. Try: %s'

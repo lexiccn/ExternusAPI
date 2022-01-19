@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.common.plugin;
 
+import me.deltaorion.extapi.command.parser.ParserRegistry;
 import me.deltaorion.extapi.common.depend.DependencyManager;
 import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.common.logger.PluginLogger;
@@ -14,7 +15,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 
 @NotThreadSafe
-public interface EPlugin extends DependencyManager {
+public interface EPlugin extends DependencyManager, ParserRegistry {
 
     /**
      * Returns an abstract representation of a minecraft server that the plugin is hosted on.

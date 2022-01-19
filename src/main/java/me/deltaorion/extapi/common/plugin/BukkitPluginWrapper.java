@@ -1,5 +1,9 @@
 package me.deltaorion.extapi.common.plugin;
 
+import me.deltaorion.extapi.command.parser.ArgumentParser;
+import me.deltaorion.extapi.command.parser.ArgumentParsers;
+import me.deltaorion.extapi.command.parser.ParserRegistry;
+import me.deltaorion.extapi.command.parser.SimpleParserRegistry;
 import me.deltaorion.extapi.common.depend.Dependency;
 import me.deltaorion.extapi.common.depend.SimpleDependencyManager;
 import me.deltaorion.extapi.common.logger.JavaPluginLogger;
@@ -12,9 +16,11 @@ import me.deltaorion.extapi.common.sender.SimpleSender;
 import me.deltaorion.extapi.common.server.BukkitServer;
 import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.locale.translator.PluginTranslator;
+import me.deltaorion.extapi.test.TestEnum;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Set;
 
 public class BukkitPluginWrapper implements EPlugin {
@@ -33,6 +40,7 @@ public class BukkitPluginWrapper implements EPlugin {
     private SimpleDependencyManager dependencies;
     private PluginTranslator translator;
     @NotNull private final Server server;
+    @NotNull private final ParserRegistry registry;
 
     private BukkitPluginWrapper(@NotNull JavaPlugin wrapped) {
         Validate.notNull(wrapped,"Wrapped plugin cannot be null!");
@@ -41,7 +49,16 @@ public class BukkitPluginWrapper implements EPlugin {
         this.server = wrapped.getServer();
         pluginLogger = new JavaPluginLogger(wrapped.getLogger());
         schedulerAdapter = new BukkitSchedulerAdapter(wrapped);
+        registry = new SimpleParserRegistry();
+
+        registerDefaults();
     }
+
+    private void registerDefaults() {
+        registry.registerParser(TestEnum.class, ArgumentParsers.TEST_PARSER());
+        registry.registerParser(Player.class,ArgumentParsers.BUKKIT_PLAYER_PARSER(wrapped));
+    }
+
 
     private void init() {
         dependencies = new SimpleDependencyManager(this); //Don't allow the this to escape
@@ -156,5 +173,21 @@ public class BukkitPluginWrapper implements EPlugin {
             throw new IllegalStateException("Illegal Construction of the Bukkit plugin wrapper");
 
         return dependencies.getDependencies();
+    }
+
+    @Override
+    public <T> void registerParser(@NotNull Class<T> clazz, @NotNull ArgumentParser<T> parser) {
+        registry.registerParser(clazz,parser);
+    }
+
+    @NotNull
+    @Override
+    public <T> Collection<ArgumentParser<T>> getParser(@NotNull Class<T> clazz) {
+        return registry.getParser(clazz);
+    }
+
+    @Override
+    public <T> void clearParsers(@NotNull Class<T> clazz) {
+        this.registry.clearParsers(clazz);
     }
 }
