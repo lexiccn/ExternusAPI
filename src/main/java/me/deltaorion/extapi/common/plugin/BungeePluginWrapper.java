@@ -2,9 +2,9 @@ package me.deltaorion.extapi.common.plugin;
 
 import me.deltaorion.extapi.common.depend.Dependency;
 import me.deltaorion.extapi.common.depend.SimpleDependencyManager;
-import me.deltaorion.extapi.common.entity.sender.BungeeSenderInfo;
-import me.deltaorion.extapi.common.entity.sender.Sender;
-import me.deltaorion.extapi.common.entity.sender.SimpleSender;
+import me.deltaorion.extapi.common.sender.BungeeSenderInfo;
+import me.deltaorion.extapi.common.sender.Sender;
+import me.deltaorion.extapi.common.sender.SimpleSender;
 import me.deltaorion.extapi.common.logger.JavaPluginLogger;
 import me.deltaorion.extapi.common.logger.PluginLogger;
 import me.deltaorion.extapi.common.scheduler.BungeeSchedulerAdapter;
@@ -13,77 +13,84 @@ import me.deltaorion.extapi.common.server.BungeeServer;
 import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.locale.translator.PluginTranslator;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
+import org.apache.commons.lang.Validate;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.Set;
 
-public class BungeePluginWrapper implements EPlugin{
+public class BungeePluginWrapper implements EPlugin {
 
-    private final Plugin wrapped;
-    private final EServer eServer;
-    private final PluginLogger logger;
-    private final BungeeSchedulerAdapter schedulerAdapter;
-    private final SimpleDependencyManager dependencies;
-    private final PluginTranslator translator;
+    @NotNull private final Plugin wrapped;
+    @NotNull private final EServer eServer;
+    @NotNull private final ProxyServer server;
+    @NotNull private final PluginLogger logger;
+    @NotNull private final BungeeSchedulerAdapter schedulerAdapter;
+    @Nullable private SimpleDependencyManager dependencies;
+    @Nullable private PluginTranslator translator;
+    private boolean isEnabled;
 
 
-    public BungeePluginWrapper(Plugin wrapped) {
+    private BungeePluginWrapper(@NotNull Plugin wrapped) {
         this.wrapped = wrapped;
-        if(wrapped!=null) {
-            this.eServer = new BungeeServer(wrapped.getProxy());
-            this.logger = new JavaPluginLogger(wrapped.getLogger());
-            this.schedulerAdapter = new BungeeSchedulerAdapter(wrapped);
-            this.dependencies = new SimpleDependencyManager(this);
-            this.translator = new PluginTranslator(this,"en-yml");
-        } else {
-            this.eServer = null;
-            this.logger = null;
-            this.schedulerAdapter = null;
-            this.dependencies = null;
-            translator = null;
-        }
+        this.server = wrapped.getProxy();
+        this.isEnabled = true;
+        this.eServer = new BungeeServer(wrapped.getProxy());
+        this.logger = new JavaPluginLogger(wrapped.getLogger());
+        this.schedulerAdapter = new BungeeSchedulerAdapter(wrapped);
+
     }
 
+    private void init() {
+        this.dependencies = new SimpleDependencyManager(this);
+        this.translator = new PluginTranslator(this,"en.yml");
+    }
+
+    public static BungeePluginWrapper of(@NotNull Plugin wrapped) {
+        BungeePluginWrapper wrapper = new BungeePluginWrapper(wrapped);
+        wrapper.getPluginLogger().info("Constructing Bungee Plugin!");
+        wrapper.init();
+        return wrapper;
+    }
+
+    @NotNull
     @Override
     public EServer getEServer() {
         return eServer;
     }
 
+    @NotNull
     @Override
     public SchedulerAdapter getScheduler() {
         return schedulerAdapter;
     }
 
     @Override
-    public Sender wrapSender(Object commandSender) {
+    public Sender wrapSender(@NotNull Object commandSender) {
         if(!(commandSender instanceof CommandSender))
             throw new IllegalArgumentException("Command Sender must be a net.md5 command sender");
 
-        return new SimpleSender(new BungeeSenderInfo((CommandSender) commandSender,getEServer()));
+        return new SimpleSender(new BungeeSenderInfo((CommandSender) commandSender,server,getEServer()));
     }
 
+    @NotNull
     @Override
     public Path getDataDirectory() {
         return wrapped.getDataFolder().toPath().toAbsolutePath();
     }
 
-    @Override
-    public InputStream getResourceStream(String path) {
+    @Nullable @Override
+    public InputStream getResourceStream(@NotNull String path) {
+        Validate.notNull(path,"Resource Stream path cannot be null!");
         return wrapped.getClass().getClassLoader().getResourceAsStream(path);
     }
 
     @Override
-    public URL getResourceURL(String path) {
-        return wrapped.getClass().getClassLoader().getResource(path);
-    }
-
-    @Override
-    public void saveResource(String resourcePath, boolean replace) {
+    public void saveResource(@NotNull String resourcePath, boolean replace) {
         if (resourcePath == null || resourcePath.equals("")) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
@@ -127,24 +134,32 @@ public class BungeePluginWrapper implements EPlugin{
 
     @Override
     public boolean isPluginEnabled() {
-        return wrapped!=null;
+        return this.isEnabled;
     }
 
-    @Override
-    public Object getPluginObject() {
-        return wrapped;
-    }
 
     @Override
     public void disablePlugin() {
         wrapped.getProxy().getPluginManager().unregisterCommands(wrapped);
         wrapped.getProxy().getPluginManager().unregisterListeners(wrapped);
+        this.isEnabled = false;
         this.logger.warn("Disabling Bungee Plugins is not fully supported. All commands and listeners have been de-registered.");
     }
 
+    @NotNull
     @Override
     public PluginTranslator getTranslator() {
         return translator;
+    }
+
+    @Override
+    public void onPluginDisable() {
+        throw new UnsupportedOperationException("Cannot call plugin disable on the wrapper");
+    }
+
+    @Override
+    public void onPluginEnable() {
+        throw new UnsupportedOperationException("Cannot call plugin enable on the wrapper");
     }
 
     @Override

@@ -1,10 +1,10 @@
 package me.deltaorion.extapi.common.server;
 
-import me.deltaorion.extapi.common.entity.sender.Sender;
+import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.common.plugin.EPlugin;
-import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
 import me.deltaorion.extapi.common.version.MinecraftVersion;
-import org.bukkit.Server;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Locale;
@@ -28,8 +28,7 @@ public interface EServer {
      *
      * @return The minecraft version of the server
      */
-
-    public MinecraftVersion getVersion();
+    public MinecraftVersion getServerVersion();
 
     /**
      * The brand of the server. If a server is a Bukkit Server for example this would return CraftBukkit.
@@ -38,11 +37,10 @@ public interface EServer {
      * @return The brand of the server.
      */
 
-    public String getBrand();
+    public String getServerBrand();
 
     /**
-     * Gets a list of online players on the server. This does NOT include the console. To get the player respective
-     * to the server software you will need to use the relevant getPlayer() method in the {@link #getServerObject()} method.
+     * Gets a list of online players on the server. This does NOT include the console. .
      *
      * @return A list of all online players on the server
      */
@@ -81,30 +79,41 @@ public interface EServer {
      * @return Whether the player is or is NOT online.
      */
 
-    public boolean isPlayerOnline(UUID uuid);
+    public boolean isPlayerOnline(@NotNull UUID uuid);
 
     /**
-     * Gets a plugin of a given name. To get the stored plugin use {@link EPlugin#getPluginObject()} as cast
-     * it to the relevant plugin type. The plugin name should be the name specified in the relevant plugin.yml
-     * For example the TownyAdvanced Plugin has the name Towny.
+     * Gets a plugin of a given name. The plugin name should be the name specified in the relevant plugin.yml
+     * For example the TownyAdvanced Plugin has the name Towny. If the plugin cannot be found then this will
+     * return null
      *
      * @param name The name of the plugin
      * @return The relevant plugin object.
      */
 
-    public EPlugin getPlugin(String name);
+    @Nullable
+    public EPlugin getPlugin(@NotNull String name);
+
+    @Nullable
+    public Object getPluginObject(@NotNull String name);
 
     /**
      * Checks whether a plugin of a given name is enabled or not.
      *
-     * @param name
-     * @return
+     * @param name The name of the plugin as defined in its plugin.yml
+     * @return Whether said plugin is enabled on the server ot not
      */
 
-    public boolean isPluginEnabled(String name);
+    public boolean isPluginEnabled(@NotNull String name);
 
-    public Object getServerObject();
+    /**
+     * Translates a string using an alternate color code character into a
+     * string that uses the internal ChatColor.COLOR_CODE color code
+     * character. The alternate color code character will only be replaced if
+     * it is immediately followed by 0-9, A-F, a-f, K-O, k-o, R or r.
+     *
+     * @param textToTranslate Text containing the alternate color code character.
+     * @return Text containing the ChatColor.COLOR_CODE color code character.
+     */
 
-    public String translateColorCodes(String raw);
-
+    public String translateColorCodes(@NotNull String textToTranslate);
 }

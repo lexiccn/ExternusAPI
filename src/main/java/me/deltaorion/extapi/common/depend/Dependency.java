@@ -1,6 +1,9 @@
 package me.deltaorion.extapi.common.depend;
 
 import me.deltaorion.extapi.common.plugin.EPlugin;
+import org.apache.commons.lang.Validate;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This class is a helper class for plugin dependencies. This contains information on the fly about the plugin such as
@@ -9,7 +12,7 @@ import me.deltaorion.extapi.common.plugin.EPlugin;
  *
  * This class allows a user to access
  *   - whether it is enabled or not {@link Dependency#isActive()}
- *   - the plugin jar {@link Dependency#getPlugin()}
+ *   - the plugin jar {@link Dependency#getDependency()}
  *
  * This class also automatically checks if the plugin jar is enabled or not and acts appropiately whether it is required or
  * not.
@@ -21,18 +24,25 @@ import me.deltaorion.extapi.common.plugin.EPlugin;
 public class Dependency {
 
     //the name needed to fetch the plugin
-    private final String name;
-    //wheher the plugin is required or not
+    @NotNull private final String name;
+    //whether the plugin is required or not
     private final boolean required;
     private boolean active = false;
-    private EPlugin master;
+    @NotNull private final EPlugin master;
     //the plugin which the master depends on
-    private EPlugin plugin;
+    @Nullable private EPlugin depend;
+    @Nullable private Object dependObject;
 
-    public Dependency(EPlugin master, String name, boolean required) {
+    public Dependency(@NotNull EPlugin master, @NotNull String name, boolean required) {
+
+        Validate.notNull(master,"Master plugin in dependency cannot be null");
+
         this.name = name;
         this.required = required;
         this.master = master;
+
+        this.depend = null;
+        this.dependObject = null;
     }
 
     /**
@@ -42,23 +52,36 @@ public class Dependency {
      *
      * @return a eplugin wrapping the dependency plugin file.
      */
-    public EPlugin wrap() {
-        return master.getEServer().getPlugin(name);
-    }
+
 
     public void check() {
-        EPlugin wrapped = wrap();
-        if(wrapped.isPluginEnabled()) {
-            this.active = true;
-            this.plugin = wrapped;
+        EPlugin wrapped = master.getEServer().getPlugin(name);
+        Object object = master.getEServer().getPluginObject(name);
+
+        if(wrapped==null) {
+            dependInactive();
+        } else if(!wrapped.isPluginEnabled()) {
+            dependInactive();
         } else {
-            if(required) {
-                shutdown();
-            } else {
-                warn();
-            }
+            dependActive(wrapped,object);
         }
     }
+
+    private void dependActive(EPlugin wrapped, Object pluginObject) {
+        this.active = true;
+        this.depend = wrapped;
+        this.dependObject = pluginObject;
+    }
+
+    private void dependInactive() {
+        if(required) {
+            shutdown();
+        } else {
+            warn();
+        }
+    }
+
+
 
     private void warn() {
         master.getPluginLogger().warn("Dependency '"+name+"' was not found. However " +
@@ -79,6 +102,7 @@ public class Dependency {
         master.disablePlugin();
     }
 
+    @NotNull
     public String getName() {
         return name;
     }
@@ -88,10 +112,20 @@ public class Dependency {
     }
 
     public boolean isActive() {
-        return active;
+        if(active && depend != null) {
+            return depend.isPluginEnabled();
+        } else {
+            return false;
+        }
     }
 
-    public EPlugin getPlugin() {
-        return plugin;
+    @Nullable
+    public Object getDependency() {
+        return dependObject;
+    }
+
+    @Nullable
+    public EPlugin getDependEPlugin() {
+        return depend;
     }
 }

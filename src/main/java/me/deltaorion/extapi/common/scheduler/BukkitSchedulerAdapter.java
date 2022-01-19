@@ -1,6 +1,7 @@
 package me.deltaorion.extapi.common.scheduler;
 
 import me.deltaorion.extapi.common.server.BukkitServer;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -8,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 public class BukkitSchedulerAdapter implements SchedulerAdapter {
 
-    private final JavaPlugin plugin;
+    private final Plugin plugin;
 
     public BukkitSchedulerAdapter(JavaPlugin plugin) {
         this.plugin = plugin;

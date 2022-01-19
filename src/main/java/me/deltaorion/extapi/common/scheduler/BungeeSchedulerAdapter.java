@@ -1,6 +1,7 @@
 package me.deltaorion.extapi.common.scheduler;
 
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,37 +20,34 @@ public class BungeeSchedulerAdapter implements SchedulerAdapter {
 
     @Override
     public SchedulerTask runTask(Runnable task) {
-        final int taskID = bungeePlugin.getProxy().getScheduler().runAsync(bungeePlugin,task).getId();
-        return () -> { bungeePlugin.getProxy().getScheduler().cancel(taskID); };
+        return runTaskAsynchronously(task);
     }
 
     @Override
     public SchedulerTask runTaskAsynchronously(Runnable task) {
-        final int taskID = bungeePlugin.getProxy().getScheduler().runAsync(bungeePlugin,task).getId();
-        return () -> { bungeePlugin.getProxy().getScheduler().cancel(taskID); };
+        final ScheduledTask sTask = bungeePlugin.getProxy().getScheduler().runAsync(bungeePlugin,task);
+        return sTask::cancel;
     }
 
     @Override
     public SchedulerTask runTaskLater(Runnable task, long delay, TimeUnit unit) {
-        final int taskID = bungeePlugin.getProxy().getScheduler().schedule(bungeePlugin,task,delay,unit).getId();
-        return () -> { bungeePlugin.getProxy().getScheduler().cancel(taskID); };
+        return runTaskLaterAsynchronously(task,delay,unit);
     }
 
     @Override
     public SchedulerTask runTaskLaterAsynchronously(Runnable task, long delay, TimeUnit unit) {
-        final int taskID = bungeePlugin.getProxy().getScheduler().schedule(bungeePlugin,task,delay,unit).getId();
-        return () -> { bungeePlugin.getProxy().getScheduler().cancel(taskID); };
+        final ScheduledTask sTask = bungeePlugin.getProxy().getScheduler().schedule(bungeePlugin,task,delay,unit);
+        return sTask::cancel;
     }
 
     @Override
     public SchedulerTask runTaskTimer(Runnable task, long delay, long period,TimeUnit unit) {
-        final int taskID =  bungeePlugin.getProxy().getScheduler().schedule(bungeePlugin,task,delay,period,unit).getId();
-        return () -> {bungeePlugin.getProxy().getScheduler().cancel(taskID);};
+        return runTaskTimerAsynchronously(task,delay,period,unit);
     }
 
     @Override
     public SchedulerTask runTaskTimerAsynchronously(Runnable task, long delay, long period, TimeUnit unit) {
-        final int taskID = bungeePlugin.getProxy().getScheduler().schedule(bungeePlugin,task,delay,period,unit).getId();
-        return () -> {bungeePlugin.getProxy().getScheduler().cancel(taskID); };
+        final ScheduledTask sTask =  bungeePlugin.getProxy().getScheduler().schedule(bungeePlugin,task,delay,period,unit);
+        return sTask::cancel;
     }
 }

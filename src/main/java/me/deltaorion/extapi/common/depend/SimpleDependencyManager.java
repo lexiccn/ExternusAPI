@@ -3,9 +3,7 @@ package me.deltaorion.extapi.common.depend;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class SimpleDependencyManager implements DependencyManager {
 
@@ -32,14 +30,14 @@ public class SimpleDependencyManager implements DependencyManager {
         Dependency dependency = new Dependency(master,name,required);
         dependency.check();
 
-        this.dependencies.put(name,dependency);
+        this.dependencies.put(name.toUpperCase(),dependency);
     }
 
     /**
      * Gets a plugin dependency object.
      *
      * Use {@link Dependency#isActive()} to check if the dependency is active
-     *  CAST {@link Dependency#getPlugin()#getPluginObject()} to get the actual plugin.
+     *  CAST {@link Dependency#getDependency()}  to get the actual plugin.
      *
      * @param name The name of the dependency
      * @return a dependency object.
@@ -47,14 +45,14 @@ public class SimpleDependencyManager implements DependencyManager {
 
     @Nullable
     public Dependency getDependency(String name) {
-        return dependencies.get(name);
+        return dependencies.get(name.toUpperCase());
     }
 
     public boolean hasDependency(String name) {
-        return dependencies.containsKey(name);
+        return dependencies.containsKey(name.toUpperCase());
     }
 
     public Set<String> getDependencies() {
-        return dependencies.keySet();
+        return Collections.unmodifiableSet(dependencies.keySet());
     }
 }

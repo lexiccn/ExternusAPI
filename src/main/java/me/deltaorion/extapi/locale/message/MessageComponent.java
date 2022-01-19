@@ -8,7 +8,6 @@ public interface MessageComponent {
 
     public String toString(Locale locale);
 
-
     default String getDefault() {
         return toString(EServer.DEFAULT_LOCALE);
     }

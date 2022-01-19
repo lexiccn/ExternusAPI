@@ -14,6 +14,6 @@ public class TranslatableComponent implements MessageComponent {
 
     @Override
     public String toString(Locale locale) {
-        return Translator.translate(location,locale);
+        return Translator.getInstance().translate(location,locale);
     }
 }

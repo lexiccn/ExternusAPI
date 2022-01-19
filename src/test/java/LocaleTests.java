@@ -10,8 +10,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class LocaleTests {
 
@@ -19,25 +21,30 @@ public class LocaleTests {
     public void testTranslationManager() {
         try {
             URI directory = getClass().getClassLoader().getResource("translations").toURI();
-            URL def = getClass().getClassLoader().getResource("en.yml");
-            TranslationManager translationManager = new TranslationManager(new File(directory).toPath(),def);
-            assertEquals(Translator.getDefaultTranslation("hello"),"Hello World");
-            assertEquals(Translator.translate("hello", Translator.parseLocale("en_PT")),"Ahoy There Mateys");
-            assertEquals(Translator.getDefaultTranslation("world.hello"),"World");
-            assertEquals(Translator.translate("world.hello",Translator.parseLocale("en_PT")),"World");
-            assertEquals(Translator.getDefaultTranslation("gamer"),"gamer");
+            TranslationManager translationManager = new TranslationManager(new File(directory).toPath(),"en.yml");
+            translationManager.reload();
+            assertEquals(Translator.getInstance().getDefaultTranslation("hello"),"Hello World");
+            assertEquals(Translator.getInstance().translate("hello", Translator.parseLocale("en_PT")),"Ahoy There Mateys");
+            assertEquals(Translator.getInstance().getDefaultTranslation("world.hello"),"World");
+            assertEquals(Translator.getInstance().translate("world.hello",Translator.parseLocale("en_PT")),"World");
+            assertEquals(Translator.getInstance().getDefaultTranslation("gamer"),"gamer");
         } catch (Exception e) {
             assertEquals(2,3);
         }
     }
 
     @Test
-    public void testMessage() throws URISyntaxException {
-        Path path = FileSystems.getDefault().getPath("C:\\Users\\User\\Documents\\abc\\translations");
-        URL def = getClass().getClassLoader().getResource("en.yml");
-        TranslationManager translationManager = new TranslationManager(path,def);
-        assertEquals(Translator.translate("hello", Translator.parseLocale("en_PT")),"Ahoy There Mateys");
-        assertEquals(Translator.translate("world.hello",Translator.parseLocale("en_PT")),"World");
+    public void testMessage() {
+        Path path = null;
+        try {
+            path = new File(getClass().getClassLoader().getResource("translations").toURI()).toPath();
+        } catch (Exception e) {
+            fail();
+        }
+        TranslationManager translationManager = new TranslationManager(path,"en.yml");
+        translationManager.reload();
+        assertEquals(Translator.getInstance().translate("hello", Translator.parseLocale("en_PT")),"Ahoy There Mateys");
+        assertEquals(Translator.getInstance().translate("world.hello",Translator.parseLocale("en_PT")),"World");
 
         Message middle = Message.valueOf("Gam%srs Unite!");
         assertEquals(middle.toString("e"),"Gamers Unite!");
@@ -51,6 +58,8 @@ public class LocaleTests {
         Message translatable = Message.valueOfTranslatable("hello");
         assertEquals(translatable.toString(),"Hello World");
         assertEquals(translatable.toString(Translator.parseLocale("en_PT")),"Ahoy There Mateys");
+        assertEquals(translatable.toString(Locale.FRANCE),"Bonjour");
+        assertEquals(translatable.toString(Locale.CANADA_FRENCH),"Bonjour");
 
         Message everything = Message.valueOfBuilder(builder -> {
             builder.appendTranslatable("hello")

@@ -1,26 +1,43 @@
 package me.deltaorion.extapi.locale.translator;
 
-import me.deltaorion.extapi.config.Configuration;
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static me.deltaorion.extapi.common.server.EServer.DEFAULT_LOCALE;
 
+@ThreadSafe
 public class Translator {
 
-    private final static Map<Locale,Map<String,String>> translationLibrary;
+    private final ConcurrentMap<Locale,ConcurrentMap<String,String>> translationLibrary;
+    @GuardedBy("this") private static volatile Translator instance;
 
-    static  {
-        translationLibrary = new HashMap<>();
+    private Translator() {
+        this.translationLibrary = new ConcurrentHashMap<>();
     }
 
 
-    public static String getDefaultTranslation(String location) {
+    public static Translator getInstance() {
+        Translator singleton = instance;
+        if(singleton==null) {
+            synchronized (Translator.class) {
+                singleton = instance;
+                if(singleton==null)
+                    instance = new Translator();
+                    singleton = instance;
+            }
+        }
+        return singleton;
+    }
+
+
+    public String getDefaultTranslation(String location) {
         return translate(location,DEFAULT_LOCALE);
     }
 
@@ -31,7 +48,7 @@ public class Translator {
      * @param locale
      * @return
      */
-    public static String translate(String location, Locale locale) {
+    public String translate(@NotNull String location, @Nullable Locale locale) {
 
         Validate.notNull(location);
 
@@ -40,14 +57,20 @@ public class Translator {
         }
 
         if(!translationLibrary.containsKey(locale)) {
-            locale = DEFAULT_LOCALE;
-        }
-        //try their locale
-        Map<String,String> translation = translationLibrary.get(locale);
-        if(translation!=null) {
-            if (translation.containsKey(location)) {
-                return translation.get(location);
+            Locale similar = new Locale(locale.getLanguage(),"","");
+            if(!translationLibrary.containsKey(similar)) {
+                locale = DEFAULT_LOCALE;
+            } else {
+                locale = similar;
             }
+        }
+
+        //try their locale
+        ConcurrentMap<String,String> translation = translationLibrary.get(locale);
+        if(translation!=null) {
+            String result = translation.get(location);
+            if(result!=null)
+                return result;
         }
 
         //try the default locale
@@ -56,30 +79,19 @@ public class Translator {
             translation = translationLibrary.get(locale);
             //translation = translationLibrary.get(locale);
             if(translation!=null) {
-                if (translation.containsKey(location)) {
-                    return translation.get(location);
-                }
+                String result = translation.get(location);
+                if(result!=null)
+                    return result;
             }
         }
         //no results, return the location
         return location;
     }
 
-    public static void addTranslation(Locale locale, String location, String result) {
-        Map<String,String> translationFile = translationLibrary.get(locale);
-        if(translationFile==null) {
-            translationFile = new HashMap<>();
-            translationLibrary.put(locale,translationFile);
-        }
 
+    public void addTranslation(Locale locale, String location, String result) {
+        ConcurrentMap<String, String> translationFile = translationLibrary.computeIfAbsent(locale, k -> new ConcurrentHashMap<>());
         translationFile.put(location,result);
-    }
-
-    private static String convertObject(Object object) {
-        if(object==null)
-            return "null";
-
-        return object.toString();
     }
 
     @Nullable

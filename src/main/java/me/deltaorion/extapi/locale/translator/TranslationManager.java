@@ -2,43 +2,47 @@ package me.deltaorion.extapi.locale.translator;
 
 import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.config.Configuration;
-import me.deltaorion.extapi.config.StorageConfiguration;
-import me.deltaorion.extapi.config.URLConfiguration;
+import me.deltaorion.extapi.config.FileConfiguration;
+import org.apache.commons.lang.Validate;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TranslationManager {
 
-    private final Path translationDirectory;
-    private final URL defaultLocaleURL;
+    @NotNull private final Path translationDirectory;
+    @NotNull private final String defaultLocaleLocation;
+    @Nullable private final Class<?> classLoader;
     private final Locale DEFAULT_LOCALE = EServer.DEFAULT_LOCALE;
 
-    public TranslationManager(Path translationDirectory, URL defaultLocale) {
-        this.translationDirectory = translationDirectory;
-        this.defaultLocaleURL = defaultLocale;
+    public TranslationManager(@NotNull Path translationDirectory, @NotNull String defaultLocaleLocation, Class<?> classLoader) {
+        Validate.notNull(translationDirectory);
+        Validate.notNull(defaultLocaleLocation);
 
-        reload();
+        this.translationDirectory = translationDirectory;
+        this.defaultLocaleLocation = defaultLocaleLocation;
+        this.classLoader = classLoader;
     }
+
+    public TranslationManager(@NotNull Path translationDirectory, @NotNull String defaultLocaleLocation) {
+        this(translationDirectory,defaultLocaleLocation,null);
+    }
+
+
 
     private void loadDefaultLocale() {
-        System.out.println("Loading Default File");
-        if(defaultLocaleURL != null) {
-            //assumed to be english
-            System.out.println("Loading the Default Locale File");
-            Configuration configuration = new URLConfiguration(defaultLocaleURL);
-            addTranslations(DEFAULT_LOCALE,configuration);
-        }
+        Configuration configuration = new FileConfiguration(classLoader,translationDirectory.resolve(defaultLocaleLocation),defaultLocaleLocation);
+        addTranslations(DEFAULT_LOCALE,configuration);
     }
 
-    public void loadCustomTranslations() {
-        System.out.println("Loading Custom");
+    private void loadCustomTranslations() {
         List<Path> translationFiles;
         if(!translationDirectory.toFile().exists()) {
             translationDirectory.toFile().mkdirs();
@@ -65,17 +69,18 @@ public class TranslationManager {
                 System.out.println("Unable to load locale '"+path.getFileName().toString()+"'");
             }
         }
-
     }
 
     private void addTranslations(Locale locale, Configuration configuration) {
         configuration.getConfig().getKeys(true).forEach(key -> {
-            Translator.addTranslation(locale,key,configuration.getConfig().getString(key));
+            if(!configuration.getConfig().isConfigurationSection(key)) {
+                Translator.getInstance().addTranslation(locale, key, configuration.getConfig().getString(key));
+            }
         });
     }
 
     private Configuration getTranslation(Path path) throws IOException {
-        return new StorageConfiguration(path);
+        return new FileConfiguration(classLoader,path);
     }
 
     private Locale getLocale(Path path) {

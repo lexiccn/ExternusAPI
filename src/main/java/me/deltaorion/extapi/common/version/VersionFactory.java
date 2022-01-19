@@ -2,6 +2,7 @@ package me.deltaorion.extapi.common.version;
 
 import net.md_5.bungee.api.ProxyServer;
 import org.bukkit.Server;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class VersionFactory {
      * @param version The bukkit version string
      * @return A minecraft version
      */
-    public static MinecraftVersion parseBukkit(String version) {
+    public static MinecraftVersion parseBukkit(@NotNull String version) {
         return BUKKIT_PARSER.parse(version);
     }
 
@@ -31,7 +32,7 @@ public class VersionFactory {
      * @return A minecraft version
      */
 
-    public static MinecraftVersion parseBungee(String version) {
+    public static MinecraftVersion parseBungee (@NotNull String version) {
         return BUNGEE_PARSER.parse(version);
     }
 
@@ -42,7 +43,7 @@ public class VersionFactory {
      * @return the corresponding minecraft version
      */
     @Nullable
-    public static MinecraftVersion parse(String version) {
+    public static MinecraftVersion parse(@NotNull String version) {
         final List<VersionParser> parsers = new ArrayList<>();
         parsers.add(BUKKIT_PARSER);
         parsers.add(BUNGEE_PARSER);
@@ -58,7 +59,7 @@ public class VersionFactory {
         return null;
     }
 
-    private static VersionParser BUKKIT_PARSER = new VersionParser() {
+    private static final VersionParser BUKKIT_PARSER = new VersionParser() {
 
         private final int VERSION_POSITION = 0;
         private final int SNAP_POSITION = 1;
@@ -68,7 +69,7 @@ public class VersionFactory {
         private final String ERR_MSG = "Invalid Version String. String should be in the format 1.(major).(minor)-(snapshot)";
 
         @Override
-        public MinecraftVersion parse(final String versionString) throws IllegalArgumentException {
+        public MinecraftVersion parse(@NotNull final String versionString) throws IllegalArgumentException {
             try {
                 String[] snapSplit = DASH_REGEX.split(versionString);
                 final String snapShot = snapSplit[SNAP_POSITION];

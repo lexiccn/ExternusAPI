@@ -109,5 +109,10 @@
             <scope>system</scope>
             <systemPath>${pom.basedir}/lib/TestDepend-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>net.jcip</groupId>
+            <artifactId>jcip-annotations</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>

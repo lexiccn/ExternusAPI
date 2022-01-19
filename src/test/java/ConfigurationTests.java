@@ -1,5 +1,5 @@
 import me.deltaorion.extapi.config.Configuration;
-import me.deltaorion.extapi.config.StorageConfiguration;
+import me.deltaorion.extapi.config.FileConfiguration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.junit.Test;
 
@@ -14,7 +14,7 @@ public class ConfigurationTests {
     public void testStorageConfiguration() {
         try {
             URI uri = getClass().getClassLoader().getResource("config.yml").toURI();
-            Configuration configuration = new StorageConfiguration(new File(uri).toPath());
+            Configuration configuration = new FileConfiguration(new File(uri).toPath());
             testConfigBasic(configuration);
         } catch (Exception e) {
             fail();
