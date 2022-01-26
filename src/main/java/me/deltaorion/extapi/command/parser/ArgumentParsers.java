@@ -1,6 +1,9 @@
 package me.deltaorion.extapi.command.parser;
 
 import me.deltaorion.extapi.command.CommandException;
+import me.deltaorion.extapi.command.sent.ArgumentErrors;
+import me.deltaorion.extapi.common.sender.Sender;
+import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.test.TestEnum;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.bukkit.entity.Player;
@@ -51,6 +54,19 @@ public class ArgumentParsers {
                 } catch (IllegalArgumentException e) {
                     throw new CommandException("Cannot resolve test enum");
                 }
+            }
+        };
+    }
+
+    public static ArgumentParser<Sender> SENDER_PARSER(EServer server) {
+        return new ArgumentParser<Sender>() {
+            @Override
+            public Sender parse(String arg) throws CommandException {
+                Sender sender  = server.getSenderExact(arg);
+                if(sender==null) {
+                    throw new CommandException(ArgumentErrors.NOT_ONLINE_PLAYER().toString(arg));
+                }
+                return sender;
             }
         };
     }

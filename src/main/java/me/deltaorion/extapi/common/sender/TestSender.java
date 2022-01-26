@@ -70,7 +70,7 @@ public class TestSender implements Sender {
 
     @Override
     public boolean hasPermission(String permission) {
-        return permissions.contains(permission);
+        return permissions.contains(permission) || isOp || isConsole;
     }
 
     @Override

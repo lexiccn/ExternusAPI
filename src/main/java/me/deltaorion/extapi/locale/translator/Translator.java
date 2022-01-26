@@ -48,6 +48,7 @@ public class Translator {
      * @param locale
      * @return
      */
+    @NotNull
     public String translate(@NotNull String location, @Nullable Locale locale) {
 
         Validate.notNull(location);

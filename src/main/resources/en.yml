@@ -9,5 +9,10 @@ command:
   notOnlinePlayer: "&cPlayer '%s' does not exist or is not online"
   notEnum: "&cArgument '%s' is not correct. Please enter a valid %s"
   notDuration: "&cArgument '%s' is not a valid duration"
+  notPlayer: "&cPlayer '%s' is not online or does not exist"
   invalidArgumentOther: "&cArgument '%s' is not correct"
-  invalidUsage: '&cInvalid Usage. Try: %s'
+  invalidUsage: "&cInvalid Usage. Try '%s'"
+  internalError: '&cAn internal Error occurred when running this command!'
+  internalErrorTab: '&cAn internal error occured when tab completing this command!'
+  #no permission excepts an arg with the permission name
+  noPermission: '&cYou do not have permission to use this command!'

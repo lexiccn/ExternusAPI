@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.common.depend;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -16,8 +17,9 @@ public interface DependencyManager {
      *
      * @param name The name used by the plugin loader to identify the dependency
      * @param required Whether the dependency is essential for this plugin or not
+     * @throws IllegalArgumentException if the dependency has already been registered
      */
-    public void registerDependency(String name, boolean required);
+    public void registerDependency(@NotNull String name, boolean required);
 
     /**
      * Gets a plugin dependency object.
@@ -30,7 +32,7 @@ public interface DependencyManager {
      */
 
     @Nullable
-    public Dependency getDependency(String name);
+    public Dependency getDependency(@NotNull String name);
 
     /**
      * Checks whether the dependency manager has a dependency of the given name
@@ -39,7 +41,7 @@ public interface DependencyManager {
      * @return whether teh dependency is active or not
      */
 
-    public boolean hasDependency(String name);
+    public boolean hasDependency(@NotNull String name);
 
     /**
      * Gets an immutable list of the names of all dependencies registered in the dependency manager
@@ -47,5 +49,7 @@ public interface DependencyManager {
      * @return a list of the names of all dependencies registered.
      */
 
+    @NotNull
     public Set<String> getDependencies();
+
 }

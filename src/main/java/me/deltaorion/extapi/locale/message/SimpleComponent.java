@@ -1,7 +1,10 @@
 package me.deltaorion.extapi.locale.message;
 
+import jdk.nashorn.internal.ir.annotations.Immutable;
+
 import java.util.Locale;
 
+@Immutable
 public class SimpleComponent implements MessageComponent {
 
     private final String component;

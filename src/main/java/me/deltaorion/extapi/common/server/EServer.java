@@ -56,6 +56,23 @@ public interface EServer {
     public List<Sender> getOnlineSenders();
 
     /**
+     * Retrieves a sender by name ignoring case. If the sender does not exist
+     * or is not online. Then this will return null
+     *
+     * @param name The sender name
+     * @return A sender who's name matches or null
+     */
+
+    default Sender getSenderExact(String name) {
+        for(Sender sender : getOnlineSenders()) {
+            if(sender.getName().equalsIgnoreCase(name)) {
+                return sender;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Gets the console as a sender.
      *
      * @return The console as a sender.

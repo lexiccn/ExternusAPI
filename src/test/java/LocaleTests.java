@@ -49,6 +49,10 @@ public class LocaleTests {
         Message middle = Message.valueOf("Gam%srs Unite!");
         assertEquals(middle.toString("e"),"Gamers Unite!");
 
+        Message nullable = Message.valueOf("Insert %s Null");
+        String a = null;
+        assertEquals(nullable.toString(a),"Insert %s Null");
+
         Message end = Message.valueOf("Gamer%s");
         assertEquals(end.toString("s"),"Gamers");
 

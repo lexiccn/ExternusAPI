@@ -1,4 +1,6 @@
-package me.deltaorion.extapi.test.unit;
+package me.deltaorion.extapi.test.unit.generic;
+
+import static org.junit.Assert.*;
 
 public class McTestTest implements MinecraftTest {
 
@@ -9,13 +11,19 @@ public class McTestTest implements MinecraftTest {
         assertNotNull(new Object());
         assertTrue(true);
         assertNull(null);
-        assetEquals("hello","hello");
+        assertEquals("hello","hello");
     }
 
     @McTest
     public void testFail() {
         System.out.println("This test will FAIL!");
-        assetEquals("hello","Hello");
+        try {
+            assertEquals("hello", "Hello");
+        } catch (AssertionError e) {
+            return;
+        }
+
+        fail();
     }
 
 

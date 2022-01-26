@@ -1,8 +1,12 @@
-package me.deltaorion.extapi.command;
+package me.deltaorion.extapi.command.sent;
 
 import me.deltaorion.extapi.locale.message.Message;
 
 public class ArgumentErrors {
+
+    private ArgumentErrors() {
+        throw new UnsupportedOperationException();
+    }
 
     public static Message NOT_INTEGER() {
         return Message.valueOfTranslatable("command.notInteger");
@@ -17,7 +21,7 @@ public class ArgumentErrors {
     }
 
     public static Message NOT_ONLINE_PLAYER() {
-        return Message.valueOfTranslatable("command.notOnlinePlayer");
+        return Message.valueOfTranslatable("command.notPlayer");
     }
 
     public static Message NOT_ENUM() {
@@ -34,5 +38,13 @@ public class ArgumentErrors {
 
     public static Message BAD_USAGE() {
         return Message.valueOfTranslatable("command.invalidUsage");
+    }
+
+    public static Message INTERNAL_ERROR() { return Message.valueOfTranslatable("command.internalError");}
+
+    public static Message NO_PERMISSION() { return Message.valueOfTranslatable("command.noPermission");}
+
+    public static Message INTERNAL_ERROR_TAB_COMPLETION() {
+        return Message.valueOfTranslatable("command.internalErrorTab");
     }
 }

@@ -76,6 +76,10 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.org/repository/maven-public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -113,6 +117,17 @@
             <groupId>net.jcip</groupId>
             <artifactId>jcip-annotations</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api-plugin</artifactId>
+            <version>2.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>authlib</artifactId>
+            <version>1.5.25</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

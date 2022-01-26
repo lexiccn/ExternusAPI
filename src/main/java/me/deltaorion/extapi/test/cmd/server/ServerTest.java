@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.test.cmd.server;
 
+import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.test.cmd.JointTests;
@@ -9,9 +10,9 @@ import org.bukkit.command.CommandSender;
 
 public class ServerTest implements CommandExecutor {
 
-    private final EPlugin plugin;
+    private final ApiPlugin plugin;
 
-    public ServerTest(EPlugin plugin) {
+    public ServerTest(ApiPlugin plugin) {
         this.plugin = plugin;
     }
 

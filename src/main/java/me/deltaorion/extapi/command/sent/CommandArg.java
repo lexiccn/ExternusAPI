@@ -1,10 +1,14 @@
-package me.deltaorion.extapi.command;
+package me.deltaorion.extapi.command.sent;
 
 import jdk.nashorn.internal.ir.annotations.Immutable;
+import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.command.parser.ArgumentParser;
+import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.util.DurationParser;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
@@ -15,11 +19,11 @@ import java.util.function.Function;
 @Immutable
 public class CommandArg {
 
-    @NotNull private final EPlugin plugin;
+    @NotNull private final ApiPlugin plugin;
     @NotNull private final String arg;
     private final int index;
 
-    public CommandArg(@NotNull EPlugin plugin, @NotNull String arg, int index) {
+    public CommandArg(@NotNull ApiPlugin plugin, @NotNull String arg, int index) {
 
         Validate.notNull(arg);
         Validate.notNull(plugin);
@@ -221,13 +225,14 @@ public class CommandArg {
         return this.arg.equalsIgnoreCase(string);
     }
     public String asString() {
-        return this.arg.toLowerCase();
+        return this.arg;
     }
 
     public int getIndex() {
         return this.index;
     }
 
+    @Override
     public String toString() {
         return this.arg;
     }

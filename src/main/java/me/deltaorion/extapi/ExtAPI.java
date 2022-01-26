@@ -1,15 +1,22 @@
 package me.deltaorion.extapi;
 
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
+import me.deltaorion.extapi.test.cmd.item.CustomItemTestCommand;
+import me.deltaorion.extapi.test.cmd.item.ItemTest;
+import me.deltaorion.extapi.test.command.MessageCommand;
+import me.deltaorion.extapi.test.command.ShouldBeRunAsyncCommand;
+import me.deltaorion.extapi.test.command.TestCommand;
 import me.deltaorion.extapi.test.cmd.dependency.BukkitDependencyTest;
 import me.deltaorion.extapi.test.cmd.locale.LocaleTestBukkit;
 import me.deltaorion.extapi.test.cmd.playerparse.PlayerParseCommand;
 import me.deltaorion.extapi.test.cmd.sender.SenderTest;
 import me.deltaorion.extapi.test.cmd.server.ServerTest;
-import me.deltaorion.extapi.test.unit.McTestTest;
-import me.deltaorion.extapi.test.unit.McTester;
+import me.deltaorion.extapi.test.unit.LocaleTest;
+import me.deltaorion.extapi.test.unit.generic.McTestTest;
+import me.deltaorion.extapi.test.unit.generic.McTester;
 import me.deltaorion.extapi.test.cmd.version.VersionTest;
-import me.deltaorion.extapi.test.unit.arg.ArgTest;
+import me.deltaorion.extapi.test.unit.ArgTest;
+import me.deltaorion.extapi.test.unit.CustomItemTest;
 
 public final class ExtAPI extends BukkitPlugin {
 
@@ -25,15 +32,25 @@ public final class ExtAPI extends BukkitPlugin {
         getCommand("localetest").setExecutor(new LocaleTestBukkit(this));
         getCommand("parsetest").setExecutor(new PlayerParseCommand(this));
 
+        registerCommand(new MessageCommand(this),"msg","whisper","tell");
+        registerCommand(new TestCommand(),"testcommand");
+        registerAsyncCommand(new ShouldBeRunAsyncCommand(),"lifemeaning");
+        registerCommand(new ItemTest(this),"itemtest");
+        registerCommand(new CustomItemTestCommand(this),"citest");
+
         getPluginLogger().info("This should work!");
 
         registerTests();
         tester.runTests();
+
     }
 
     private void registerTests() {
         tester.addTest(new McTestTest());
         tester.addTest(new ArgTest(this));
+        tester.addTest(new me.deltaorion.extapi.test.unit.ItemTest(this));
+        tester.addTest(new CustomItemTest(this));
+        tester.addTest(new LocaleTest(this));
     }
 
     @Override

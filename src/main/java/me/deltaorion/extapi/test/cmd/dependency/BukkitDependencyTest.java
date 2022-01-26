@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.test.cmd.dependency;
 
+import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.testdepend.TestDepend;
@@ -12,10 +13,10 @@ import java.util.Locale;
 
 public class BukkitDependencyTest implements CommandExecutor {
 
-    private final EPlugin plugin;
+    private final ApiPlugin plugin;
     private final String DEPENDENCY = "TestDepend";
 
-    public BukkitDependencyTest(EPlugin plugin) {
+    public BukkitDependencyTest(ApiPlugin plugin) {
         this.plugin = plugin;
     }
 

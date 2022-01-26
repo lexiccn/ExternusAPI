@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.test.cmd.dependency;
 
+import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.testdepend.TestDependBungee;
@@ -8,9 +9,9 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class BungeeDependencyTest extends Command {
 
-    private final EPlugin plugin;
+    private final ApiPlugin plugin;
 
-    public BungeeDependencyTest(EPlugin plugin) {
+    public BungeeDependencyTest(ApiPlugin plugin) {
         super("dependencytestbungee");
         this.plugin = plugin;
     }

@@ -1,4 +1,4 @@
-package me.deltaorion.extapi.test.unit;
+package me.deltaorion.extapi.test.unit.generic;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

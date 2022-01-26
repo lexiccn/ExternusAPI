@@ -36,7 +36,7 @@ public class TestServer implements EServer {
             for(int j=0;j<i;j++) {
                 perms[j] = String.valueOf(j);
             }
-            onlineSenders.add(new TestSender("Gamer"+i,UUID.randomUUID(),false,random.nextBoolean(),locales.get(random.nextInt(locales.size())),perms));
+            onlineSenders.add(new TestSender("Gamer"+i,UUID.randomUUID(),false,false,locales.get(random.nextInt(locales.size())),perms));
         }
     }
 

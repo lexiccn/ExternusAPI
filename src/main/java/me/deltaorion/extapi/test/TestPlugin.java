@@ -1,6 +1,8 @@
 package me.deltaorion.extapi.test;
 
+import me.deltaorion.extapi.command.Command;
 import me.deltaorion.extapi.command.parser.ArgumentParser;
+import me.deltaorion.extapi.command.parser.ArgumentParsers;
 import me.deltaorion.extapi.command.parser.ParserRegistry;
 import me.deltaorion.extapi.command.parser.SimpleParserRegistry;
 import me.deltaorion.extapi.common.depend.Dependency;
@@ -8,7 +10,7 @@ import me.deltaorion.extapi.common.depend.DependencyManager;
 import me.deltaorion.extapi.common.depend.SimpleDependencyManager;
 import me.deltaorion.extapi.common.logger.JavaPluginLogger;
 import me.deltaorion.extapi.common.logger.PluginLogger;
-import me.deltaorion.extapi.common.plugin.EPlugin;
+import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
 import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.common.sender.TestSender;
@@ -23,7 +25,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class TestPlugin implements EPlugin {
+public class TestPlugin implements ApiPlugin {
 
     private final DependencyManager manager;
     private final EServer server;
@@ -38,21 +40,23 @@ public class TestPlugin implements EPlugin {
         this.manager = new SimpleDependencyManager(this);
         this.translator = new PluginTranslator(this,"en.yml");
         this.registry = new SimpleParserRegistry();
+
+        this.registry.registerParser(Sender.class, ArgumentParsers.SENDER_PARSER(server));
     }
 
     @Override
-    public void registerDependency(String name, boolean required) {
+    public void registerDependency(@NotNull String name, boolean required) {
         manager.registerDependency(name,required);
     }
 
     @Nullable
     @Override
-    public Dependency getDependency(String name) {
+    public Dependency getDependency(@NotNull String name) {
         return manager.getDependency(name);
     }
 
     @Override
-    public boolean hasDependency(String name) {
+    public boolean hasDependency(@NotNull String name) {
         return manager.hasDependency(name);
     }
 
@@ -64,7 +68,7 @@ public class TestPlugin implements EPlugin {
     @NotNull
     @Override
     public EServer getEServer() {
-        return getEServer();
+        return server;
     }
 
     @NotNull
@@ -73,6 +77,7 @@ public class TestPlugin implements EPlugin {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public Sender wrapSender(@NotNull Object commandSender) {
         return new TestSender(String.valueOf(random.nextInt()), UUID.randomUUID(),random.nextBoolean(),random.nextBoolean(), Locale.ENGLISH);
@@ -128,6 +133,7 @@ public class TestPlugin implements EPlugin {
         }
     }
 
+    @NotNull
     @Override
     public PluginLogger getPluginLogger() {
         return logger;
@@ -156,6 +162,11 @@ public class TestPlugin implements EPlugin {
     @Override
     public void onPluginEnable() {
 
+    }
+
+    @Override
+    public void registerCommand(@NotNull Command command, @NotNull String... names) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

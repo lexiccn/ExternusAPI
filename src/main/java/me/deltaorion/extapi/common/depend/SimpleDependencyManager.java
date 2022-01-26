@@ -1,6 +1,7 @@
 package me.deltaorion.extapi.common.depend;
 
 import me.deltaorion.extapi.common.plugin.EPlugin;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -10,7 +11,8 @@ public class SimpleDependencyManager implements DependencyManager {
     private final Map<String,Dependency> dependencies;
     private final EPlugin master;
 
-    public SimpleDependencyManager(EPlugin master) {
+    public SimpleDependencyManager(@NotNull EPlugin master) {
+        Objects.requireNonNull(master);
         this.dependencies = new HashMap<>();
         this.master = master;
     }
@@ -25,8 +27,12 @@ public class SimpleDependencyManager implements DependencyManager {
      *
      * @param name The name used by the plugin loader to identify the dependency
      * @param required Whether the dependency is essential for this plugin or not
+     *
      */
-    public void registerDependency(String name, boolean required) {
+    public void registerDependency(@NotNull String name, boolean required) {
+        if(hasDependency(name))
+            throw new IllegalArgumentException("The dependency '"+name+"' has already been registered!");
+
         Dependency dependency = new Dependency(master,name,required);
         dependency.check();
 
@@ -44,14 +50,15 @@ public class SimpleDependencyManager implements DependencyManager {
      */
 
     @Nullable
-    public Dependency getDependency(String name) {
+    public Dependency getDependency(@NotNull String name) {
         return dependencies.get(name.toUpperCase());
     }
 
-    public boolean hasDependency(String name) {
+    public boolean hasDependency(@NotNull String name) {
         return dependencies.containsKey(name.toUpperCase());
     }
 
+    @NotNull
     public Set<String> getDependencies() {
         return Collections.unmodifiableSet(dependencies.keySet());
     }

@@ -1,6 +1,6 @@
 package me.deltaorion.extapi.test.cmd.locale;
 
-import me.deltaorion.extapi.common.plugin.EPlugin;
+import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.test.cmd.JointTests;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -8,9 +8,9 @@ import org.bukkit.command.CommandSender;
 
 public class LocaleTestBukkit implements CommandExecutor {
 
-    private final EPlugin plugin;
+    private final ApiPlugin plugin;
 
-    public LocaleTestBukkit(EPlugin plugin) {
+    public LocaleTestBukkit(ApiPlugin plugin) {
         this.plugin = plugin;
     }
 

@@ -1,12 +1,17 @@
 package me.deltaorion.extapi.common.plugin;
 
+import me.deltaorion.extapi.command.Command;
 import me.deltaorion.extapi.command.parser.ArgumentParser;
+import me.deltaorion.extapi.common.command.BungeeCommand;
 import me.deltaorion.extapi.common.depend.Dependency;
+import me.deltaorion.extapi.common.sender.BungeeSenderInfo;
 import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.common.logger.PluginLogger;
 import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
+import me.deltaorion.extapi.common.sender.SimpleSender;
 import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.locale.translator.PluginTranslator;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,80 +21,74 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
 
-public class BungeePlugin extends Plugin implements EPlugin {
+public class BungeePlugin extends Plugin implements ApiPlugin {
 
-   private final WrapperManager manager = new WrapperManager(this) {
-       @Override
-       protected EPlugin getWrapper() {
-           return BungeePluginWrapper.of(BungeePlugin.this);
-       }
-   };
+    private final SharedApiPlugin plugin;
 
     public BungeePlugin() {
         super();
+        this.plugin = new SharedApiPlugin(new BungeePluginWrapper(this));
     }
 
     @NotNull @Override
     public EServer getEServer() {
-        return manager.getEServer();
+        return plugin.getEServer();
     }
 
     @Override
-    public void onEnable() {
+    public final void onEnable() {
         super.onEnable();
-        manager.onEnable();
+        plugin.onPluginEnable();
+        this.onPluginEnable();
     }
 
-    public void onDisable() {
+    public final void onDisable() {
         super.onDisable();
-        manager.onDisable();
+        this.onPluginDisable();
+        plugin.onPluginDisable();
     }
 
     @NotNull
     @Override
     public SchedulerAdapter getScheduler() {
-        return manager.getScheduler();
-    }
-
-    @Override
-    public Sender wrapSender(@NotNull Object commandSender) {
-        return manager.wrapSender(commandSender);
+        return plugin.getScheduler();
     }
 
     @NotNull
     @Override
     public Path getDataDirectory() {
-        return manager.getDataDirectory();
+        return plugin.getDataDirectory();
     }
 
     @Override @Nullable
     public InputStream getResourceStream(@NotNull String path) {
-        return manager.getResourceStream(path);
+        return plugin.getResourceStream(path);
     }
 
     @Override
     public void saveResource(@NotNull String resourcePath, boolean replace) {
-        manager.saveResource(resourcePath,replace);
+        plugin.saveResource(resourcePath,replace);
     }
 
+    @NotNull
     @Override
     public PluginLogger getPluginLogger() {
-        return manager.getPluginLogger();
+        return plugin.getPluginLogger();
     }
 
     @Override
     public boolean isPluginEnabled() {
-        return manager.isPluginEnabled();
+        return plugin.isPluginEnabled();
     }
 
     @Override
     public void disablePlugin() {
-        manager.disablePlugin();
+        plugin.disablePlugin();
     }
 
     @Override
     public PluginTranslator getTranslator() {
-        return manager.getTranslator();
+        return plugin.getTranslator();
     }
 
     @Override
@@ -99,38 +98,57 @@ public class BungeePlugin extends Plugin implements EPlugin {
     public void onPluginEnable() { }
 
     @Override
-    public void registerDependency(String name, boolean required) {
-        manager.registerDependency(name,required);
+    public void registerCommand(@NotNull Command command, @NotNull String... names) {
+        if(names.length==0)
+            throw new IllegalArgumentException("Command must have a valid name!");
+
+        BungeeCommand bungeeCommand = new BungeeCommand(this,command,names);
+        getProxy().getPluginManager().registerCommand(this,bungeeCommand);
     }
 
     @Override
-    public Dependency getDependency(String name) {
-        return manager.getDependency(name);
+    public void registerDependency(@NotNull String name, boolean required) {
+        plugin.registerDependency(name,required);
     }
 
     @Override
-    public boolean hasDependency(String name) {
-        return manager.hasDependency(name);
+    public Dependency getDependency(@NotNull String name) {
+        return plugin.getDependency(name);
+    }
+
+    @Override
+    public boolean hasDependency(@NotNull String name) {
+        return plugin.hasDependency(name);
     }
 
     @Override
     public Set<String> getDependencies() {
-        return manager.getDependencies();
+        return plugin.getDependencies();
     }
 
     @Override
     public <T> void registerParser(@NotNull Class<T> clazz, @NotNull ArgumentParser<T> parser) {
-        manager.registerParser(clazz,parser);
+        plugin.registerParser(clazz,parser);
     }
 
     @NotNull
     @Override
     public <T> Collection<ArgumentParser<T>> getParser(@NotNull Class<T> clazz) {
-        return manager.getParser(clazz);
+        return plugin.getParser(clazz);
     }
 
     @Override
     public <T> void clearParsers(@NotNull Class<T> clazz) {
-        this.manager.clearParsers(clazz);
+        this.plugin.clearParsers(clazz);
     }
+
+    @NotNull
+    @Override
+    public Sender wrapSender(@NotNull Object commandSender) {
+        if(!(commandSender instanceof CommandSender))
+            throw new IllegalArgumentException("Command Sender must be a net.md5 command sender");
+
+        return new SimpleSender(new BungeeSenderInfo((CommandSender) commandSender,getProxy(),getEServer()));
+    }
+
 }

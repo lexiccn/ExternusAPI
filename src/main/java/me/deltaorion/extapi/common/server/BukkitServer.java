@@ -80,7 +80,7 @@ public class BukkitServer implements EServer {
         if(plugin==null)
             return null;
 
-        return BukkitPluginWrapper.of(plugin);
+        return new BukkitPluginWrapper(plugin);
     }
 
     @Nullable

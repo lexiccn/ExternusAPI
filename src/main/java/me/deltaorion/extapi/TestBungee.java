@@ -1,6 +1,9 @@
 package me.deltaorion.extapi;
 
 import me.deltaorion.extapi.common.plugin.BungeePlugin;
+import me.deltaorion.extapi.test.command.MessageCommand;
+import me.deltaorion.extapi.test.command.ShouldBeRunAsyncCommand;
+import me.deltaorion.extapi.test.command.TestCommand;
 import me.deltaorion.extapi.test.cmd.dependency.BungeeDependencyTest;
 import me.deltaorion.extapi.test.cmd.locale.LocaleTestBungee;
 import me.deltaorion.extapi.test.cmd.sender.SenderTestBungee;
@@ -19,5 +22,8 @@ public class TestBungee extends BungeePlugin {
         getProxy().getPluginManager().registerCommand(this, new LocaleTestBungee(this));
 
         getPluginLogger().info("This should work!");
+        registerCommand(new MessageCommand(this),"msg","whisper","tell");
+        registerCommand(new TestCommand(),"testcommand");
+        registerCommand(new ShouldBeRunAsyncCommand(),"lifemeaning");
     }
 }

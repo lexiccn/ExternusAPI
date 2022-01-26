@@ -1,17 +1,19 @@
-package me.deltaorion.extapi.test.unit.arg;
+package me.deltaorion.extapi.test.unit;
 
-import me.deltaorion.extapi.command.CommandArg;
+import me.deltaorion.extapi.command.sent.CommandArg;
 import me.deltaorion.extapi.command.CommandException;
-import me.deltaorion.extapi.common.plugin.EPlugin;
+import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.test.TestEnum;
-import me.deltaorion.extapi.test.unit.McTest;
-import me.deltaorion.extapi.test.unit.MinecraftTest;
+import me.deltaorion.extapi.test.unit.generic.McTest;
+import me.deltaorion.extapi.test.unit.generic.MinecraftTest;
+
+import static org.junit.Assert.*;
 
 public class ArgTest implements MinecraftTest {
 
-    private final EPlugin plugin;
+    private final ApiPlugin plugin;
 
-    public ArgTest(EPlugin plugin) {
+    public ArgTest(ApiPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -25,14 +27,14 @@ public class ArgTest implements MinecraftTest {
 
         }
         try {
-            assetEquals(arg.asInt(),123);
+            assertEquals(arg.asInt(),123);
         } catch (CommandException e) {
             fail();
         }
 
         CommandArg arg2 = new CommandArg(plugin,"hello",0);
         try {
-            assetEquals(arg2.parse(TestEnum.class),TestEnum.HELLO);
+            assertEquals(arg2.parse(TestEnum.class),TestEnum.HELLO);
         } catch (CommandException e) {
             fail();
         }

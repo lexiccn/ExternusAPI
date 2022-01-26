@@ -3,6 +3,7 @@ version: ${project.version}
 main: me.deltaorion.extapi.ExtAPI
 api-version: 1.18
 authors: [ DeltaOrion, Ceedric_ ]
+softdepend: [ NBTAPI ]
 description: Grand API for the Externus Server
 commands:
   versiontest:

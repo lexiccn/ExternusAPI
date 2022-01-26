@@ -1,7 +1,9 @@
 package me.deltaorion.extapi.locale.message;
 
 import me.deltaorion.extapi.common.server.EServer;
+import net.jcip.annotations.GuardedBy;
 import org.bukkit.ChatColor;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -10,15 +12,15 @@ public class Message {
 
     public final static String PLACEHOLDER = "%s";
     private final List<MessageComponent> composition;
-    private Object[] defaultArgs;
+    @Nullable @GuardedBy("this") private Object[] defaultArgs;
 
     private Message(MessageComponent... components) {
-        this.composition = new ArrayList<>();
-        composition.addAll(Arrays.asList(components));
+        List<MessageComponent> temp = new ArrayList<>(Arrays.asList(components));
+        this.composition = Collections.unmodifiableList(temp);
     }
 
     private Message(Builder builder) {
-        this.composition = builder.components;
+        this.composition = Collections.unmodifiableList(builder.components);
         defaultArgs = new Object[builder.defArgs.size()];
         for(int i=0;i<builder.defArgs.size();i++) {
             defaultArgs[i] = builder.defArgs.get(i);
@@ -82,7 +84,7 @@ public class Message {
                 '&',substitutePlaceHolders(builder.toString(),args));
     }
 
-    public void setDefaults(Object... defaultArgs) {
+    public synchronized void setDefaults(@Nullable Object... defaultArgs) {
         this.defaultArgs = defaultArgs;
     }
 
@@ -90,12 +92,17 @@ public class Message {
         StringBuilder fin = new StringBuilder();
         int i = 0;
         int objCount = 0;
+        Object[] defArgs;
+        synchronized (this) {
+            defArgs = this.defaultArgs;
+        }
+
         while(i<rendered.length()-PLACEHOLDER.length()+1) {
             boolean placeholder = isPlaceHolder(rendered,PLACEHOLDER,i);
 
             Object arg = null;
             if(placeholder) {
-                arg = getArg(objCount,args,defaultArgs);
+                arg = getArg(objCount,args,defArgs);
                 objCount++;
             }
 

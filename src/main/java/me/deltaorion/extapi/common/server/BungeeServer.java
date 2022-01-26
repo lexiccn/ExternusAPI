@@ -79,7 +79,7 @@ public class BungeeServer implements EServer {
         if(plugin==null)
             return null;
 
-        return BungeePluginWrapper.of(plugin);
+        return new BungeePluginWrapper(plugin);
     }
 
     @Nullable

@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.common.plugin;
 
+import me.deltaorion.extapi.command.Command;
 import me.deltaorion.extapi.command.parser.ParserRegistry;
 import me.deltaorion.extapi.common.depend.DependencyManager;
 import me.deltaorion.extapi.common.sender.Sender;
@@ -15,7 +16,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 
 @NotThreadSafe
-public interface EPlugin extends DependencyManager, ParserRegistry {
+public interface EPlugin {
 
     /**
      * Returns an abstract representation of a minecraft server that the plugin is hosted on.
@@ -33,16 +34,6 @@ public interface EPlugin extends DependencyManager, ParserRegistry {
      */
     @NotNull
     SchedulerAdapter getScheduler();
-
-    /**
-     * Wraps a command sender, player or variant into a plugin command sender.
-     *
-     * @param commandSender The command sender object, this could be a commandsender, player, the console etc
-     * @return a sender
-     * @throws IllegalArgumentException if the sender is not a valid command sender type
-     */
-
-    public Sender wrapSender(@NotNull Object commandSender);
 
     /**
      * Gets the data folder of the plugin. This is usually /server/plugins/plugin-name
@@ -83,6 +74,7 @@ public interface EPlugin extends DependencyManager, ParserRegistry {
      * @return The plugin logger.
      */
 
+    @NotNull
     PluginLogger getPluginLogger();
 
     /**
@@ -98,21 +90,5 @@ public interface EPlugin extends DependencyManager, ParserRegistry {
      */
 
     void disablePlugin();
-
-
-    PluginTranslator getTranslator();
-
-    /**
-     * Plugin Disable Logic. This should be overiden by the plugin and any disable logic should be defined. This will be called on reloads
-     * and on server shutdowns.
-     */
-    void onPluginDisable();
-
-    /**
-     * Plugin Enable Logic. This should be overriden by the plugin extending this. This will be called on
-     * reloads and on server startups
-     */
-
-    void onPluginEnable();
 
 }

@@ -57,21 +57,26 @@ public class TranslationManager {
         for(Path path : translationFiles) {
             Locale locale = getLocale(path);
             if(locale == null) {
-                System.out.println("Unable to load locale '"+path.getFileName().toString()+"'");
+                System.err.println("Unable to load locale '"+path.getFileName().toString()+"' as the locale name could not be read");
                 continue;
             }
 
             try {
                 Configuration library = getTranslation(path);
                 addTranslations(locale,library);
-
-            } catch (IllegalArgumentException | IOException e) {
-                System.out.println("Unable to load locale '"+path.getFileName().toString()+"'");
+            } catch (IllegalArgumentException e) {
+                System.err.println("Unable to load locale '"+path.getFileName().toString()+"'");
+            } catch (IOException e) {
+                System.err.println("Unable to load locale '"+path.getFileName().toString()+"' due to IO Exception");
             }
         }
     }
 
     private void addTranslations(Locale locale, Configuration configuration) {
+        configuration.getConfig().getRoot().options().copyDefaults(true);
+        if(configuration.getConfig().getDefaults()!=null) {
+            configuration.getConfig().setDefaults(configuration.getConfig().getDefaults());
+        }
         configuration.getConfig().getKeys(true).forEach(key -> {
             if(!configuration.getConfig().isConfigurationSection(key)) {
                 Translator.getInstance().addTranslation(locale, key, configuration.getConfig().getString(key));

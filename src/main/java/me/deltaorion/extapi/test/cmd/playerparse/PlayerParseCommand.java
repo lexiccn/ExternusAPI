@@ -1,7 +1,8 @@
 package me.deltaorion.extapi.test.cmd.playerparse;
 
-import me.deltaorion.extapi.command.CommandArg;
+import me.deltaorion.extapi.command.sent.CommandArg;
 import me.deltaorion.extapi.command.CommandException;
+import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.test.TestEnum;
 import org.bukkit.command.Command;
@@ -11,9 +12,9 @@ import org.bukkit.entity.Player;
 
 public class PlayerParseCommand implements CommandExecutor {
 
-    private final EPlugin plugin;
+    private final ApiPlugin plugin;
 
-    public PlayerParseCommand(EPlugin plugin) {
+    public PlayerParseCommand(ApiPlugin plugin) {
         this.plugin = plugin;
     }
 

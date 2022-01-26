@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
  * This class also automatically checks if the plugin jar is enabled or not and acts appropiately whether it is required or
  * not.
  *
- * To register a dependency use {@link EPlugin#registerDependency(String, boolean)} to use this class.
+ * To register a dependency use {@link me.deltaorion.extapi.common.plugin.ApiPlugin#registerDependency(String, boolean)} to use this class.
  *
  */
 
