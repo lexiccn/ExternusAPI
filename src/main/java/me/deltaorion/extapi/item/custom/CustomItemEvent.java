@@ -1,9 +1,9 @@
 package me.deltaorion.extapi.item.custom;
 
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
-import me.deltaorion.extapi.item.InventoryItemStack;
+import me.deltaorion.extapi.item.position.InventoryItem;
 import net.jcip.annotations.Immutable;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,14 +17,14 @@ public class CustomItemEvent<T extends Event> {
     @NotNull private final BukkitPlugin plugin;
     @NotNull private final CustomItem item;
     @NotNull private final T event;
-    @NotNull private final List<InventoryItemStack> itemStacks;
-    @NotNull private final Player player;
+    @NotNull private final List<InventoryItem> itemStacks;
+    @NotNull private final LivingEntity entity;
 
-    public CustomItemEvent(@NotNull BukkitPlugin plugin,@NotNull CustomItem item, @NotNull T event, @NotNull Player player, @NotNull List<InventoryItemStack> itemStacks) {
+    public CustomItemEvent(@NotNull BukkitPlugin plugin,@NotNull CustomItem item, @NotNull T event, @NotNull LivingEntity entity, @NotNull List<InventoryItem> itemStacks) {
         this.item = Objects.requireNonNull(item);
         this.event = Objects.requireNonNull(event);
         this.itemStacks = Objects.requireNonNull(Collections.unmodifiableList(itemStacks));
-        this.player = Objects.requireNonNull(player);
+        this.entity = Objects.requireNonNull(entity);
         this.plugin = Objects.requireNonNull(plugin);
     }
 
@@ -39,13 +39,13 @@ public class CustomItemEvent<T extends Event> {
     }
 
     @NotNull
-    public List<InventoryItemStack> getItemStacks() {
+    public List<InventoryItem> getItemStacks() {
         return itemStacks;
     }
 
     @NotNull
-    public Player getPlayer() {
-        return player;
+    public LivingEntity getEntity() {
+        return entity;
     }
 
     @NotNull

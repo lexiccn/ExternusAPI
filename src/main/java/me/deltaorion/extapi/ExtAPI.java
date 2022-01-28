@@ -11,6 +11,7 @@ import me.deltaorion.extapi.test.cmd.locale.LocaleTestBukkit;
 import me.deltaorion.extapi.test.cmd.playerparse.PlayerParseCommand;
 import me.deltaorion.extapi.test.cmd.sender.SenderTest;
 import me.deltaorion.extapi.test.cmd.server.ServerTest;
+import me.deltaorion.extapi.test.unit.EMaterialTest;
 import me.deltaorion.extapi.test.unit.LocaleTest;
 import me.deltaorion.extapi.test.unit.generic.McTestTest;
 import me.deltaorion.extapi.test.unit.generic.McTester;
@@ -51,6 +52,7 @@ public final class ExtAPI extends BukkitPlugin {
         tester.addTest(new me.deltaorion.extapi.test.unit.ItemTest(this));
         tester.addTest(new CustomItemTest(this));
         tester.addTest(new LocaleTest(this));
+        tester.addTest(new EMaterialTest());
     }
 
     @Override

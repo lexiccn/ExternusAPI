@@ -43,4 +43,6 @@ public @interface ItemEventHandler {
     EventCondition predicate() default EventCondition.MAIN_HAND;
 
     CustomEventWrapper wrappers() default CustomEventWrapper.ROOT;
+
+    boolean playerOnly() default false;
 }

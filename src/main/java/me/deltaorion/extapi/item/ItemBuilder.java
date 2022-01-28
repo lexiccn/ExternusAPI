@@ -390,7 +390,7 @@ public class ItemBuilder {
         @Nullable private String url;
         private SkullType type;
         private boolean isTexture;
-        private final Material SKULL_MAT = Material.SKULL_ITEM;
+        private final Material SKULL_MAT = EMaterial.MOB_HEAD.getBukkitMaterial();
 
         public SkullBuilder() {
             isTexture = false;

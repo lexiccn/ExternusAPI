@@ -1,6 +1,5 @@
 package me.deltaorion.extapi.test.cmd.item;
 
-import de.tr7zw.nbtapi.NBTItem;
 import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.command.FunctionalCommand;
 import me.deltaorion.extapi.command.sent.SentCommand;
@@ -14,15 +13,11 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import java.util.Locale;
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
 
 public class ItemTest extends FunctionalCommand {
 

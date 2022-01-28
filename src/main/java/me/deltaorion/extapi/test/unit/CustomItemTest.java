@@ -2,21 +2,28 @@ package me.deltaorion.extapi.test.unit;
 
 import de.tr7zw.nbtapi.NBTCompound;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
-import me.deltaorion.extapi.item.custom.CustomItem;
 import me.deltaorion.extapi.item.ItemBuilder;
+import me.deltaorion.extapi.item.custom.CustomItem;
+import me.deltaorion.extapi.item.custom.CustomItemException;
+import me.deltaorion.extapi.item.position.HumanEntityItem;
+import me.deltaorion.extapi.item.position.InventoryItem;
+import me.deltaorion.extapi.item.position.LivingEntityItem;
+import me.deltaorion.extapi.item.position.SlotType;
 import me.deltaorion.extapi.test.unit.bukkit.TestEvent;
+import me.deltaorion.extapi.test.unit.bukkit.TestLivingEntity;
 import me.deltaorion.extapi.test.unit.bukkit.TestPlayer;
 import me.deltaorion.extapi.test.unit.generic.McTest;
 import me.deltaorion.extapi.test.unit.generic.MinecraftTest;
 import me.deltaorion.extapi.test.unit.item.*;
 import org.bukkit.Material;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.*;
 
 public class CustomItemTest implements MinecraftTest {
@@ -29,11 +36,10 @@ public class CustomItemTest implements MinecraftTest {
 
     @McTest
     public void customItemTest() {
-        CustomItem item = new BowSword();
+        CustomItem item = new BowSword(plugin);
         CustomItem enchant = new ParryEnchant();
         ItemStack generated = item.newCustomItem();
         ItemStack generated2 = item.newCustomItem(new ItemStack(Material.STAINED_CLAY));
-        TestItem t = new TestItem(new ArrayList<>());
         ItemStack trickery = new ItemBuilder(Material.DIAMOND_SWORD)
                 .transformNBT(nbtItem -> {
                     NBTCompound compound = nbtItem.getCompound("EXTAPI_CUSTOM_ITEM");
@@ -64,7 +70,9 @@ public class CustomItemTest implements MinecraftTest {
         } catch (IllegalStateException ignored) {
 
         }
-        //TODO -  test locale
+        CustomItem everythingEnchant = new EverythingItem(plugin);
+        ItemStack itemStack = everythingEnchant.newCustomItem(Locale.ENGLISH);
+        assertEquals("Hello World",itemStack.getItemMeta().getDisplayName());
     }
 
     @McTest
@@ -96,6 +104,15 @@ public class CustomItemTest implements MinecraftTest {
         if(!plugin.getCustomItemManager().isRegistered(item))
             fail();
 
+        try {
+            plugin.getCustomItemManager().registerItem(item);
+            fail();
+        } catch (IllegalArgumentException ignored) {
+
+        }
+
+        plugin.getCustomItemManager().registerIfAbsent(item);
+
         Player player = new TestPlayer("Jerry");
         plugin.getServer().getPluginManager().callEvent(new TestEvent(player,"Gamer"));
         assertEquals(0,helper.size());
@@ -115,5 +132,57 @@ public class CustomItemTest implements MinecraftTest {
         player.getInventory().setLeggings(item.newCustomItem());
         plugin.getServer().getPluginManager().callEvent(new TestEvent(player,"Gamer"));
         assertEquals(2,helper.size());
+
+        helper.clear();
+        player.getInventory().clear();
+        player.getInventory().addItem(item.newCustomItem());
+        player.getInventory().addItem(item.newCustomItem());
+        player.getInventory().addItem(item.newCustomItem());
+        player.getInventory().addItem(item.newCustomItem());
+        plugin.getServer().getPluginManager().callEvent(new TestEvent(player,"count"));
+        assertEquals(4,helper.size());
+
+        helper.clear();
+        player.getInventory().clear();
+        player.getInventory().setLeggings(item.newCustomItem());
+        player.getInventory().setBoots(item.newCustomItem());
+        player.getInventory().setChestplate(item.newCustomItem());
+        player.getInventory().setHelmet(item.newCustomItem());
+        plugin.getServer().getPluginManager().callEvent(new TestEvent(player,"armor"));
+        assertEquals(4,helper.size());
+
+        helper.clear();
+        player.getInventory().clear();
+        player.getInventory().setItem(13,item.newCustomItem());
+        plugin.getServer().getPluginManager().callEvent(new TestEvent(player,"Gamer"));
+        assertEquals(1,helper.size());
+    }
+
+    @McTest
+    public void inventoryPositionTest() {
+        Player player = new TestPlayer("Jerry");
+        player.getInventory().setItemInHand(new ItemStack(Material.NAME_TAG));
+        InventoryItem item = new HumanEntityItem(player,player.getInventory().getHeldItemSlot(),player.getItemInHand());
+        assertEquals(SlotType.MAIN_HAND,item.getSlotType());
+        assertEquals(player.getInventory().getHeldItemSlot(),item.getRawSlot());
+        item.setItem(null);
+        assertEquals(SlotType.MAIN_HAND,item.getSlotType());
+        assertTrue(player.getItemInHand() == null || player.getItemInHand().getType().equals(Material.AIR));
+        assertNull(item.getItemStack());
+        item.setItem(new ItemStack(Material.EMERALD));
+        assertEquals(Material.EMERALD,item.getItemStack().getType());
+        LivingEntity entity = new TestLivingEntity();
+        entity.getEquipment().setLeggings(new ItemStack(Material.DIAMOND_LEGGINGS));
+        item = new LivingEntityItem(entity,SlotType.LEGGINGS,entity.getEquipment().getLeggings());
+        assertEquals(SlotType.LEGGINGS,item.getSlotType());
+        assertEquals(SlotType.LEGGINGS.getSlot(),item.getRawSlot());
+        assertEquals(Material.DIAMOND_LEGGINGS,item.getItemStack().getType());
+        item.setItem(null);
+        assertTrue(entity.getEquipment().getLeggings() == null || entity.getEquipment().getLeggings().getType().equals(Material.AIR));
+        assertNull(item.getItemStack());
+        item.setItem(new ItemStack(Material.EMERALD));
+        assertEquals(Material.EMERALD,entity.getEquipment().getLeggings().getType());
+        ;
+
     }
 }

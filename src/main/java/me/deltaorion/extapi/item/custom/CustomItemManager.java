@@ -157,7 +157,7 @@ public class CustomItemManager {
     @SuppressWarnings("unchecked")
     private <T extends Event> void register(Class<T> eventClass, CustomItem item, ItemEventHandler eh, Method method) throws CustomItemException {
         try {
-            CustomItemEventListener.register(plugin, eventClass, item, eh.priority(), eh.ignoreCancelled(), EventPredicates.getPredicate(eh.predicate()), (CIEventWrapper<T>) EventWrappers.get(eventClass,eh.wrappers()) , method);
+            CustomItemEventListener.register(plugin, eventClass, item, eh.priority(), eh.ignoreCancelled(), EventPredicates.getPredicate(eh.predicate()), (CIEventWrapper<T>) EventWrappers.get(eventClass,eh.wrappers()), method, eh.playerOnly());
         } catch (ClassCastException e) {
             throw new CustomItemException(plugin.getDescription().getFullName()+" attempted to register an invalid an Invalid Custom Item Event Handler. "+method.toGenericString()+" in "+item.getClass() + ". It is invalid as the event wrapper does not match the event class type");
         } catch (UnsupportedOperationException | IllegalStateException e) {

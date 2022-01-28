@@ -723,6 +723,25 @@ public enum EMaterial {
         }
     }
 
+    //checks whether the material will not make a valid itemstack. This essentially checks whether
+    //the material is air, or a liquid material such as lava or water
+    public boolean rawGasLiquid() {
+        return rawGasLiquid(this.bukkitMaterial);
+    }
+
+    public static boolean rawGasLiquid(Material material) {
+        switch (material) {
+            case AIR:
+            case LAVA:
+            case WATER:
+            case STATIONARY_LAVA:
+            case STATIONARY_WATER:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public Class<? extends MaterialData> getData() {
         return this.bukkitMaterial.getData();
     }

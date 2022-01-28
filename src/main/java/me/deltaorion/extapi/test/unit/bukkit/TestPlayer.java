@@ -29,6 +29,7 @@ public class TestPlayer implements Player {
 
     private String name;
     private final PlayerInventory inventory = new PlayerInventoryMock(this);
+    private final EntityEquipment entityEquipment = new MockEntityEquipment(inventory,this);
 
     public TestPlayer(String name) {
         this.name = name;
@@ -1161,7 +1162,7 @@ public class TestPlayer implements Player {
 
     @Override
     public EntityEquipment getEquipment() {
-        throw new UnsupportedOperationException();
+        return entityEquipment;
     }
 
     @Override

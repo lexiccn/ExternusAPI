@@ -1,11 +1,10 @@
 package me.deltaorion.extapi.item.custom;
 
-import com.google.common.collect.ImmutableList;
 import de.tr7zw.nbtapi.NBTCompound;
 import me.deltaorion.extapi.common.server.EServer;
+import me.deltaorion.extapi.item.EMaterial;
 import me.deltaorion.extapi.item.ItemBuilder;
 import me.deltaorion.extapi.locale.message.Message;
-import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +18,6 @@ public class CustomItem implements Listener {
     //holds event listener, underlying object
     @NotNull private final String name;
     @Nullable private final ItemStack defaultStack;
-    @NotNull private final ImmutableList<Material> illegalMaterials;
     @Nullable private List<Message> defaultLore;
     @Nullable private Message defaultDisplayName;
 
@@ -28,15 +26,18 @@ public class CustomItem implements Listener {
     protected CustomItem(@NotNull String name, @Nullable ItemStack defaultStack) {
         this.name = Objects.requireNonNull(name).toLowerCase(Locale.ROOT);
         this.defaultStack = defaultStack;
-        illegalMaterials = ImmutableList.of(Material.AIR,
-                Material.LAVA,
-                Material.WATER);
-
         if(defaultStack!=null) {
-            if (illegalMaterials.contains(defaultStack.getType())) {
+            if (isBadStack(defaultStack)) {
                 throw new IllegalArgumentException("Custom Items cannot be null or made of air or a liquid");
             }
         }
+    }
+
+    private boolean isBadStack(ItemStack itemStack) {
+        if(itemStack==null)
+            return true;
+
+        return EMaterial.rawGasLiquid(itemStack.getType());
     }
 
     protected void setDefaultDisplayName(@Nullable Message defaultDisplayName) {
@@ -66,7 +67,7 @@ public class CustomItem implements Listener {
         if(itemStack==null)
             return false;
 
-        if(illegalMaterials.contains(itemStack.getType()))
+        if(isBadStack(itemStack))
             return false;
 
         ItemBuilder builder = new ItemBuilder(itemStack);
@@ -82,7 +83,7 @@ public class CustomItem implements Listener {
     }
 
     @NotNull
-    public ItemStack newCustomItem(@NotNull Locale locale) {
+    public ItemStack  newCustomItem(@NotNull Locale locale) {
         Objects.requireNonNull(locale);
         if(defaultStack==null)
             throw new IllegalStateException("Cannot make custom item without specifying the itemstack as the default stack is null!");
@@ -99,13 +100,13 @@ public class CustomItem implements Listener {
             }
         }
 
-        return newCustomItem(defaultStack);
+        return newCustomItem(builder.build());
     }
 
     @NotNull
     public ItemStack newCustomItem(@NotNull ItemStack itemStack) {
         Objects.requireNonNull(itemStack);
-        if(illegalMaterials.contains(itemStack.getType()))
+        if(isBadStack(itemStack))
             throw new IllegalArgumentException("Custom Items cannot be null or made of air or a liquid");
 
         ItemStack clone = itemStack.clone();
@@ -114,15 +115,16 @@ public class CustomItem implements Listener {
 
     public void makeCustom(@NotNull ItemStack itemStack) {
         Objects.requireNonNull(itemStack);
-        if(illegalMaterials.contains(itemStack.getType()))
+        if(isBadStack(itemStack))
             throw new IllegalArgumentException("Custom Items cannot be null or made of air or a liquid");
 
         apply(itemStack);
     }
 
+
     public void removeCustom(@NotNull ItemStack itemStack) {
         Objects.requireNonNull(itemStack);
-        if(illegalMaterials.contains(itemStack.getType()))
+        if(isBadStack(itemStack))
             throw new IllegalArgumentException("Custom Items cannot be null or made of air or a liquid");
 
         try {

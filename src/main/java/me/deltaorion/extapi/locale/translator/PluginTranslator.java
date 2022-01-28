@@ -12,7 +12,6 @@ public class PluginTranslator {
     private final EPlugin plugin;
 
     public PluginTranslator(EPlugin plugin, String defaultTranslation) {
-        plugin.getPluginLogger().info("Initialising Plugin Translator");
         managerDef = new TranslationManager(plugin.getDataDirectory().resolve("translations"),
                 defaultTranslation,getClass());
         managerCustom = new TranslationManager(plugin.getDataDirectory().resolve("translations"),
@@ -23,7 +22,6 @@ public class PluginTranslator {
     }
 
     public void reload() {
-        plugin.getPluginLogger().info("Reloading Translations and Messages");
         managerDef.reload();
         managerCustom.reload();
     }
