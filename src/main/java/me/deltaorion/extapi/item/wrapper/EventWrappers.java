@@ -15,7 +15,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,9 +35,9 @@ public class EventWrappers {
                 return getRoot(clazz);
             case PLAYER_EVENT:
                 return PLAYER_EVENT();
-            case ENTITY_DAMAGES_ENTITY:
+            case DAMAGE_ANOTHER_ENTITY:
                 return DAMAGE_ANOTHER_ENTITY();
-            case ENtity_DAMAGED_BY_ENTITY:
+            case GET_DAMAGED_BY_ENTITY:
                 return GET_DAMAGED();
             case ENTITY_EVENT:
                 return ENTITY_EVENT();

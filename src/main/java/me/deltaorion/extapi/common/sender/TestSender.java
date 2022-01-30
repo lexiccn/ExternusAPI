@@ -21,6 +21,7 @@ public class TestSender implements Sender {
         this.isOp = isOp;
         this.locale = locale;
         this.permissions = new HashSet<>(Arrays.asList(perms));
+        this.permissions.add("ExtApi.Test.Command");
     }
 
     @Override

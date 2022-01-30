@@ -166,14 +166,59 @@ public class CommandTests {
         try {
             assertEquals(command.getArgOrFail(0).toString(),"Hello");
             assertEquals(command.getArgOrFail(2).toString(),"Gamer");
+        } catch (CommandException e) {
+            fail();
+        }
+
+        try {
             command.getArgOrFail(3);
             fail();
         } catch (CommandException e) {
+
         }
 
         assertEquals(command.getArgOrDefault(3,"aaaa").toString(),"aaaa");
         assertEquals(command.getArgOrDefault(2,"aaaa").toString(),"Gamer");
         assertNull(command.getArgOrNull(-1));
+
+        command = command.reduce("/gamer World Gamer");
+        try {
+            assertEquals(command.getArgOrFail(0).toString(),"World");
+            assertEquals(command.getArgOrFail(1).toString(),"Gamer");
+        } catch (CommandException e) {
+            fail();
+        }
+
+        try {
+            command.getArgOrFail(2);
+            fail();
+        } catch (CommandException e) {
+
+        }
+
+        command = command.reduce("/gamer Gamer");
+        try {
+            assertEquals("Gamer",command.getArgOrFail(0).toString());
+        } catch (CommandException e) {
+            e.printStackTrace();
+        }
+
+        assertEquals("",command.getArgOrBlank(1).asString());
+        command = command.reduce("/gamer");
+        assertEquals(0,command.argCount());
+        try {
+            command.getArgOrFail(0);
+        } catch (CommandException e) {
+
+        }
+        command = command.reduce("/gamer");
+        assertEquals(0,command.argCount());
+        try {
+            command.getArgOrFail(0);
+        } catch (CommandException e) {
+
+        }
+        command = command.reduce("/gamer");
     }
 
     @Test

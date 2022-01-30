@@ -25,16 +25,17 @@ public class FileConfiguration implements Configuration {
     private org.bukkit.configuration.file.FileConfiguration dataConfig;
     private final File configFile;
     @Nullable private final String defaultPath;
-    @Nullable private final Class<?> classLoader;
+    @Nullable private final ClassLoader classLoader;
 
 
-    public FileConfiguration(@Nullable Class<?> classLoader, @NotNull Path configurationPath, @Nullable String defaultPath) {
+    public FileConfiguration(@Nullable ClassLoader classLoader, @NotNull Path configurationPath, @Nullable String defaultPath) {
 
         Validate.notNull(configurationPath);
 
-        if(defaultPath!=null)
-            if(!defaultPath.endsWith(EXTENSION))
+        if(defaultPath!=null) {
+            if (!defaultPath.endsWith(EXTENSION))
                 defaultPath = defaultPath + EXTENSION;
+        }
 
         this.configurationPath = configurationPath;
         this.configFile = configurationPath.toFile();
@@ -45,7 +46,7 @@ public class FileConfiguration implements Configuration {
             saveDefaultConfig();
     }
 
-    public FileConfiguration(@Nullable Class<?> classLoader, @NotNull Path configurationPath) {
+    public FileConfiguration(@Nullable ClassLoader classLoader, @NotNull Path configurationPath) {
         this(classLoader,configurationPath,null);
     }
 
@@ -65,15 +66,13 @@ public class FileConfiguration implements Configuration {
 
 
         if(defaultConfig!=null) {
-            YamlConfiguration def = null;
             try {
-                def = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultConfig));
+                YamlConfiguration def = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultConfig));
                 dataConfig.setDefaults(def);
                 defaultConfig.close();
             } catch (IOException e) {
                 System.out.println("An Error occurred when loading " + defaultConfig);
             }
-        } else {
         }
     }
 

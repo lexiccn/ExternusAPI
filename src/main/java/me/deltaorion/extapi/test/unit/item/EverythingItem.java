@@ -57,12 +57,12 @@ public class EverythingItem extends CustomItem {
         plugin.getServer().broadcastMessage("Player Died!");
     }
 
-    @ItemEventHandler(wrappers = CustomEventWrapper.ENTITY_DAMAGES_ENTITY,playerOnly = false)
+    @ItemEventHandler(wrapper = CustomEventWrapper.DAMAGE_ANOTHER_ENTITY,playerOnly = false)
     public void whenDamage(CustomItemEvent<EntityDamageByEntityEvent> event) {
         plugin.getServer().broadcastMessage("Entity damaged another entity");
     }
 
-    @ItemEventHandler(predicate = EventCondition.INVENTORY)
+    @ItemEventHandler(condition = EventCondition.INVENTORY)
     public void onDrag(CustomItemEvent<InventoryDragEvent> event) {
         for(ItemStack itemStack : event.getEvent().getNewItems().values()) {
             if(isCustomItem(itemStack)) {
@@ -72,12 +72,12 @@ public class EverythingItem extends CustomItem {
         }
     }
 
-    @ItemEventHandler(predicate = EventCondition.INVENTORY)
+    @ItemEventHandler(condition = EventCondition.INVENTORY)
     public void onOpen(CustomItemEvent<InventoryOpenEvent> event) {
         Bukkit.broadcastMessage("Opened inventory while the custom item was inside!");
     }
 
-    @ItemEventHandler(predicate = EventCondition.INVENTORY)
+    @ItemEventHandler(condition = EventCondition.INVENTORY)
     public void onClose(CustomItemEvent<InventoryCloseEvent> event) {
         Bukkit.broadcastMessage("Closed inventory while custom item was inside!");
     }
@@ -99,7 +99,7 @@ public class EverythingItem extends CustomItem {
         Bukkit.broadcastMessage("Damaged Block with custom item");
     }
 
-    @ItemEventHandler(predicate = EventCondition.HOTBAR)
+    @ItemEventHandler(condition = EventCondition.HOTBAR)
     public void onBlockPlace(CustomItemEvent<BlockPlaceEvent> event) {
         Bukkit.broadcastMessage("Placed Block with custom item in hotbar");
     }
@@ -109,47 +109,47 @@ public class EverythingItem extends CustomItem {
         Bukkit.broadcastMessage("Changed Sign with Custom Item");
     }
 
-    @ItemEventHandler(predicate = EventCondition.HOTBAR)
+    @ItemEventHandler(condition = EventCondition.HOTBAR)
     public void onBlockIgnite(CustomItemEvent<BlockIgniteEvent> event) {
         Bukkit.broadcastMessage("Ignited a block with the custom item in hotbar");
     }
 
-    @ItemEventHandler(wrappers = CustomEventWrapper.ENCHANT_ITEM_BEING_ENCHANTED)
+    @ItemEventHandler(wrapper = CustomEventWrapper.ENCHANT_ITEM_BEING_ENCHANTED)
     public void onEnchant(CustomItemEvent<EnchantItemEvent> event) {
         Bukkit.broadcastMessage("The custom item was just enchanted");
     }
 
-    @ItemEventHandler(wrappers = CustomEventWrapper.PREPARE_ENCHANT_ITEM_BEING_ENCHANTED)
+    @ItemEventHandler(wrapper = CustomEventWrapper.PREPARE_ENCHANT_ITEM_BEING_ENCHANTED)
     public void onEnchantPrepare(CustomItemEvent<PrepareItemEnchantEvent> event) {
         Bukkit.broadcastMessage("The custom item is being prepared to be enchanted!");
     }
 
-    @ItemEventHandler(wrappers = CustomEventWrapper.ENCHANT_ITEM_PLAYER_INVENTORY, predicate = EventCondition.INVENTORY)
+    @ItemEventHandler(wrapper = CustomEventWrapper.ENCHANT_ITEM_PLAYER_INVENTORY, condition = EventCondition.INVENTORY)
     public void onEnchantInv(CustomItemEvent<EnchantItemEvent> event) {
         Bukkit.broadcastMessage("An item was enchanted while this custom item is in the inventory");
     }
 
-    @ItemEventHandler(wrappers = CustomEventWrapper.PREPARE_ENCHANT_ITEM_PLAYER_INVENTORY, predicate = EventCondition.INVENTORY)
+    @ItemEventHandler(wrapper = CustomEventWrapper.PREPARE_ENCHANT_ITEM_PLAYER_INVENTORY, condition = EventCondition.INVENTORY)
     public void onPrepareEnchantInv(CustomItemEvent<PrepareItemEnchantEvent> event) {
         Bukkit.broadcastMessage("An item was being prepared to be enchanted while this custom item is in the inventory");
     }
 
-    @ItemEventHandler(wrappers = CustomEventWrapper.PROJECTILE_LAUNCH, predicate = EventCondition.HOTBAR,playerOnly = false)
+    @ItemEventHandler(wrapper = CustomEventWrapper.PROJECTILE_LAUNCH, condition = EventCondition.HOTBAR,playerOnly = false)
     public void onLaunch(CustomItemEvent<ProjectileLaunchEvent> event) {
         Bukkit.broadcastMessage("Launched a projectile while the item was in the hotbar");
     }
 
-    @ItemEventHandler(wrappers = CustomEventWrapper.ENTITY_COMBUSTED_BY_ENTITY, predicate = EventCondition.HOTBAR, playerOnly = false)
+    @ItemEventHandler(wrapper = CustomEventWrapper.ENTITY_COMBUSTED_BY_ENTITY, condition = EventCondition.HOTBAR, playerOnly = false)
     public void onCombust(CustomItemEvent<EntityCombustByEntityEvent> event) {
         Bukkit.broadcastMessage("I just got lit on fire!");
     }
 
-    @ItemEventHandler(wrappers = CustomEventWrapper.ENTITY_COMBUSTS_ENTITY, predicate = EventCondition.HOTBAR, playerOnly = false)
+    @ItemEventHandler(wrapper = CustomEventWrapper.ENTITY_COMBUSTS_ENTITY, condition = EventCondition.HOTBAR, playerOnly = false)
     public void onCombusting(CustomItemEvent<EntityCombustByEntityEvent> event) {
         Bukkit.broadcastMessage("I just combusted an enemy");
     }
 
-    @ItemEventHandler(wrappers = CustomEventWrapper.TARGETTED_BY_ENTITY, playerOnly = false)
+    @ItemEventHandler(wrapper = CustomEventWrapper.TARGETTED_BY_ENTITY, playerOnly = false)
     public void onTarget(CustomItemEvent<EntityTargetEvent> event) {
         Bukkit.broadcastMessage("I got targetted by an enemy");
     }

@@ -6,13 +6,14 @@ import me.deltaorion.extapi.command.sent.SentCommand;
 import me.deltaorion.extapi.command.tabcompletion.Completers;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.sender.Sender;
+import me.deltaorion.extapi.locale.message.Message;
 
 public class MessageCommand extends FunctionalCommand {
 
     private final EPlugin plugin;
 
     public MessageCommand(EPlugin plugin) {
-        super(NO_PERMISSION, "/msg <player> <msg>", "Sends a direct message privately to the specified player");
+        super("ExtApi.Test.Command", "/msg <player> <msg>", Message.valueOf("Sends a direct message privately to the specified player"));
         this.plugin = plugin;
         registerCompleter(1, Completers.ONLINE_SENDERS(plugin.getEServer()));
     }

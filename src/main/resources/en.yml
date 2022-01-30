@@ -3,16 +3,18 @@ hello-arg: 'Hello %s'
 world:
   hello: 'World'
 command:
-  notInteger: "&cArgument '%s' is not an integer"
-  notNumber: "&cArgument '%s' is not a number"
-  notBoolean: "&cArgument '%s' is not either true or false"
-  notOnlinePlayer: "&cPlayer '%s' does not exist or is not online"
-  notEnum: "&cArgument '%s' is not correct. Please enter a valid %s"
-  notDuration: "&cArgument '%s' is not a valid duration"
-  notPlayer: "&cPlayer '%s' is not online or does not exist"
-  invalidArgumentOther: "&cArgument '%s' is not correct"
+  notInteger: "&cArgument &4'%s' &cis not an integer"
+  notNumber: "&cArgument &4'%s' &cis not a number"
+  notBoolean: "&cArgument &4'%s' &cis not either true or false"
+  notOnlinePlayer: "&cPlayer &4'%s' &cdoes not exist or is not online"
+  notEnum: "&cArgument &4'%s' &cis not correct. Please enter a valid %s"
+  notDuration: "&cArgument &4'%s' &cis not a valid duration"
+  notPlayer: "&cPlayer &4'%s' &cis not online or does not exist"
+  invalidArgumentOther: "&cArgument &4'%s' &cis not correct"
   invalidUsage: "&cInvalid Usage. Try '%s'"
-  internalError: '&cAn internal Error occurred when running this command!'
-  internalErrorTab: '&cAn internal error occured when tab completing this command!'
+  internalError: "&cAn internal Error occurred when running the command '%s' with args '%s'"
+  internalErrorTab: "&cAn internal error occurred when tab completing the command '%s' with args '%s'"
   #no permission excepts an arg with the permission name
   noPermission: '&cYou do not have permission to use this command!'
+item:
+  internalError: "&cAn internal error occurred when using the item '%s'"

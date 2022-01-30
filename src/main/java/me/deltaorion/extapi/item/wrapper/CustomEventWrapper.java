@@ -19,9 +19,9 @@ public enum CustomEventWrapper {
 
     ROOT(null),
     //Called when the player is damaged by another entity
-    ENtity_DAMAGED_BY_ENTITY(TypeToken.get(EntityDamageByEntityEvent.class)),
+    GET_DAMAGED_BY_ENTITY(TypeToken.get(EntityDamageByEntityEvent.class)),
     //called when this player damages another entity
-    ENTITY_DAMAGES_ENTITY(TypeToken.get(EntityDamageByEntityEvent.class)),
+    DAMAGE_ANOTHER_ENTITY(TypeToken.get(EntityDamageByEntityEvent.class)),
     //retrieves the player from any player event
     PLAYER_EVENT(TypeToken.get(PlayerEvent.class)),
     //retrieves the entity from any entity event

@@ -31,12 +31,14 @@ public class CustomItemTestCommand extends FunctionalCommand {
         CustomItem everything = new EverythingItem(plugin);
         CustomItem slotType = new SlotTypeTest();
         CustomItem TntSpawnEgg = new TNTSpawnEgg();
+        CustomItem stackTracer = new StackTraceTestItem(plugin);
 
         plugin.getCustomItemManager().registerIfAbsent(bowSword);
         plugin.getCustomItemManager().registerIfAbsent(parryEnchant);
         plugin.getCustomItemManager().registerIfAbsent(everything);
         plugin.getCustomItemManager().registerIfAbsent(slotType);
         plugin.getCustomItemManager().registerIfAbsent(TntSpawnEgg);
+        plugin.getCustomItemManager().registerIfAbsent(stackTracer);
 
         if(command.getArgOrBlank(0).asString().equals("entity")) {
             LivingEntity entity = (LivingEntity) player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
@@ -54,5 +56,6 @@ public class CustomItemTestCommand extends FunctionalCommand {
         player.getInventory().addItem(bowSword.newCustomItem());
         player.getInventory().addItem(everything.newCustomItem());
         player.getInventory().addItem(TntSpawnEgg.newCustomItem());
+        player.getInventory().addItem(stackTracer.newCustomItem());
     }
 }

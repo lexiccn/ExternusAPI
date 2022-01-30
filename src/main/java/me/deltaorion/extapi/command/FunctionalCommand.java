@@ -1,11 +1,12 @@
 package me.deltaorion.extapi.command;
 
-import me.deltaorion.extapi.command.sent.ArgumentErrors;
+import me.deltaorion.extapi.command.sent.MessageErrors;
 import me.deltaorion.extapi.command.sent.SentCommand;
 import me.deltaorion.extapi.command.tabcompletion.CompletionSupplier;
 import me.deltaorion.extapi.command.tabcompletion.StringTabCompleter;
 import me.deltaorion.extapi.command.tabcompletion.TabCompleter;
 import me.deltaorion.extapi.common.sender.Sender;
+import me.deltaorion.extapi.locale.message.Message;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,16 +15,30 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Consumer;
 
+/**
+ * A functional command represents a command tree structure with functional command arguments and subcommands. A base command
+ * is the root command used to run the whole thing. The base command then may or may not have functional command arguments. A
+ * functional command argument links a string to a subcommand. These are registered using {@link #registerArgument(String, Command)}.
+ * A functional command argument is checked on the first index only. That is index position 0.
+ * If what the user typed matches(ignoring case) the functional command argument then that subcommands logic will be run.
+ * That subcommand may have its own functional command arguments. If there are no matching functional commands then base
+ * {@link CommandLogic} is run.
+ *
+ * During tab completion, the functional command arguments are automatically supplied. However additional tab completion might need to be supplied
+ * in conjunction with the {@link CommandLogic}. This additional tab completion should be defined using {@link #registerCompleter(int, CompletionSupplier)}
+ *
+ * This class is mostly thread safe. All functions apart for {@link CommandLogic} and {@link CompletionSupplier} are thread safe.
+ */
 public abstract class FunctionalCommand implements  Command {
-
+    //list of functional command arguments
     @NotNull private final ConcurrentMap<String,Command> commandArgs;
     @NotNull private final ConcurrentMap<Integer, CompletionSupplier> completers;
     @NotNull private final String permission;
     @NotNull private final String usage;
-    @Nullable private final String description;
+    @Nullable private final Message description;
     @NotNull private final TabCompleter completer;
 
-    protected FunctionalCommand(String permission, String usage, @Nullable String description) {
+    protected FunctionalCommand(String permission, String usage, @Nullable Message description) {
         this.commandArgs = new ConcurrentHashMap<>();
         this.completers = new ConcurrentHashMap<>();
         this.permission = Objects.requireNonNull(permission);
@@ -59,6 +74,20 @@ public abstract class FunctionalCommand implements  Command {
 
     public abstract void commandLogic(SentCommand command) throws CommandException;
 
+    /**
+     * Registers a functional command argument. If the index 0 typed argument matches ignore case this 'arg' then the
+     * defined 'command' will be run. The SentCommand is {@link SentCommand#reduce(String)} removing its first argument.
+     * The reduced SentCommand is passed into the command.
+     *
+     * If a functional command argument has already been registered and you use this again, then this will overwrite the
+     * previously defined arg.
+     *
+     * You can define more functional command arguments in the 'command'
+     *
+     * @param arg The arg to check against
+     * @param command the command to run if that arg is typed.
+     * @throws IllegalArgumentException if arg has a space.
+     */
     protected void registerArgument(@NotNull String arg, @NotNull Command command) {
         Objects.requireNonNull(arg);
         if(arg.contains(" "))
@@ -67,6 +96,14 @@ public abstract class FunctionalCommand implements  Command {
         this.commandArgs.put(arg.toLowerCase(Locale.ROOT),Objects.requireNonNull(command));
     }
 
+    /**
+     * Registers tab completion logic that should be run when this index is being typed. The CompletionSupplier will be called if
+     * the user is not typing a subcommand(the base {@link #commandLogic(SentCommand)} would have been run given what they type)
+     * and that the prefix, that is what they are currently typing is of the index defined.
+     *
+     * @param index The positional index of what they are typing that should be used to run this completer.
+     * @param completer the tab completer to be run
+     */
     protected void registerCompleter(int index, @NotNull CompletionSupplier completer) {
         if(index<=0)
             throw new IllegalArgumentException("Completion index must be positive and greater than 0");
@@ -75,25 +112,29 @@ public abstract class FunctionalCommand implements  Command {
     }
 
     @Override
-    public void onCommand(SentCommand command) {
+    public final void onCommand(SentCommand command) {
         try {
+            //check user has permission
             if(!hasPermission(this, command.getSender()))
-                throw new CommandException(ArgumentErrors.NO_PERMISSION().toString());
+                throw new CommandException(MessageErrors.NO_PERMISSION().toString(getPermission()));
 
             Command found = null;
             if(command.hasArg(0)) {
+                //loop thorugh all the functional command arguments and see if the index 0 entry matches any of them
                 for(Map.Entry<String,Command> commandEntry : commandArgs.entrySet()) {
                     if(commandEntry.getKey().equalsIgnoreCase(command.getRawArg(0))) {
                         if(hasPermission(commandEntry.getValue(),command.getSender())) {
+                            //if a suitable command has been found break the loop. Otherwise the iterator is may lock
+                            //the map reducing concurrency
                             found = commandEntry.getValue();
                             break;
                         } else {
-                            throw new CommandException(ArgumentErrors.NO_PERMISSION().toString(commandEntry.getValue().getPermission()));
+                            throw new CommandException(MessageErrors.NO_PERMISSION().toString(commandEntry.getValue().getPermission()));
                         }
                     }
                 }
             }
-
+            //if they haven't typed a functional command run the base command logic, otherwise run the reduced command
             if(found==null) {
                 commandLogic(command);
             } else {
@@ -103,7 +144,7 @@ public abstract class FunctionalCommand implements  Command {
         } catch (CommandException e) {
             command.getSender().sendMessage(e.getMessage());
         } catch (Throwable e) {
-            command.getSender().sendMessage(ArgumentErrors.INTERNAL_ERROR().toString());
+            command.getSender().sendMessage(MessageErrors.INTERNAL_ERROR_COMMAND().toString(command.getLabel(),command.getRawArgs()));
             command.getPlugin().getPluginLogger().severe("An error occurred when running the command '"+command.getLabel()+"' with args '"+command.getRawArgs()+"'",e);
         }
     }
@@ -119,13 +160,14 @@ public abstract class FunctionalCommand implements  Command {
     }
 
     @NotNull @Override
-    public List<String> onTabCompletion(SentCommand command) {
+    public final List<String> onTabCompletion(SentCommand command) {
 
-        //no permission
+        //no permission then return no completions, they cant use this command anyway
         if(!hasPermission(this,command.getSender()))
             return Collections.emptyList();
 
         try {
+            //if they are typing a subcommand use the logic for that instead
             List<String> completions = new ArrayList<>();
             if (command.hasArg(1)) {
                 Command found = null;
@@ -137,13 +179,14 @@ public abstract class FunctionalCommand implements  Command {
                         }
                     }
                 }
-
+                //if they are typing a subcommand hand logic for that instead
                 if(found!=null) {
                     completions.addAll(found.onTabCompletion(command.reduce(found.getUsage())));
                 } else {
                     completions.addAll(getAdditionalCompletion(command));
                 }
             } else {
+                //if they have typed nothing then hand them everything
                 for(Map.Entry<String,Command> commandEntry : commandArgs.entrySet()) {
                     if(hasPermission(commandEntry.getValue(),command.getSender()))
                         completions.add(commandEntry.getKey());
@@ -155,7 +198,8 @@ public abstract class FunctionalCommand implements  Command {
         } catch (CommandException e) {
             return Collections.emptyList();
         } catch (Throwable e) {
-            command.getPlugin().getPluginLogger().severe("An error occured when attempting to tab complete the command '"+command.getLabel()+"' with args '"+command.getRawArgs()+"'",e);
+            command.getSender().sendMessage(MessageErrors.INTERNAL_ERROR_TAB_COMPLETION().toString(command.getLabel(),command.getRawArgs()));
+            command.getPlugin().getPluginLogger().severe("An error occurred when attempting to tab complete the command '"+command.getLabel()+"' with args '"+command.getRawArgs()+"'",e);
             return Collections.emptyList();
         }
     }
@@ -180,7 +224,7 @@ public abstract class FunctionalCommand implements  Command {
     }
 
     @Nullable @Override
-    public String getDescription() {
+    public Message getDescription() {
         return description;
     }
 
@@ -199,7 +243,7 @@ public abstract class FunctionalCommand implements  Command {
         @NotNull private final Map<Integer, CompletionSupplier> completers;
         @Nullable private CommandLogic logic;
         @Nullable private String permission;
-        @Nullable private String description = null;
+        @Nullable private Message description = null;
         @NotNull private String usage = NO_USAGE;
 
         public Builder() {
@@ -241,7 +285,7 @@ public abstract class FunctionalCommand implements  Command {
             return this;
         }
 
-        public Builder setDescription(@Nullable String description) {
+        public Builder setDescription(@Nullable Message description) {
             this.description = description;
             return this;
         }
@@ -259,8 +303,8 @@ public abstract class FunctionalCommand implements  Command {
         }
     }
 
-    public static interface CommandLogic {
-        public void onCommand(SentCommand command) throws CommandException;
+    public interface CommandLogic {
+        void onCommand(SentCommand command) throws CommandException;
     }
 
 }

@@ -31,7 +31,7 @@ public class TestItem extends CustomItem {
         setDefaultLore(ImmutableList.of(Message.valueOfTranslatable("hello")));
     }
 
-    @ItemEventHandler(predicate = EventCondition.HOTBAR)
+    @ItemEventHandler(condition = EventCondition.HOTBAR)
     private void onEvent(CustomItemEvent<TestEvent> event) {
         if(event.getEvent().getMessage().equals("count"))
             return;
@@ -42,7 +42,7 @@ public class TestItem extends CustomItem {
         helper.add(event.getEvent().getMessage());
     }
 
-    @ItemEventHandler(predicate = EventCondition.MAIN_HAND, wrappers = CustomEventWrapper.PLAYER_EVENT)
+    @ItemEventHandler(condition = EventCondition.MAIN_HAND, wrapper = CustomEventWrapper.PLAYER_EVENT)
     public void onEvent2(CustomItemEvent<TestEvent> event) {
 
         Assert.assertTrue(event.getItemStacks().size()<=1);
@@ -64,7 +64,7 @@ public class TestItem extends CustomItem {
         helper.add(event.getEvent().getMessage());
     }
 
-    @ItemEventHandler(predicate = EventCondition.INVENTORY)
+    @ItemEventHandler(condition = EventCondition.INVENTORY)
     public void onEvent3(CustomItemEvent<TestEvent> event) {
         if(event.getEvent().getMessage().equals("count")) {
             for(int i=0;i<event.getItemStacks().size();i++) {
@@ -80,7 +80,7 @@ public class TestItem extends CustomItem {
         helper.add(event.getEvent().getMessage());
     }
 
-    @ItemEventHandler(predicate = EventCondition.ARMOR)
+    @ItemEventHandler(condition = EventCondition.ARMOR)
     public void onEvent4(CustomItemEvent<TestEvent> event) {
         if(event.getEvent().getMessage().equals("count"))
             return;

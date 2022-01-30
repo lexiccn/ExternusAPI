@@ -19,16 +19,16 @@ public class TranslationManager {
 
     @NotNull private final Path translationDirectory;
     @NotNull private final String defaultLocaleLocation;
-    @Nullable private final Class<?> classLoader;
+    @Nullable private final ClassLoader classLoader;
     private final Locale DEFAULT_LOCALE = EServer.DEFAULT_LOCALE;
 
-    public TranslationManager(@NotNull Path translationDirectory, @NotNull String defaultLocaleLocation, Class<?> classLoader) {
+    public TranslationManager(@NotNull Path translationDirectory, @NotNull String defaultLocaleLocation, @Nullable ClassLoader loader) {
         Validate.notNull(translationDirectory);
         Validate.notNull(defaultLocaleLocation);
 
         this.translationDirectory = translationDirectory;
         this.defaultLocaleLocation = defaultLocaleLocation;
-        this.classLoader = classLoader;
+        this.classLoader = loader;
     }
 
     public TranslationManager(@NotNull Path translationDirectory, @NotNull String defaultLocaleLocation) {
@@ -77,11 +77,12 @@ public class TranslationManager {
         if(configuration.getConfig().getDefaults()!=null) {
             configuration.getConfig().setDefaults(configuration.getConfig().getDefaults());
         }
-        configuration.getConfig().getKeys(true).forEach(key -> {
+
+        for(String key : configuration.getConfig().getKeys(true)) {
             if(!configuration.getConfig().isConfigurationSection(key)) {
                 Translator.getInstance().addTranslation(locale, key, configuration.getConfig().getString(key));
             }
-        });
+        }
     }
 
     private Configuration getTranslation(Path path) throws IOException {

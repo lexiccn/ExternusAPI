@@ -43,11 +43,11 @@ public interface Configuration {
     public void saveConfig();
 
     @Nullable
-    default InputStream getResourceStream(Class<?> clazz,@NotNull String path) {
-        if(clazz == null) {
+    default InputStream getResourceStream(@Nullable ClassLoader loader,@NotNull String path) {
+        if(loader == null) {
             return Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
         } else {
-            return clazz.getClassLoader().getResourceAsStream(path);
+            return loader.getResourceAsStream(path);
         }
     }
 }

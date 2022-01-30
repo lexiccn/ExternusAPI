@@ -118,7 +118,6 @@ public class CustomItemTest implements MinecraftTest {
         assertEquals(0,helper.size());
 
         player.getInventory().setItemInHand(item.newCustomItem());
-        System.out.println(player.getInventory().getItemInHand());
         plugin.getServer().getPluginManager().callEvent(new TestEvent(player,"Gamer"));
         assertEquals(3,helper.size());
 

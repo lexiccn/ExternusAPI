@@ -3,6 +3,7 @@ package me.deltaorion.extapi;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.test.cmd.item.CustomItemTestCommand;
 import me.deltaorion.extapi.test.cmd.item.ItemTest;
+import me.deltaorion.extapi.test.command.FailCommand;
 import me.deltaorion.extapi.test.command.MessageCommand;
 import me.deltaorion.extapi.test.command.ShouldBeRunAsyncCommand;
 import me.deltaorion.extapi.test.command.TestCommand;
@@ -33,11 +34,12 @@ public final class ExtAPI extends BukkitPlugin {
         getCommand("localetest").setExecutor(new LocaleTestBukkit(this));
         getCommand("parsetest").setExecutor(new PlayerParseCommand(this));
 
-        registerCommand(new MessageCommand(this),"msg","whisper","tell");
+        registerCommand(new MessageCommand(this),"msgtest","whispertest","telltest");
         registerCommand(new TestCommand(),"testcommand");
         registerAsyncCommand(new ShouldBeRunAsyncCommand(),"lifemeaning");
         registerCommand(new ItemTest(this),"itemtest");
         registerCommand(new CustomItemTestCommand(this),"citest");
+        registerCommand(new FailCommand(),"failcommand");
 
         getPluginLogger().info("This should work!");
 

@@ -1,7 +1,8 @@
 package me.deltaorion.extapi.command;
 
-import me.deltaorion.extapi.command.sent.ArgumentErrors;
+import me.deltaorion.extapi.command.sent.MessageErrors;
 import me.deltaorion.extapi.command.sent.SentCommand;
+import me.deltaorion.extapi.locale.message.Message;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +21,7 @@ public abstract class SingleActionCommand implements Command {
 
     @Nullable
     @Override
-    public String getDescription() {
+    public Message getDescription() {
         return null;
     }
 
@@ -46,7 +47,8 @@ public abstract class SingleActionCommand implements Command {
         } catch (CommandException e) {
             command.getSender().sendMessage(e.getMessage());
         } catch (Throwable e) {
-            command.getPlugin().getPluginLogger().severe(ArgumentErrors.INTERNAL_ERROR().toString(),e);
+            command.getSender().sendMessage(MessageErrors.INTERNAL_ERROR_COMMAND().toString(command.getLabel(),command.getRawArgs()));
+            command.getPlugin().getPluginLogger().severe(MessageErrors.INTERNAL_ERROR_COMMAND().toString(command.getLabel(),command.getRawArgs()),e);
         }
     }
 
@@ -64,7 +66,8 @@ public abstract class SingleActionCommand implements Command {
         } catch (CommandException e) {
             return Collections.emptyList();
         } catch (Throwable e) {
-            command.getPlugin().getPluginLogger().severe(ArgumentErrors.INTERNAL_ERROR_TAB_COMPLETION().toString(),e);
+            command.getPlugin().getPluginLogger().severe(MessageErrors.INTERNAL_ERROR_TAB_COMPLETION().toString(command),e);
+            command.getSender().sendMessage(MessageErrors.INTERNAL_ERROR_TAB_COMPLETION().toString(command,e));
             return Collections.emptyList();
         }
     }

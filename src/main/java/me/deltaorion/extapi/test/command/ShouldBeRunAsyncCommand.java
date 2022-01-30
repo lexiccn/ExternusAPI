@@ -15,7 +15,7 @@ public class ShouldBeRunAsyncCommand extends FunctionalCommand {
     @GuardedBy("this") private final Set<UUID> running;
 
     public ShouldBeRunAsyncCommand() {
-        super(NO_PERMISSION,NO_USAGE);
+        super("ExtApi.Test.Command",NO_USAGE);
         this.running = new HashSet<>();
     }
 

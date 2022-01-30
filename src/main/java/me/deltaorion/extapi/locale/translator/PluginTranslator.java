@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.locale.translator;
 
+import me.deltaorion.extapi.ExtAPI;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.server.EServer;
 
@@ -13,11 +14,10 @@ public class PluginTranslator {
 
     public PluginTranslator(EPlugin plugin, String defaultTranslation) {
         managerDef = new TranslationManager(plugin.getDataDirectory().resolve("translations"),
-                defaultTranslation,getClass());
+                defaultTranslation, getClass().getClassLoader());
         managerCustom = new TranslationManager(plugin.getDataDirectory().resolve("translations"),
-                defaultTranslation,plugin.getClass());
-        managerDef.reload();
-        managerCustom.reload();
+                defaultTranslation,plugin.getClass().getClassLoader());
+        reload();
         this.plugin = plugin;
     }
 

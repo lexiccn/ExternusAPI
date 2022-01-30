@@ -121,6 +121,9 @@ public class CustomItem implements Listener {
         apply(itemStack);
     }
 
+    public void onRegister() {
+
+    }
 
     public void removeCustom(@NotNull ItemStack itemStack) {
         Objects.requireNonNull(itemStack);

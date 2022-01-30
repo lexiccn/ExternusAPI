@@ -24,8 +24,8 @@ public class LocaleTest implements MinecraftTest {
     @McTest
     public void testTranslationManager() {
 
-        Configuration configFr = new FileConfiguration(getClass(),plugin.getDataDirectory().resolve("translations").resolve("fr.yml"),"translations/fr.yml");
-        Configuration configPT = new FileConfiguration(getClass(),plugin.getDataDirectory().resolve("translations").resolve("en_PT.yml"),"translations/en_PT.yml");
+        Configuration configFr = new FileConfiguration(getClass().getClassLoader(),plugin.getDataDirectory().resolve("translations").resolve("fr.yml"),"translations/fr.yml");
+        Configuration configPT = new FileConfiguration(getClass().getClassLoader(),plugin.getDataDirectory().resolve("translations").resolve("en_PT.yml"),"translations/en_PT.yml");
 
         plugin.getTranslator().reload();
 
@@ -43,8 +43,8 @@ public class LocaleTest implements MinecraftTest {
     @McTest
     public void testMessage() {
 
-        Configuration configFr = new FileConfiguration(getClass(),plugin.getDataDirectory().resolve("translations").resolve("fr.yml"),"translations/fr.yml");
-        Configuration configPT = new FileConfiguration(getClass(),plugin.getDataDirectory().resolve("translations").resolve("en_PT.yml"),"translations/en_PT.yml");
+        Configuration configFr = new FileConfiguration(getClass().getClassLoader(),plugin.getDataDirectory().resolve("translations").resolve("fr.yml"),"translations/fr.yml");
+        Configuration configPT = new FileConfiguration(getClass().getClassLoader(),plugin.getDataDirectory().resolve("translations").resolve("en_PT.yml"),"translations/en_PT.yml");
         plugin.getTranslator().reload();
 
         assertEquals(Translator.getInstance().translate("hello", Translator.parseLocale("en_PT")),"Ahoy There Mateys");

@@ -6,7 +6,6 @@ public class McTestTest implements MinecraftTest {
 
     @McTest
     public void testPass() {
-        System.out.println("This test will PASS!");
         assertFalse(false);
         assertNotNull(new Object());
         assertTrue(true);
@@ -16,7 +15,6 @@ public class McTestTest implements MinecraftTest {
 
     @McTest
     public void testFail() {
-        System.out.println("This test will FAIL!");
         try {
             assertEquals("hello", "Hello");
         } catch (AssertionError e) {

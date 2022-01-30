@@ -40,9 +40,9 @@ public @interface ItemEventHandler {
      */
     boolean ignoreCancelled() default false;
 
-    EventCondition predicate() default EventCondition.MAIN_HAND;
+    EventCondition condition() default EventCondition.MAIN_HAND;
 
-    CustomEventWrapper wrappers() default CustomEventWrapper.ROOT;
+    CustomEventWrapper wrapper() default CustomEventWrapper.ROOT;
 
     boolean playerOnly() default false;
 }

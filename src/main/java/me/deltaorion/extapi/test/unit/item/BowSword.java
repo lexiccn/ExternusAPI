@@ -33,7 +33,7 @@ public class BowSword extends CustomItem {
         this.plugin = plugin;
     }
 
-    @ItemEventHandler(predicate = EventCondition.MAIN_HAND, priority = EventPriority.NORMAL, ignoreCancelled = false)
+    @ItemEventHandler(condition = EventCondition.MAIN_HAND, priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onRightClick(CustomItemEvent<PlayerInteractEvent> event) {
 
         if(!(event.getEvent().getAction().equals(Action.RIGHT_CLICK_AIR) || event.getEvent().getAction().equals(Action.RIGHT_CLICK_BLOCK))) {

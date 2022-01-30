@@ -7,6 +7,7 @@ import me.deltaorion.extapi.command.SingleActionCommand;
 import me.deltaorion.extapi.command.sent.SentCommand;
 import me.deltaorion.extapi.command.tabcompletion.Completers;
 import me.deltaorion.extapi.common.sender.Sender;
+import me.deltaorion.extapi.locale.message.Message;
 import org.bukkit.Material;
 
 import java.time.Duration;
@@ -16,7 +17,7 @@ import java.util.Map;
 public class TestCommand extends FunctionalCommand {
 
     public TestCommand() {
-        super("5","/testcommand <integer> <boolean> <float> <material> <duration>","Test Command Logic");
+        super("5","/testcommand <integer> <boolean> <float> <material> <duration>", Message.valueOf("Test Command Logic"));
         registerArgument("PathA", new SingleActionCommand() {
             @Override
             public void commandLogic(SentCommand command) {

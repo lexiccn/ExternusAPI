@@ -14,8 +14,6 @@ import java.lang.reflect.MalformedParameterizedTypeException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
 
 //Needs unit test
 public class CustomItemManager {
@@ -152,12 +150,18 @@ public class CustomItemManager {
 
             register(eventClass,item,eh,method);
         }
+
+        try {
+            item.onRegister();
+        } catch (Throwable e) {
+            throw new CustomItemException("An error occurred when running forRegister() for item '"+item.getName()+"'",e);
+        }
     }
 
     @SuppressWarnings("unchecked")
     private <T extends Event> void register(Class<T> eventClass, CustomItem item, ItemEventHandler eh, Method method) throws CustomItemException {
         try {
-            CustomItemEventListener.register(plugin, eventClass, item, eh.priority(), eh.ignoreCancelled(), EventPredicates.getPredicate(eh.predicate()), (CIEventWrapper<T>) EventWrappers.get(eventClass,eh.wrappers()), method, eh.playerOnly());
+            CustomItemEventListener.register(plugin, eventClass, item, EventPredicates.getPredicate(eh.condition()), (CIEventWrapper<T>) EventWrappers.get(eventClass,eh.wrapper()), method, eh.playerOnly(),eh.priority(),eh.ignoreCancelled());
         } catch (ClassCastException e) {
             throw new CustomItemException(plugin.getDescription().getFullName()+" attempted to register an invalid an Invalid Custom Item Event Handler. "+method.toGenericString()+" in "+item.getClass() + ". It is invalid as the event wrapper does not match the event class type");
         } catch (UnsupportedOperationException | IllegalStateException e) {

@@ -26,9 +26,8 @@ public class SlotTypeTest extends CustomItem {
         this.random = new Random();
     }
 
-    @ItemEventHandler(predicate = EventCondition.INVENTORY, wrappers = CustomEventWrapper.ENTITY_DAMAGES_ENTITY, playerOnly = false)
+    @ItemEventHandler(condition = EventCondition.INVENTORY, wrapper = CustomEventWrapper.DAMAGE_ANOTHER_ENTITY, playerOnly = false)
     public void onHit(CustomItemEvent<EntityDamageByEntityEvent> event) {
-        System.out.println("This is being called!");
         InventoryItem item = event.getItemStacks().get(0);
         ItemStack itemStack = Objects.requireNonNull(item.getItemStack());
         SlotType original = item.getSlotType();
@@ -36,7 +35,6 @@ public class SlotTypeTest extends CustomItem {
         item.setItem(null);
         List<SlotType> slotTypes = new ArrayList<>(Arrays.asList(SlotType.values()));
         slotTypes.remove(SlotType.OTHER);
-        System.out.println(original);
         for(int i=0;i<slotTypes.size();i++) {
             SlotType type = slotTypes.get(i);
             if(type.equals(original)) {
@@ -48,8 +46,6 @@ public class SlotTypeTest extends CustomItem {
                 break;
             }
         }
-
-        System.out.println(next);
 
         if(next==null)
             return;

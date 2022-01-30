@@ -20,9 +20,9 @@ public class ResourceConfiguration implements Configuration {
 
     private final String resourcePath;
     private FileConfiguration dataConfig;
-    private final Class<?> classLoader;
+    private final ClassLoader classLoader;
 
-    public ResourceConfiguration(@NotNull String resourcePath, @Nullable Class<?> classLoader) {
+    public ResourceConfiguration(@NotNull String resourcePath, @Nullable ClassLoader classLoader) {
         Validate.notNull(resourcePath);
         this.resourcePath = resourcePath;
         this.classLoader = classLoader;
