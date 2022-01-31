@@ -15,7 +15,14 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
-//Needs unit test
+/**
+ * The Custom Item Manager maintains a registry of all custom items. This class is used to
+ *   - Register custom items. This will take all {@link ItemEventHandler} and register the listeners with bukkit.
+ *   - Register regular event listeners in a custom item.
+ *   - Maintain an easy way to retrieve registered custom items
+ *   - Ensure the same custom item isn't registered multiple times.
+ *   - Provide error handling if the registration fails
+ */
 public class CustomItemManager {
 
     private final BukkitPlugin plugin;
@@ -32,7 +39,7 @@ public class CustomItemManager {
      * registered or use {@link CustomItemManager#registerIfAbsent(CustomItem)}.
      *
      * For all event listeners to be considered valid the event should be annotated with @{@link ItemEventHandler}. The first
-     * parameter of the method should have a {@link CustomItemEvent<? extends Event>} to be considered valid. The item can also
+     * parameter of the method should have a {@link CustomItemEvent<Event>} to be considered valid. The item can also
      * register regular bukkit events
      *
      * @param item the custom item to register
@@ -42,8 +49,8 @@ public class CustomItemManager {
 
     public void registerItem(@NotNull CustomItem item) {
 
-        if(plugin.getDependency(BukkitAPIDepends.NBTAPI.name()) == null || !plugin.getDependency(BukkitAPIDepends.NBTAPI.name()).isActive())
-            throw new MissingDependencyException("Cannot register custom item's without the NBTAPI");
+        if(plugin.getDependency(BukkitAPIDepends.NBTAPI.name()) == null || !Objects.requireNonNull(plugin.getDependency(BukkitAPIDepends.NBTAPI.name())).isActive())
+            throw new MissingDependencyException("Cannot register custom item's without the NBT API");
 
         Objects.requireNonNull(item);
         if (itemRegistry.containsKey(item.getName()))
@@ -102,13 +109,9 @@ public class CustomItemManager {
         try {
             Method[] publicMethods = item.getClass().getMethods();
             Method[] privateMethods = item.getClass().getDeclaredMethods();
-            methods = new HashSet<Method>(publicMethods.length + privateMethods.length, 1.0f);
-            for (Method method : publicMethods) {
-                methods.add(method);
-            }
-            for (Method method : privateMethods) {
-                methods.add(method);
-            }
+            methods = new HashSet<>(publicMethods.length + privateMethods.length, 1.0f);
+            Collections.addAll(methods, publicMethods);
+            Collections.addAll(methods, privateMethods);
         } catch (NoClassDefFoundError e) {
             throw new CustomItemException("Plugin " + plugin.getDescription().getFullName() + " has failed to register events for " + item.getClass() + " because " + e.getMessage() + " does not exist.");
         }
@@ -123,8 +126,7 @@ public class CustomItemManager {
             }
 
             //ensure the first parameter exists and the parameter is a custom item event
-            final Class<?> checkClass;
-            if (method.getParameterTypes().length != 1 || !CustomItemEvent.class.isAssignableFrom(checkClass = method.getParameterTypes()[0])) {
+            if (method.getParameterTypes().length != 1 || !CustomItemEvent.class.isAssignableFrom(method.getParameterTypes()[0])) {
                 throw new CustomItemException(plugin.getDescription().getFullName() + " attempted to register an invalid EventHandler method signature \"" + method.toGenericString() + "\" in " + item.getClass());
             }
 
@@ -169,5 +171,12 @@ public class CustomItemManager {
         } catch (IllegalArgumentException e) {
             throw new CustomItemException(e.getMessage());
         }
+    }
+
+    @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(this)
+                .add("Registry",itemRegistry)
+                .toString();
     }
 }

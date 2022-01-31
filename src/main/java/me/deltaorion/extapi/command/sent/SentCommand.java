@@ -5,6 +5,7 @@ import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.sender.Sender;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -232,6 +233,29 @@ public class SentCommand implements Iterable<CommandArg> {
         } else {
             return new SentCommand(plugin,sender,Collections.emptyList(),label,usage);
         }
+    }
+
+    @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(this)
+                .add("Sender",sender)
+                .add("Label",label)
+                .add("Args",args)
+                .add("Usage",usage)
+                .add("Plugin",plugin).toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof SentCommand))
+            return false;
+
+        SentCommand command = (SentCommand) o;
+
+        return this.sender.equals(command.sender)
+                && this.args.equals(command.args)
+                && this.plugin.equals(command.plugin)
+                && this.label.equals(command.label);
     }
 
     @NotNull

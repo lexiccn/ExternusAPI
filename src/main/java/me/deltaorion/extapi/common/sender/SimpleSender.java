@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.common.sender;
 
+import com.google.common.base.Objects;
 import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.locale.message.Message;
 import org.apache.commons.lang.Validate;
@@ -94,5 +95,10 @@ public class SimpleSender implements Sender {
     @Override
     public Locale getLocale() {
         return senderInfo.getLocale();
+    }
+
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("Wrapper",senderInfo).toString();
     }
 }

@@ -10,7 +10,7 @@ import java.util.Objects;
 public class LivingEntityItem implements InventoryItem {
 
     @NotNull private final LivingEntity entity;
-    @NotNull private SlotType type;
+    @NotNull private final SlotType type;
     @Nullable private ItemStack itemStack;
 
     public LivingEntityItem(@NotNull LivingEntity entity, @NotNull SlotType type, @Nullable ItemStack itemStack) {
@@ -37,7 +37,6 @@ public class LivingEntityItem implements InventoryItem {
                 return;
             case CHESTPLATE:
                 entity.getEquipment().setChestplate(itemStack);
-                return;
         }
     }
 
@@ -55,5 +54,23 @@ public class LivingEntityItem implements InventoryItem {
     @Override
     public SlotType getSlotType() {
         return type;
+    }
+
+    @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(this)
+                .add("Entity",entity)
+                .add("Slot",this.type)
+                .add("ItemStack",this.itemStack)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+       if(!(o instanceof LivingEntityItem))
+           return false;
+
+       LivingEntityItem item = (LivingEntityItem) o;
+       return item.entity.equals(this.entity) && item.type.equals(this.type) && Objects.equals(this.itemStack,item.itemStack);
     }
 }

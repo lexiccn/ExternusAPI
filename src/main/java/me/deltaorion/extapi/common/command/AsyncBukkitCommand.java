@@ -9,6 +9,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * The following class acts as a driver for a command. It is to take a bukkit sent command and wrap it in the SentCommand adapter.
+ * Then pass it into the command so that the logic can fall through. This however will run the task asynchronously. it is
+ * crucial that all code in the command is threadsafe.
+ */
 public class AsyncBukkitCommand implements TabExecutor {
 
     @NotNull private final BukkitPlugin plugin;

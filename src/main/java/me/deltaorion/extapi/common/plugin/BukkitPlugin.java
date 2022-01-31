@@ -46,7 +46,7 @@ public class BukkitPlugin extends JavaPlugin implements ApiPlugin {
         this.commandMap = new BukkitCommandMap(this);
         this.commandService = new ErrorReportingThreadPool(0,Integer.MAX_VALUE,
                 60L, TimeUnit.SECONDS,
-                new SynchronousQueue<Runnable>());
+                new SynchronousQueue<>());
 
         registerDefaultParsers();
     }

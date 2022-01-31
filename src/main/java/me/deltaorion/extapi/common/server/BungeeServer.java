@@ -99,4 +99,17 @@ public class BungeeServer implements EServer {
         Validate.notNull(raw);
         return ChatColor.translateAlternateColorCodes('&',raw);
     }
+
+    @Override
+    public String getServerName() {
+        return proxyServer.getName();
+    }
+
+    @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(this)
+                .add("name",proxyServer.getName())
+                .add("minecraft version",minecraftVersion)
+                .add("server version",proxyServer.getVersion()).toString();
+    }
 }

@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.common.depend;
 
+import com.google.common.base.Objects;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
@@ -8,7 +9,9 @@ import org.jetbrains.annotations.Nullable;
 /**
  * This class is a helper class for plugin dependencies. This contains information on the fly about the plugin such as
  * whether it is enabled or not. An easy way to grab the plugin object. For a dependency there is a master-slave relation,
- * that being where the master plugin depends on the slave plugin. Sometimes the slave plugin is not required.
+ * that being where the master plugin depends on the slave plugin. The slave plugin may or may not be enabled(is active). The slave plugin
+ * may or may not be on the server(is active) . The slave plugin may or may not be required (isRequired).
+ *
  *
  * This class allows a user to access
  *   - whether it is enabled or not {@link Dependency#isActive()}
@@ -127,5 +130,23 @@ public class Dependency {
     @Nullable
     public EPlugin getDependEPlugin() {
         return depend;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof Dependency))
+            return false;
+
+        Dependency dependency = (Dependency) o;
+        //other information isn't relevant, as you cant register two dependencies with the same plugin and name
+        return dependency.name.equals(this.name) && this.master.equals(dependency.master);
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("name",name)
+                .add("required",required)
+                .add("active",active).toString();
     }
 }

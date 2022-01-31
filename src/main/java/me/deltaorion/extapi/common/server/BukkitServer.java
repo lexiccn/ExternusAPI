@@ -99,5 +99,16 @@ public class BukkitServer implements EServer {
         return ChatColor.translateAlternateColorCodes('&',raw);
     }
 
+    @Override
+    public String getServerName() {
+        return server.getServerName();
+    }
 
+    @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(this)
+                .add("name",server.getServerName())
+                .add("minecraft version",minecraftVersion)
+                .add("server version",server.getVersion()).toString();
+    }
 }

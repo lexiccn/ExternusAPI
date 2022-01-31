@@ -87,11 +87,11 @@ public class ItemTest implements MinecraftTest {
                 .removeTag("This tag is not on the item");
 
         try {
-            airBuilder.setAmount(500)
+            airBuilder.setAmount(-1)
                     .build();
 
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ignored) {
 
         }
 

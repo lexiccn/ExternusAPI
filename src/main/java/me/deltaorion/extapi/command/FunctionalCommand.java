@@ -238,6 +238,17 @@ public abstract class FunctionalCommand implements  Command {
         return this.usage;
     }
 
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(this)
+                .add("permission",permission)
+                .add("usage",usage)
+                .add("description",description)
+                .add("func_command_args",getCommandArgs())
+                .add("tab_suppliers",completers.keySet())
+                .add("completer",completer)
+                .toString();
+    }
+
     public static class Builder {
         @NotNull private final Map<String,Command> commandArgs;
         @NotNull private final Map<Integer, CompletionSupplier> completers;

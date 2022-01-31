@@ -133,4 +133,6 @@ public interface EServer {
      */
 
     public String translateColorCodes(@NotNull String textToTranslate);
+
+    public String getServerName();
 }

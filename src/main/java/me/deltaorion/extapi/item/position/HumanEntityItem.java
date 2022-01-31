@@ -4,6 +4,11 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
+/**
+ * Represents an ItemStack residing in a Human Entity, such as an NPC or player's inventory.
+ */
 public class HumanEntityItem implements InventoryItem {
 
     private final HumanEntity entity;
@@ -51,5 +56,25 @@ public class HumanEntityItem implements InventoryItem {
             return SlotType.HELMET;
 
         return SlotType.OTHER;
+    }
+
+    @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(this)
+                .add("Entity",entity)
+                .add("Position",position)
+                .add("ItemStack",itemStack)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof HumanEntityItem))
+            return false;
+
+        HumanEntityItem entityItem = (HumanEntityItem) o;
+
+        return this.position == entityItem.position && Objects.equals(entityItem.itemStack,this.itemStack)
+                && this.entity.equals(entityItem.entity);
     }
 }

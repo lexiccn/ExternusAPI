@@ -11,6 +11,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * The following class acts as a driver for a command. It is to take a bukkit sent command and wrap it in the SentCommand adapter.
+ * Then pass it into the command so that the logic can fall through.
+ */
 public class SyncBukkitCommand implements TabExecutor {
 
     @NotNull private final ApiPlugin plugin;

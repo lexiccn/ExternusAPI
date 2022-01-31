@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.command.parser;
 
+import com.google.common.base.Objects;
 import com.google.gson.reflect.TypeToken;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang.Validate;
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -29,7 +31,7 @@ public class SimpleParserRegistry implements ParserRegistry {
         TypeToken<T> token = TypeToken.get(clazz);
         List<ArgumentParser<?>> parsers = registry.computeIfAbsent(token, t -> new CopyOnWriteArrayList<>());
         synchronized (parsers) {
-            if(!parsers.contains(parser)) {
+            if (!parsers.contains(parser)) {
                 parsers.add(parser);
             }
         }
@@ -48,5 +50,11 @@ public class SimpleParserRegistry implements ParserRegistry {
     @Override
     public <T> void clearParsers(@NotNull Class<T> clazz) {
         this.registry.remove(TypeToken.get(clazz));
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("Registry Map",registry).toString();
     }
 }

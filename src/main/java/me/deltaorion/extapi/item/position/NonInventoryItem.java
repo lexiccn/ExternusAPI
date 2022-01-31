@@ -3,6 +3,8 @@ package me.deltaorion.extapi.item.position;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class NonInventoryItem implements InventoryItem {
 
     @Nullable private ItemStack itemStack;
@@ -31,4 +33,21 @@ public class NonInventoryItem implements InventoryItem {
     public SlotType getSlotType() {
         return SlotType.OTHER;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof NonInventoryItem))
+            return false;
+
+        return Objects.equals(((NonInventoryItem) o).itemStack,this.itemStack);
+    }
+
+    @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(this)
+                .add("ItemStack",itemStack)
+                .toString();
+    }
+
+
 }

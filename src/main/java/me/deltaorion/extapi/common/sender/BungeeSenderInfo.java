@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.common.sender;
 
+import com.google.common.base.Objects;
 import me.deltaorion.extapi.common.server.EServer;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -78,6 +79,16 @@ public class BungeeSenderInfo implements SenderInfo {
 
     public CommandSender getSender() {
         return sender;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("uuid",getUniqueId())
+                .add("name",getName())
+                .add("console",isConsole())
+                .add("op",isOP())
+                .add("locale",getLocale()).toString();
     }
 
 }

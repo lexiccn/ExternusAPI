@@ -71,6 +71,7 @@ public class MinecraftVersion implements Comparable<MinecraftVersion> {
         return MinecraftVersion.comparator.compare(this,o2);
     }
 
+    @Override
     public String toString() {
         String stringify = "1." + major + "." + minor;
 

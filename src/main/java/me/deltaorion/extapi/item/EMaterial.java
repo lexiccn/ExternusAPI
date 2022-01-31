@@ -5,7 +5,10 @@ import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ *  Enum that represents all of the 1.8 materials.
+ */
 
 public enum EMaterial {
 

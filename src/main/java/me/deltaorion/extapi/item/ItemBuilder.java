@@ -4,9 +4,10 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTItem;
+import me.deltaorion.extapi.common.server.EServer;
+import me.deltaorion.extapi.item.custom.CustomItem;
 import me.deltaorion.extapi.locale.message.Message;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.enchantments.Enchantment;
@@ -26,6 +27,14 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Consumer;
 
+/**
+ * An ItemBuilder is a data structure that allows for the easy and quick manipulation of an {@link ItemStack}. ItemStacks currently
+ * do not have any easy creational interface and rely on a boilerplate code. This class attempts to fix this issue by wrapping
+ * an itemstack. This class also allows for easy manipulation of, and editing of the NBT of an itemstack.
+ *
+ * Itemstacks are passed into this class by reference and can be manipulated by reference, meaning suppose you are editing an itemstack
+ * in an inventory or in a collection. You can simply edit it here and not have to replace it in said container.
+ */
 public class ItemBuilder {
 
     @NotNull private final ItemStack itemStack;
@@ -44,6 +53,15 @@ public class ItemBuilder {
         this.itemStack = new ItemStack(material);
     }
 
+    public ItemBuilder(@NotNull CustomItem item, Locale locale) {
+        Objects.requireNonNull(item);
+        this.itemStack = item.newCustomItem(locale);
+    }
+
+    public ItemBuilder(@NotNull CustomItem item) {
+        this(item, EServer.DEFAULT_LOCALE);
+    }
+
     public ItemBuilder setType(@NotNull EMaterial type) {
         this.itemStack.setType(type.getBukkitMaterial());
         this.itemStack.setDurability(type.getItemData());
@@ -55,8 +73,15 @@ public class ItemBuilder {
         return this;
     }
 
+    /**
+     * Sets the quantity of the itemstack. The quantity must be above 0.
+     *
+     * @param amount the amount to set to
+     * @return the current itembuilder
+     * @throws IllegalArgumentException if the quantity is 0 or less
+     */
     public ItemBuilder setAmount(int amount) {
-        Validate.isTrue(validStack(amount));
+        Validate.isTrue(amount>0,"Itemstack quantity must be above 0");
         this.itemStack.setAmount(amount);
         return this;
     }
@@ -255,6 +280,16 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder makeCustom(@NotNull CustomItem item) {
+        item.makeCustom(itemStack);
+        return this;
+    }
+
+    public ItemBuilder removeCustom(@NotNull CustomItem item) {
+        item.removeCustom(itemStack);
+        return this;
+    }
+
     public ItemBuilder removeTag(@NotNull String key) {
         Validate.notNull(key,"Cannot remove null key");
         if(!isValidStack()) {
@@ -284,8 +319,33 @@ public class ItemBuilder {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(this)
+                .add("ItemStack",itemStack)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof ItemStack) {
+            return this.itemStack.equals(o);
+        } else if(o instanceof ItemBuilder) {
+            return ((ItemBuilder) o).itemStack.equals(this.itemStack);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Returns a built itemstack. If an itemstack of some kind was passed into this, then you will not get a cloned
+     * itemstack, just the original. For a clone use {@link ItemStack#clone()}
+     *
+     * @return
+     */
     public ItemStack build() {
         return this.itemStack;
+
     }
 
     @Nullable
@@ -339,7 +399,7 @@ public class ItemBuilder {
         private PotionType color = PotionType.WATER;
         private boolean splash = false;
         private boolean clear = false;
-        @NotNull private Set<PotionEffect> effects;
+        @NotNull private final Set<PotionEffect> effects;
 
         public PotionBuilder() {
             this.effects = new HashSet<>();
@@ -437,7 +497,7 @@ public class ItemBuilder {
             skull.setDurability((short) type.ordinal());
 
             SkullMeta meta = (SkullMeta) skull.getItemMeta();
-            meta.setOwner(Bukkit.getOfflinePlayer(playerUUID).getName());
+            meta.setOwner(Objects.requireNonNull(plugin).getServer().getOfflinePlayer(playerUUID).getName());
             skull.setItemMeta(meta);
         }
 

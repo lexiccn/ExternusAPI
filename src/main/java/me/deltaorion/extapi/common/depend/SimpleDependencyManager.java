@@ -62,4 +62,10 @@ public class SimpleDependencyManager implements DependencyManager {
     public Set<String> getDependencies() {
         return Collections.unmodifiableSet(dependencies.keySet());
     }
+
+    @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(this)
+                .add("Registry",dependencies).toString();
+    }
 }

@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +21,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-//unit testing
+/**
+ * A Custom Item Event Listener is a wrapper for an {@link Event}. This class
+ *   - listens to a bukkit event
+ *   - when the bukkit event is fired, this will check that the extracted entity from the {@link CIEventWrapper} meets
+ *     the specified {@link EventPredicate}
+ *   - registers the listener for the event
+ *
+ * @param <T> The event class to listen to
+ */
 public class CustomItemEventListener<T extends Event> {
 
     @NotNull private final EventPredicate predicate;
@@ -44,27 +51,24 @@ public class CustomItemEventListener<T extends Event> {
         this.clazz = clazz;
     }
 
-    public void setExecutor(@NotNull EventExecutor executor) {
+    private void setExecutor(@NotNull EventExecutor executor) {
         this.executor = Objects.requireNonNull(executor);
     }
 
-    //custom item is the underlying listener object, call this over and over, loop through all methods
+    //Registers a custom event from an extracted method from an object.
     public static <T extends Event> void register(@NotNull BukkitPlugin plugin, @NotNull Class<T> clazz, final @NotNull CustomItem customItem,
                                                   @NotNull EventPredicate predicate, @Nullable CIEventWrapper<T> eventWrapper, @NotNull Method method,
                                                   boolean playerOnly, @NotNull EventPriority priority, boolean ignoreCancelled) {
         if(eventWrapper == null)
             throw new IllegalArgumentException("Cannot resolve event wrapper for class " + clazz.getSimpleName() + ". This can be resolved by making or specifying custom CIEventWrapper for it");
 
-        ItemEventConsumer<T> consumer = new ItemEventConsumer<T>() {
-            @Override
-            public void onEvent(CustomItem item, CustomItemEvent<T> event) throws EventException {
-                try {
-                    method.invoke(item,event);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                } catch (InvocationTargetException e) {
-                    throw new EventException(e.getCause());
-                }
+        ItemEventConsumer<T> consumer = (item, event) -> {
+            try {
+                method.invoke(item,event);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new EventException(e.getCause());
             }
         };
 
@@ -79,14 +83,11 @@ public class CustomItemEventListener<T extends Event> {
         if(eventWrapper == null)
             throw new IllegalArgumentException("Cannot resolve event wrapper for class " + clazz.getSimpleName() + ". This can be resolved by making or specifying custom CIEventWrapper for it");
 
-        ItemEventConsumer<T> consumer = new ItemEventConsumer<T>() {
-            @Override
-            public void onEvent(CustomItem item, CustomItemEvent<T> event) throws EventException {
-                try {
-                    method.accept(event);
-                } catch (Throwable e) {
-                    throw new EventException(e);
-                }
+        ItemEventConsumer<T> consumer = (item, event) -> {
+            try {
+                method.accept(event);
+            } catch (Throwable e) {
+                throw new EventException(e);
             }
         };
 
@@ -95,25 +96,22 @@ public class CustomItemEventListener<T extends Event> {
         customItemEventListener.register(priority,ignoreCancelled);
     }
 
-    private static <T extends Event> CustomItemEventListener<T> applyExecutor(@NotNull CustomItemEventListener<T> customItemEventListener,@NotNull Class<T> clazz,@NotNull BukkitPlugin plugin, @Nullable Method method) {
-        EventExecutor executor = new co.aikar.timings.TimedEventExecutor(new EventExecutor() {
-            public void execute(Listener listener, Event event) throws EventException {
-                try {
-                    if (!clazz.isAssignableFrom(event.getClass())) {
-                        return;
-                    }
-                    customItemEventListener.onEvent(clazz.cast(event));
-                } catch (Throwable t) {
-                    throw new EventException(t);
+    private static <T extends Event> void applyExecutor(@NotNull CustomItemEventListener<T> customItemEventListener,@NotNull Class<T> clazz,@NotNull BukkitPlugin plugin, @Nullable Method method) {
+        EventExecutor executor = new co.aikar.timings.TimedEventExecutor((listener, event) -> {
+            try {
+                if (!clazz.isAssignableFrom(event.getClass())) {
+                    return;
                 }
+                customItemEventListener.onEvent(clazz.cast(event));
+            } catch (Throwable t) {
+                throw new EventException(t);
             }
         }, plugin, method, clazz);
 
         customItemEventListener.setExecutor(executor);
-        return customItemEventListener;
     }
 
-    public void register(@NotNull EventPriority priority, boolean ignoreCancelled) {
+    private void register(@NotNull EventPriority priority, boolean ignoreCancelled) {
         plugin.getServer().getPluginManager().registerEvent(clazz,customItem,priority,executor,plugin,ignoreCancelled);
     }
 
@@ -129,6 +127,8 @@ public class CustomItemEventListener<T extends Event> {
             return;
 
         CustomItemEvent<T> itemEvent;
+        //Check whether the event is in ItemStack or Entity Mode. If in ItemStack mode then the event wrapper
+        //is looking for a specific item from the event rather than the entity.
         if(itemStack!=null) {
             //specific event item. This is used for the
             if(!customItem.isCustomItem(itemStack.getItemStack()))
@@ -145,6 +145,7 @@ public class CustomItemEventListener<T extends Event> {
         }
 
         try {
+            //we are running foreign code here so we don't know what errors this may cause
             consumer.onEvent(customItem,itemEvent);
         } catch (EventException e) {
             if(itemEvent.getEntity() instanceof Player) {

@@ -108,4 +108,9 @@ public class TestServer implements EServer {
     public String translateColorCodes(@NotNull String textToTranslate) {
         return ChatColor.translateAlternateColorCodes('&',textToTranslate);
     }
+
+    @Override
+    public String getServerName() {
+        return "Test Server";
+    }
 }

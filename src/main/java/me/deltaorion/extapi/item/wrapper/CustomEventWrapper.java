@@ -1,33 +1,42 @@
 package me.deltaorion.extapi.item.wrapper;
 
 import com.google.gson.reflect.TypeToken;
-import me.deltaorion.extapi.test.unit.bukkit.TestEvent;
+import org.bukkit.event.Event;
 import org.bukkit.event.block.*;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.entity.*;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+/**
+ *  An enum that represents a variety of custom event wrappers. See more at {@link CIEventWrapper}
+ */
 public enum CustomEventWrapper {
 
-
-
+    //If this is selected then the program will automatically find a relevant custom event wrapper. This may not be the correct
+    //event wrapper for your ci event.
     ROOT(null),
-    //Called when the player is damaged by another entity
+    //Checks the entity that caused damage to another entity.
     GET_DAMAGED_BY_ENTITY(TypeToken.get(EntityDamageByEntityEvent.class)),
-    //called when this player damages another entity
+    //Checks the entity which was hurt or damaged by another entity
     DAMAGE_ANOTHER_ENTITY(TypeToken.get(EntityDamageByEntityEvent.class)),
-    //retrieves the player from any player event
+    //retrieves the PlayerEvent#getPlayer() from the event
     PLAYER_EVENT(TypeToken.get(PlayerEvent.class)),
-    //retrieves the entity from any entity event
+    //retrieves the EntityEvent#getEntity() from the event
     ENTITY_EVENT(TypeToken.get(EntityEvent.class)),
-    //retrieves the inventory clicker from any inventory interact
+    //Retrieves whoever interacted with the inventory. This does NOT retrieve which item was clicked.
+    //For example suppose this is used in par with the inventoryClickEvent and the predicate is mainhand. Then
+    //the program will check if the item is in their mainhand when they do the inventory click.
     INVENTORY_INTERACT(TypeToken.get(InventoryInteractEvent.class)),
+    //Checks whether the item that was clicked is the custom item. This will IGNORE the predicate
     INVENTORY_CLICK(TypeToken.get(InventoryClickEvent.class)),
     //detects when an inventory is open
     INVENTORY_OPEN(TypeToken.get(InventoryOpenEvent.class)),
@@ -44,10 +53,10 @@ public enum CustomEventWrapper {
     //detects when the player ignites a block
     IGNITE_BLOCK(TypeToken.get(BlockIgniteEvent.class)),
     //detects when a custom item is being enchanted, this does not use the event predicate, it only detects that the item in the
-    //enchant table which is currently being enchanted is the custom item
+    //enchant table which is currently being enchanted is the custom item. This will IGNORE the event predicate
     ENCHANT_ITEM_BEING_ENCHANTED(TypeToken.get(EnchantItemEvent.class)),
     //Called when an ItemStack is inserted in an enchantment table - can be called multiple times, checks if this custom
-    //item is the one that is being placed
+    //item is the one that is being placed. This will IGNORE the event predicate
     PREPARE_ENCHANT_ITEM_BEING_ENCHANTED(TypeToken.get(PrepareItemEnchantEvent.class)),
     //When an item is enchanted, this detects wheteher the event predicate is met
     ENCHANT_ITEM_PLAYER_INVENTORY(TypeToken.get(EnchantItemEvent.class)),
@@ -59,15 +68,16 @@ public enum CustomEventWrapper {
     ENTITY_COMBUSTS_ENTITY(TypeToken.get(EntityCombustByEntityEvent.class)),
     //detects when this player is targetted by an entity
     TARGETTED_BY_ENTITY(TypeToken.get(EntityTargetEvent.class)),
-    //detects when this player launches a projectile.
+    //detects when this entity launches a projectile.
     PROJECTILE_LAUNCH(TypeToken.get(ProjectileLaunchEvent.class)),
     ;
 
-    private final TypeToken<?> typeToken;
-    private final static Map<TypeToken<?>,List<CustomEventWrapper>> byType;
+    private final TypeToken<? extends Event> typeToken;
+    private final static Map<TypeToken<? extends Event>,List<CustomEventWrapper>> byType;
 
+    //convert the enum into a map for extremely quick access.
     static {
-        Map<TypeToken<?>,List<CustomEventWrapper>> temp = new HashMap<>();
+        Map<TypeToken<? extends Event>,List<CustomEventWrapper>> temp = new HashMap<>();
         for(CustomEventWrapper wrapper : CustomEventWrapper.values()) {
             if(wrapper==CustomEventWrapper.ROOT)
                 continue;
@@ -84,17 +94,18 @@ public enum CustomEventWrapper {
         byType = Collections.unmodifiableMap(temp);
     }
 
-    CustomEventWrapper(TypeToken<?> typeToken) {
+    CustomEventWrapper(TypeToken<? extends Event> typeToken) {
         this.typeToken = typeToken;
     }
 
+    //finds an appropiate CIEventWrapper given the event class
     @Nullable
-    public static List<CustomEventWrapper> fromClass(@NotNull Class<?> clazz) {
+    public static List<CustomEventWrapper> fromClass(@NotNull Class<? extends Event> clazz) {
         TypeToken<?> typeToken = TypeToken.get(clazz);
         if(byType.containsKey(typeToken)) {
             return byType.get(typeToken);
         } else {
-            for(Map.Entry<TypeToken<?>,List<CustomEventWrapper>> entry : byType.entrySet()) {
+            for(Map.Entry<TypeToken<? extends Event>,List<CustomEventWrapper>> entry : byType.entrySet()) {
                 if(entry.getKey().getRawType().isAssignableFrom(clazz)) {
                     return entry.getValue();
                 }

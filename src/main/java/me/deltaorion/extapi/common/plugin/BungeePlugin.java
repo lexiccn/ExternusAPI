@@ -121,6 +121,7 @@ public class BungeePlugin extends Plugin implements ApiPlugin {
         return plugin.hasDependency(name);
     }
 
+    @NotNull
     @Override
     public Set<String> getDependencies() {
         return plugin.getDependencies();

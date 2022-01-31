@@ -1,27 +1,12 @@
 package me.deltaorion.extapi.common.plugin;
 
-import me.deltaorion.extapi.command.Command;
-import me.deltaorion.extapi.command.parser.ArgumentParser;
-import me.deltaorion.extapi.command.parser.ArgumentParsers;
-import me.deltaorion.extapi.command.parser.ParserRegistry;
-import me.deltaorion.extapi.command.parser.SimpleParserRegistry;
-import me.deltaorion.extapi.common.command.BungeeCommand;
-import me.deltaorion.extapi.common.depend.Dependency;
-import me.deltaorion.extapi.common.depend.SimpleDependencyManager;
-import me.deltaorion.extapi.common.sender.BungeeSenderInfo;
-import me.deltaorion.extapi.common.sender.Sender;
-import me.deltaorion.extapi.common.sender.SimpleSender;
 import me.deltaorion.extapi.common.logger.JavaPluginLogger;
 import me.deltaorion.extapi.common.logger.PluginLogger;
 import me.deltaorion.extapi.common.scheduler.BungeeSchedulerAdapter;
 import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
 import me.deltaorion.extapi.common.server.BungeeServer;
 import me.deltaorion.extapi.common.server.EServer;
-import me.deltaorion.extapi.locale.translator.PluginTranslator;
-import me.deltaorion.extapi.test.TestEnum;
-import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
@@ -29,9 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Set;
 
 public class BungeePluginWrapper implements EPlugin {
 
