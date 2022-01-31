@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-//unit testing
 public class EventPredicates {
 
     public static EventPredicate getPredicate(@NotNull EventCondition condition) {

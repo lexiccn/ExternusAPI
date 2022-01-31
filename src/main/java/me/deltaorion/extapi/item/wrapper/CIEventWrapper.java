@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public interface CIEventWrapper<T extends Event> {
 
     /**
-     * Retrieves the player associated with the event so that its inventory can be checked for the custom item predicate. If a
+     * Retrieves the entity associated with the event so that its inventory can be checked for the custom item predicate. If a
      * null value is returned then it will be assumed that this is not a custom item event. That is if a null value is returned
      * the associated event will not be called for the custom item. If the retrieved player is not null and the retrieved {@link #getItem(Event)} is not
      * null then the itemstack will be checked
