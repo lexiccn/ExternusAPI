@@ -1,4 +1,4 @@
-package me.deltaorion.extapi.common.command;
+package me.deltaorion.extapi.command.implementation;
 
 import me.deltaorion.extapi.command.Command;
 import me.deltaorion.extapi.command.sent.SentCommand;

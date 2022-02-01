@@ -1,63 +1,56 @@
-package me.deltaorion.extapi;
-
 import com.google.common.collect.ImmutableSet;
 import me.deltaorion.extapi.animation.MinecraftFrame;
 import me.deltaorion.extapi.animation.RunningAnimation;
 import me.deltaorion.extapi.animation.factory.AnimationFactories;
+import me.deltaorion.extapi.common.server.BukkitServer;
 import me.deltaorion.extapi.test.TestPlugin;
 import me.deltaorion.extapi.test.TestServer;
-import me.deltaorion.extapi.test.animation.LoggingAnimation;
 import me.deltaorion.extapi.test.animation.TestAnimation;
+import org.junit.Test;
 
-import java.net.URISyntaxException;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
-public class Main {
+public class AnimationTest {
 
-    public static Main main = new Main();
+    private final TestServer eServer = new TestServer();
+    private final TestPlugin plugin = new TestPlugin(eServer);
 
-    public static void main(String[] args) {
-        try {
-            main.run();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+    public AnimationTest() {
+        eServer.addPlugin("Test",plugin);
     }
 
-    public void run() throws URISyntaxException {
-        TestServer server = new TestServer();
-        TestPlugin plugin = new TestPlugin(server);
-        server.addPlugin("Test",plugin);
-
-        System.out.println("beginning");
-        LoggingAnimation animation = new LoggingAnimation(plugin);
-        animation.addScreen(plugin.getPluginLogger());
-        RunningAnimation animation1 = animation.start();
-        /*
-        for(int i=0;i<100;i++) {
-            System.out.println("Running: "+i);
-            simpleAnimationTest(plugin);
-        }
-         */
-        ;
-
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        plugin.onDisable();
+    @Test
+    public void testBukkitUnit() {
+        assertEquals(BukkitServer.MILLIS_PER_TICK, Duration.of(1,BukkitServer.TICK_UNIT).toMillis());
+        assertEquals(BukkitServer.MILLIS_PER_TICK*20,Duration.of(20,BukkitServer.TICK_UNIT).toMillis());
+        assertEquals(1,Duration.of(1000/BukkitServer.MILLIS_PER_TICK*60,BukkitServer.TICK_UNIT).toMinutes());
     }
 
-    public void simpleAnimationTest(TestPlugin plugin) {
+    @Test
+    public void frameTest() {
+        MinecraftFrame<String> frame = new MinecraftFrame<>("Gamer",50);
+        MinecraftFrame<String> frame2 = new MinecraftFrame<>("World",50,BukkitServer.TICK_UNIT);
+        MinecraftFrame<String> frame3 = new MinecraftFrame<>("Delta",50, ChronoUnit.MINUTES);
+        MinecraftFrame<String> frame4 = new MinecraftFrame<>("Gamer",50);
+
+        assertEquals("Gamer",frame.getObject());
+        assertEquals("World",frame2.getObject());
+        assertEquals("Delta",frame3.getObject());
+
+        assertEquals(50,frame.getTime());
+        assertEquals(50*BukkitServer.MILLIS_PER_TICK,frame2.getTime());
+        assertEquals(50*1000*60,frame3.getTime());
+        assertEquals(frame,frame4);
+    }
+
+    @Test
+    public void simpleAnimationTest() {
         try {
             testAnimation(new TestAnimation(plugin, AnimationFactories.SCHEDULE_ASYNC()));
         } catch (InterruptedException e) {
@@ -93,7 +86,7 @@ public class Main {
         Thread.sleep(5);
         assertTrue(runningAnimation.isAlive());
         animation.addScreen(screenB);
-        Thread.sleep(10);
+        Thread.sleep(20);
         assertTrue(screenA.size()>0);
         animation.addFrame(new MinecraftFrame<>("Gamer",0));
         animation.addFrame(new MinecraftFrame<>("Gamer",0));
@@ -112,7 +105,19 @@ public class Main {
         Thread.sleep(20);
         assertEquals(size,screenA.size());
         assertEquals(size2,screenB.size());
+
+        animation.clearFrames();
+        for(int i=0;i<1000;i++) {
+            animation.addFrame(new MinecraftFrame<>(String.valueOf(i),0));
+        }
+        animation.start();
+        screenA.clear();
+        screenB.clear();
+        Thread.sleep(5);
+        for(int i=0;i<1000;i++) {
+            assertEquals(String.valueOf(i),screenA.get(i));
+            assertEquals(String.valueOf(i),screenB.get(i));
+        }
+        assertEquals(1000,screenA.size()); //make sure we get no extras lol
     }
-
-
 }

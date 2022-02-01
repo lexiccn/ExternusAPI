@@ -34,6 +34,7 @@ public class TestPlugin implements ApiPlugin {
     private final PluginTranslator translator;
     private boolean enabled = true;
     private final ParserRegistry registry;
+    private final TestSchedularAdapter adapter;
 
     public TestPlugin(EServer server) {
         this.server = server;
@@ -42,6 +43,7 @@ public class TestPlugin implements ApiPlugin {
         this.registry = new SimpleParserRegistry();
 
         this.registry.registerParser(Sender.class, ArgumentParsers.SENDER_PARSER(server));
+        this.adapter = new TestSchedularAdapter();
     }
 
     @Override
@@ -74,7 +76,11 @@ public class TestPlugin implements ApiPlugin {
     @NotNull
     @Override
     public SchedulerAdapter getScheduler() {
-        throw new UnsupportedOperationException();
+        return adapter;
+    }
+
+    public void onDisable() {
+        adapter.shutdown();
     }
 
     @NotNull

@@ -14,6 +14,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 public class BukkitServer implements EServer {
@@ -21,6 +22,7 @@ public class BukkitServer implements EServer {
     @NotNull private final Server server;
     @NotNull private final MinecraftVersion minecraftVersion;
     public final static int MILLIS_PER_TICK = 50;
+    public final static TemporalUnit TICK_UNIT = new BukkitTick();
 
     public BukkitServer(@NotNull Server server) {
         this.server = server;

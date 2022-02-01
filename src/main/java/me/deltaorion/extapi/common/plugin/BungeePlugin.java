@@ -2,7 +2,7 @@ package me.deltaorion.extapi.common.plugin;
 
 import me.deltaorion.extapi.command.Command;
 import me.deltaorion.extapi.command.parser.ArgumentParser;
-import me.deltaorion.extapi.common.command.BungeeCommand;
+import me.deltaorion.extapi.command.implementation.BungeeCommand;
 import me.deltaorion.extapi.common.depend.Dependency;
 import me.deltaorion.extapi.common.sender.BungeeSenderInfo;
 import me.deltaorion.extapi.common.sender.Sender;

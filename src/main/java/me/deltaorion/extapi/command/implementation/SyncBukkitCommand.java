@@ -1,8 +1,7 @@
-package me.deltaorion.extapi.common.command;
+package me.deltaorion.extapi.command.implementation;
 
 import me.deltaorion.extapi.command.sent.SentCommand;
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
-import me.deltaorion.extapi.common.plugin.EPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;

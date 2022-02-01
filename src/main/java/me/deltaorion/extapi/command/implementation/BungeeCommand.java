@@ -1,8 +1,7 @@
-package me.deltaorion.extapi.common.command;
+package me.deltaorion.extapi.command.implementation;
 
 import me.deltaorion.extapi.command.sent.SentCommand;
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
-import me.deltaorion.extapi.common.plugin.EPlugin;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;

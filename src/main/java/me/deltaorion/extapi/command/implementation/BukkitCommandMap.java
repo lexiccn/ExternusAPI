@@ -1,7 +1,6 @@
-package me.deltaorion.extapi.common.command;
+package me.deltaorion.extapi.command.implementation;
 
 import com.google.common.base.Preconditions;
-import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import org.bukkit.command.*;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.SimplePluginManager;
