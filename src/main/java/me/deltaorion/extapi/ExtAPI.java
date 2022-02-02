@@ -37,7 +37,7 @@ public final class ExtAPI extends BukkitPlugin {
         registerCommand(new ItemTest(this),"itemtest");
         registerCommand(new CustomItemTestCommand(this),"citest");
         registerCommand(new FailCommand(),"failcommand");
-        registerCommand(new AnimationTest(),"animationtest");
+        registerCommand(new AnimationTest(this),"animationtest");
 
         getPluginLogger().info("This should work!");
 

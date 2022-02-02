@@ -24,6 +24,6 @@ public class TestBungee extends BungeePlugin {
         registerCommand(new TestCommand(),"testcommand");
         registerCommand(new ShouldBeRunAsyncCommand(),"lifemeaning");
         registerCommand(new FailCommand(),"failcommand");
-        registerCommand(new AnimationTest(),"animationtest");
+        registerCommand(new AnimationTest(this),"animationtest");
     }
 }

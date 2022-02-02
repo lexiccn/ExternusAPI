@@ -4,5 +4,5 @@ import me.deltaorion.extapi.common.plugin.ApiPlugin;
 
 public interface AnimationFactory {
 
-    public <T,S> RunningAnimation get(MinecraftAnimation<T,S> animation, ApiPlugin plugin, long taskID);
+    public <T,S> RunningAnimation<S> get(MinecraftAnimation<T,S> animation, ApiPlugin plugin,AnimationRenderer<T,S> renderer, long taskID);
 }
