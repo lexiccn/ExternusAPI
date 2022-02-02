@@ -26,7 +26,7 @@ public class CobbleLineAnimation implements AnimationRenderer<PolarVector, Locat
     private PolarVector previous = null;
 
     @Override
-    public void render(MinecraftFrame<PolarVector> frame, Location screen) {
+    public void render(@NotNull MinecraftFrame<PolarVector> frame, Location screen) {
         if (frame.getObject() == null)
             throw new NullPointerException();
 
@@ -94,13 +94,14 @@ public class CobbleLineAnimation implements AnimationRenderer<PolarVector, Locat
     }
 
 
+    @NotNull
     @Override
     public AnimationRenderer<PolarVector, Location> copy() {
         return new CobbleLineAnimation(plugin);
     }
 
     @Override
-    public boolean beforeCompletion(RunningAnimation<Location> animation) {
+    public boolean beforeCompletion(@NotNull RunningAnimation<Location> animation) {
         System.out.println("Before Completion");
         for(Location screen : animation.getScreens()) {
             if(previous!=null) {

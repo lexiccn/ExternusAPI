@@ -80,7 +80,7 @@ public class TestAnimation extends MinecraftAnimation<String, List<String>> {
         }
 
         @Override
-        public void render(MinecraftFrame<String> frame, List<String> screen) {
+        public void render(@NotNull MinecraftFrame<String> frame, List<String> screen) {
             if (frame.getObject() == null) {
                 throw new RuntimeException();
             }
@@ -94,6 +94,7 @@ public class TestAnimation extends MinecraftAnimation<String, List<String>> {
             }
         }
 
+        @NotNull
         @Override
         public AnimationRenderer<String, List<String>> copy() {
             TestAnimationRender render = new TestAnimationRender(repeat);
@@ -102,7 +103,7 @@ public class TestAnimation extends MinecraftAnimation<String, List<String>> {
         }
 
         @Override
-        public boolean beforeCompletion(RunningAnimation<List<String>> animation) {
+        public boolean beforeCompletion(@NotNull RunningAnimation<List<String>> animation) {
             if(this.animation==null)
                 return repeat;
 
@@ -113,7 +114,6 @@ public class TestAnimation extends MinecraftAnimation<String, List<String>> {
 
             if(this.animation.getFinishLatch().getCount()==0)
                 return repeat;
-
 
             this.animation.getFinishLatch().countDown();
             return repeat;

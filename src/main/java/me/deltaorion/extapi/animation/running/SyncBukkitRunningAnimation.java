@@ -12,27 +12,25 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S> {
 
     private boolean running = false;
     @NotNull private final MinecraftAnimation<T,S> animation;
-    private final Collection<MinecraftFrame<T>> frames;
     @NotNull private Iterator<MinecraftFrame<T>> frameIterator;
     @NotNull private final EPlugin plugin;
     @NotNull private final AnimationRenderer<T,S> renderer;
     @Nullable private SchedulerTask task;
     @Nullable private MinecraftFrame<T> currentFrame = null;
-    private boolean restarting = false;
     private boolean cancelled = false;
     private final long taskId;
     private int timeElapsed = 0;
 
     public SyncBukkitRunningAnimation(@NotNull MinecraftAnimation<T, S> animation, @NotNull EPlugin plugin, @NotNull AnimationRenderer<T, S> renderer, long taskId) {
         this.animation = animation;
-        this.frameIterator = animation.getFrames().iterator();
-        this.frames = animation.getFrames();
+        this.frameIterator = animation.getFrames();
         this.plugin = plugin;
         this.renderer = renderer;
         this.taskId = taskId;
@@ -56,17 +54,6 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
 
         this.running = true;
         plugin.getScheduler().runTaskTimer(this,0L,BukkitServer.MILLIS_PER_TICK, TimeUnit.MILLISECONDS);
-    }
-
-    @Override
-    public void restart() {
-        if(this.running) {
-            restarting = true;
-            stop();
-            restarting = false;
-        }
-        this.frameIterator = frames.iterator();
-        start();
     }
 
     @Override
@@ -107,7 +94,7 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
 
                 for (S screen : getScreens()) {
                     try {
-                        renderer.render(currentFrame, screen);
+                        renderer.render(Objects.requireNonNull(currentFrame), screen);
                     } catch (Throwable e) {
                         throw new AnimationException("An error occurred when running the animation on frame '" + currentFrame + "' rendering to screen '" + screen + "'", e);
                     }
@@ -141,8 +128,6 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
         } catch (Throwable e) {
             plugin.getPluginLogger().severe("An error occurred when attempting to run beforeCompletion",e);
         }
-        if(this.restarting)
-            restart = true;
 
         if(cancelled)
             restart = false;
@@ -150,7 +135,12 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
         if(!restart)
             cancelled = true;
 
-        animation.onComplete(this,restart);
+        if(restart) {
+            frameIterator = animation.getFrames();
+            start();
+        } else {
+            animation.onComplete(this);
+        }
     }
 
     @Override

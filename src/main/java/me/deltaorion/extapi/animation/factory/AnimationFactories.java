@@ -8,13 +8,14 @@ import me.deltaorion.extapi.animation.running.ScheduleAsyncRunningAnimation;
 import me.deltaorion.extapi.animation.running.SleepAsyncRunningAnimation;
 import me.deltaorion.extapi.animation.running.SyncBukkitRunningAnimation;
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
+import org.jetbrains.annotations.NotNull;
 
 public class AnimationFactories {
 
     public static AnimationFactory SCHEDULE_ASYNC() {
         return new AnimationFactory() {
             @Override
-            public <T, S> RunningAnimation<S> get(MinecraftAnimation<T, S> animation, ApiPlugin plugin, AnimationRenderer<T,S> renderer, long taskID) {
+            public <T, S> RunningAnimation<S> get(@NotNull MinecraftAnimation<T, S> animation, @NotNull ApiPlugin plugin, @NotNull AnimationRenderer<T,S> renderer, long taskID) {
                 return new ScheduleAsyncRunningAnimation<>(animation,plugin, renderer, taskID);
             }
         };
@@ -23,7 +24,7 @@ public class AnimationFactories {
     public static AnimationFactory SLEEP_ASYNC() {
         return new AnimationFactory() {
             @Override
-            public <T, S> RunningAnimation<S> get(MinecraftAnimation<T, S> animation, ApiPlugin plugin, AnimationRenderer<T,S> renderer, long taskID) {
+            public <T, S> RunningAnimation<S> get(@NotNull MinecraftAnimation<T, S> animation, @NotNull ApiPlugin plugin, @NotNull AnimationRenderer<T,S> renderer, long taskID) {
                 return new SleepAsyncRunningAnimation<>(animation,plugin, renderer, taskID);
             }
         };
@@ -32,7 +33,7 @@ public class AnimationFactories {
     public static AnimationFactory SYNC_BUKKIT() {
         return new AnimationFactory() {
             @Override
-            public <T, S> RunningAnimation<S> get(MinecraftAnimation<T, S> animation, ApiPlugin plugin, AnimationRenderer<T, S> renderer, long taskID) {
+            public <T, S> RunningAnimation<S> get(@NotNull MinecraftAnimation<T, S> animation, @NotNull ApiPlugin plugin, @NotNull AnimationRenderer<T, S> renderer, long taskID) {
                 return new SyncBukkitRunningAnimation<>(animation,plugin,renderer,taskID);
             }
         };

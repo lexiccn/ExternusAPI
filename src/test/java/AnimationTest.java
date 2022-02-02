@@ -64,8 +64,8 @@ public class AnimationTest {
     }
 
     private void testAnimation(TestAnimation animation) throws InterruptedException {
+        long time =  System.currentTimeMillis();
         testScreens(animation);
-        //add a bunch of frames
         testFunctionalityAndCancellation(animation);
         testCorrectness(animation);
     }
@@ -132,23 +132,24 @@ public class AnimationTest {
         assertEquals(size2,screenB.size());
 
         //none of these should do anything
-        runningAnimation.restart();
         runningAnimation.start();
         runningAnimation.run();
         Thread.sleep(20);
         //double check that none of them did anything
         assertEquals(size,screenA.size());
         assertEquals(size2,screenB.size());
+        assertEquals(0,animation.getCurrentlyRunning().size());
     }
 
     private void testScreens(TestAnimation animation) {
+        animation.setFinishLatch(new CountDownLatch(1));
         List<String> screenA = new CopyOnWriteArrayList<>();
         List<String> screenB = new CopyOnWriteArrayList<>();
         screenB.add("aaa");
         RunningAnimation<List<String>> sTest = animation.start();
         //ensure that the screened animation adds the screens correctly.
         assertEquals(sTest.getScreens().size(),0);
-        assertEquals(animation.getFrames().size(),0);
+        assertFalse(animation.getFrames().hasNext());
         sTest.addScreen(screenA);
         assertEquals(sTest.getScreens().size(), 1);
         sTest.removeScreen(screenA);
@@ -156,6 +157,11 @@ public class AnimationTest {
         sTest.addScreen(screenA);
         sTest.addScreen(screenB);
         assertEquals(2,sTest.getScreens().size());
+        try {
+            animation.getFinishLatch().await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -197,6 +203,7 @@ public class AnimationTest {
             }
             assertEquals(size, screenA.size()); //make sure we get no extras lol
         }
+        assertEquals(0,stateAnimationTest.getCurrentlyRunning().size());
     }
 
     @Test
@@ -217,10 +224,10 @@ public class AnimationTest {
             animation.addFrame(new MinecraftFrame<>("Gamer",0));
         }
 
+        animation.setFinishLatch(new CountDownLatch(nAnimations*nRepeats));
         for(int i=0;i<nAnimations;i++) {
             List<String> screen = new ArrayList<>();
             screens.add(screen);
-            animation.setFinishLatch(new CountDownLatch(nAnimations*nRepeats));
             animation.start(screen);
         }
 
@@ -237,6 +244,11 @@ public class AnimationTest {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         int count = 0;
         for (List<String> screen : screens) {
             count += screen.size();
@@ -244,13 +256,14 @@ public class AnimationTest {
         try {
             Thread.sleep(10);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         int newCount = 0;
         for (List<String> screen : screens) {
             newCount += screen.size();
         }
         assertEquals(newCount,count);
+        assertEquals(0,animation.getCurrentlyRunning().size());
 
     }
 }

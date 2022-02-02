@@ -15,20 +15,15 @@ public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
 
     @NotNull private final MinecraftAnimation<T,S> animation;
     @NotNull private volatile Iterator<MinecraftFrame<T>> frameIterator;
-    @NotNull private final Collection<MinecraftFrame<T>> frames;
     @GuardedBy("this") private volatile boolean running;
     @GuardedBy("this") private volatile boolean cancelled = false;
     @NotNull private final EPlugin plugin;
     @NotNull private final AnimationRenderer<T,S> animationRenderer;
     @Nullable private SchedulerTask runningTask = null;
-    @GuardedBy("this") private volatile boolean restarting = false;
     private final long taskID;
-    private final Object renderLock = new Object();
-    private final Object restartLock = new Object();
 
     public SleepAsyncRunningAnimation(@NotNull MinecraftAnimation<T, S> animation, @NotNull EPlugin plugin, @NotNull AnimationRenderer<T,S> animationRenderer, long taskID) {
-        this.frames = animation.getFrames();
-        this.frameIterator = animation.getFrames().iterator();
+        this.frameIterator = animation.getFrames();
         this.animation = animation;
         this.plugin = plugin;
         this.animationRenderer = animationRenderer;
@@ -50,13 +45,14 @@ public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
                 return;
         }
         halt();
-        stop();
         //tell the animation to cancel as soon as possible
     }
 
     private void halt() {
-        if (this.runningTask != null) {
-            runningTask.cancel();
+        synchronized (this) {
+            if (this.runningTask != null) {
+                runningTask.cancel();
+            }
         }
     }
 
@@ -64,14 +60,12 @@ public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
     //or otherwise
     private void stop() {
         //if something is rendering wait for that to happen first
-        synchronized (renderLock) {
-            synchronized (this) {
-                //in case this is called twice
-                if (!this.running)
-                    return;
-                this.running = false;
-                this.runningTask = null;
-            }
+        synchronized (this) {
+            //in case this is called twice
+            if (!this.running)
+                return;
+            this.running = false;
+            this.runningTask = null;
         }
         boolean restart = false;
         try {
@@ -80,16 +74,19 @@ public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
             plugin.getPluginLogger().severe("An error occurred when attempting to run beforeCompletion",e);
         }
         synchronized (this) {
-            if (restarting)
-                restart = true;
-
             if (cancelled)
                 restart = false;
 
             if(!restart)
                 cancelled = true;
         }
-        animation.onComplete(this,restart);
+
+        if(restart) {
+            frameIterator = animation.getFrames();
+            start();
+        } else {
+            animation.onComplete(this);
+        }
     }
 
     @Override
@@ -112,21 +109,6 @@ public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
         //begin the task
         synchronized (this) {
             this.runningTask = plugin.getScheduler().runTaskAsynchronously(this);
-        }
-    }
-
-    @Override
-    public void restart() {
-        synchronized (restartLock) {
-            if (this.running) {
-                halt();
-                restarting = true;
-                stop();
-                restarting = false;
-            }
-
-            this.frameIterator = frames.iterator();
-            start();
         }
     }
 
@@ -178,17 +160,13 @@ public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
             //if it has been cancelled do not render the next frame
             if(cancelled || !this.running)
                 return;
-            synchronized (renderLock) {
-                if(!this.running || cancelled) {
-                    return;
-                }
-                Collection<S> screens = getScreens();
-                for (S screen : screens) {
-                    try {
-                        animationRenderer.render(nextFrame, screen);
-                    } catch (Throwable e) {
-                        throw new AnimationException("An error occurred whilst attempting to render this animation on frame '" + nextFrame + "' on screen '" + screen + "'", e);
-                    }
+
+            Collection<S> screens = getScreens();
+            for (S screen : screens) {
+                try {
+                    animationRenderer.render(Objects.requireNonNull(nextFrame), screen);
+                } catch (Throwable e) {
+                    throw new AnimationException("An error occurred whilst attempting to render this animation on frame '" + nextFrame + "' on screen '" + screen + "'", e);
                 }
             }
         }

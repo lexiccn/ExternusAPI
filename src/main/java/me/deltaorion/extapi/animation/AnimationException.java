@@ -1,5 +1,8 @@
 package me.deltaorion.extapi.animation;
 
+/**
+ * Called when external animation rendering code fails.
+ */
 public class AnimationException extends Exception {
 
     public AnimationException(String message) {

@@ -6,6 +6,7 @@ import me.deltaorion.extapi.animation.MinecraftFrame;
 import me.deltaorion.extapi.animation.factory.AnimationFactories;
 import me.deltaorion.extapi.common.logger.PluginLogger;
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
+import org.jetbrains.annotations.NotNull;
 
 public class LoggingAnimation extends MinecraftAnimation<String, PluginLogger> {
     public LoggingAnimation(ApiPlugin plugin) {
@@ -22,10 +23,11 @@ public class LoggingAnimation extends MinecraftAnimation<String, PluginLogger> {
 
     private static class LoggingRenderer implements AnimationRenderer<String,PluginLogger> {
         @Override
-        public void render(MinecraftFrame<String> frame, PluginLogger screen) {
+        public void render(@NotNull MinecraftFrame<String> frame, PluginLogger screen) {
             screen.info(frame.getObject());
         }
 
+        @NotNull
         @Override
         public AnimationRenderer<String, PluginLogger> copy() {
             return new LoggingRenderer();

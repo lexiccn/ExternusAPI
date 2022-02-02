@@ -6,6 +6,7 @@ import me.deltaorion.extapi.animation.MinecraftFrame;
 import me.deltaorion.extapi.animation.RunningAnimation;
 import me.deltaorion.extapi.animation.factory.AnimationFactories;
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -27,7 +28,7 @@ public class StateAnimationTest extends MinecraftAnimation<String, List<String>>
         }
 
         @Override
-        public void render(MinecraftFrame<String> frame, List<String> screen) {
+        public void render(@NotNull MinecraftFrame<String> frame, List<String> screen) {
 
             if(frame.getObject()==null)
                 throw new NullPointerException();
@@ -39,13 +40,14 @@ public class StateAnimationTest extends MinecraftAnimation<String, List<String>>
             lastFrame = frame.getObject();
         }
 
+        @NotNull
         @Override
         public AnimationRenderer<String, List<String>> copy() {
             return new StateAnimationRenderer(finishLatch);
         }
 
         @Override
-        public boolean beforeCompletion(RunningAnimation<List<String>> animation) {
+        public boolean beforeCompletion(@NotNull RunningAnimation<List<String>> animation) {
             finishLatch.countDown();
             return false;
         }

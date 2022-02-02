@@ -10,15 +10,17 @@ import java.util.Collection;
  * by each frame. If the time of the frame is 0ms then it will be played in loop immediately after the one before it.
  *
  * When a running animation is created by {@link MinecraftAnimation#start()} it will load all of the frames
- * into this running animation as they were when it was created. That means that if additional frames are added to the minecraft
- * animation it will have no affect on what is being displayed on this running animation instance.
+ * into this running animation as they were when it was created. However if the animation is restarted and any changes were made
+ * to the frames, the restart will reflect said changes.
  *
- * A running animation has several screens
+ * A running animation has several screens. When a frame is to be rendered. The running animation will render the frame to all
+ * screens that are currently hooked to this running animation. See more at {@link AnimationRenderer}. One can immediately
+ * add screens using {@link MinecraftAnimation#start(Iterable)}
  *
  * Implementations can be found in
  *  - {@link me.deltaorion.extapi.animation.factory.AnimationFactories}
  *
- * @param <S>
+ * @param <S> The screen's type
  */
 public interface RunningAnimation<S> extends Runnable {
 
@@ -46,23 +48,27 @@ public interface RunningAnimation<S> extends Runnable {
     public void start();
 
     /**
-     * Restarts the animation. This will only work if the animation is currently running and has not finished. The animation
-     * that is currently already running will be stopped but not cancelled. The restarted animation will use the existing set of frames it was loaded with.
-     * If any new frames were added to the MinecraftAnimation it will not have any effect.
-     */
-    public void restart();
-
-    /**
-     * Adds a screen to the running animation. A screen i
+     * Adds a screen to the running animation.
      *
-     * @param screen
+     * @param screen The screen to add
      */
     public void addScreen(@NotNull S screen);
 
+    /**
+     * Removes the specified screen from the animation
+     *
+     * @param screen The screen to remove
+     */
     public void removeScreen(@NotNull S screen);
 
+    /**
+     * Removes all screens from the animation
+     */
     public void clearScreens();
 
+    /**
+     * @return Returns a collection of all the screens that are currently hooked to the animation
+     */
     @NotNull
     public Collection<S> getScreens();
 }
