@@ -66,7 +66,6 @@ public class BukkitSenderInfo implements SenderInfo {
     public Locale getLocale() {
         if(sender instanceof Player) {
             Player player = (Player) sender;
-            System.out.println(player.spigot().getLocale());
             return Translator.parseLocale(player.spigot().getLocale());
         } else {
             return EServer.DEFAULT_LOCALE;

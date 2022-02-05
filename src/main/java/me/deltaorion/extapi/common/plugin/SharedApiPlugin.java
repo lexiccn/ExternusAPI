@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.common.plugin;
 
+import me.deltaorion.extapi.animation.RunningAnimation;
 import me.deltaorion.extapi.command.parser.ArgumentParser;
 import me.deltaorion.extapi.command.parser.ArgumentParsers;
 import me.deltaorion.extapi.command.parser.ParserRegistry;
@@ -18,9 +19,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class SharedApiPlugin implements BaseApiPlugin {
 
@@ -29,6 +30,7 @@ public class SharedApiPlugin implements BaseApiPlugin {
     @NotNull private final ParserRegistry registry;
     @NotNull private SimpleDependencyManager dependencies;
     @Nullable private PluginTranslator translator;
+    @NotNull private final ConcurrentMap<RunningAnimation<?>,Object> animationCache;
 
     private final String ERR_MSG = "Attempting to access abstraction API methods before the plugin has been enabled. Are you" +
             "overriding onEnable? instead of onPluginEnable";
@@ -37,6 +39,7 @@ public class SharedApiPlugin implements BaseApiPlugin {
         this.plugin = Objects.requireNonNull(plugin);
         this.registry = new SimpleParserRegistry();
         this.dependencies = new SimpleDependencyManager(plugin);
+        this.animationCache = new ConcurrentHashMap<>();
         registerDefaults();
     }
 
@@ -51,7 +54,18 @@ public class SharedApiPlugin implements BaseApiPlugin {
      * and on server shutdowns.
      */
     @Override
-    public void onPluginDisable() { }
+    public void onPluginDisable() {
+        cleanupAnimation();
+    }
+
+    private void cleanupAnimation() {
+        Iterator<RunningAnimation<?>> iterator = animationCache.keySet().iterator();
+        while(iterator.hasNext()) {
+            RunningAnimation<?> animation = iterator.next();
+            animation.cancel();
+            iterator.remove();
+        }
+    }
 
     /**
      * Plugin Enable Logic. This should be overriden by the plugin extending this. This will be called on
@@ -61,6 +75,21 @@ public class SharedApiPlugin implements BaseApiPlugin {
     @Override
     public void onPluginEnable() {
         this.translator = new PluginTranslator(plugin,"en.yml");
+    }
+
+    @Override
+    public void cacheRunning(RunningAnimation<?> animation) {
+        animationCache.put(animation,new Object());
+    }
+
+    @Override
+    public Collection<RunningAnimation<?>> getCachedRunning() {
+        return Collections.unmodifiableSet(animationCache.keySet());
+    }
+
+    @Override
+    public void removeCachedRunning(RunningAnimation<?> animation) {
+        animationCache.remove(animation);
     }
 
 

@@ -1,8 +1,11 @@
 package me.deltaorion.extapi.common.plugin;
 
+import me.deltaorion.extapi.animation.RunningAnimation;
 import me.deltaorion.extapi.command.parser.ParserRegistry;
 import me.deltaorion.extapi.common.depend.DependencyManager;
 import me.deltaorion.extapi.locale.translator.PluginTranslator;
+
+import java.util.Collection;
 
 //shared api functions
 public interface BaseApiPlugin extends EPlugin, DependencyManager, ParserRegistry {
@@ -22,4 +25,26 @@ public interface BaseApiPlugin extends EPlugin, DependencyManager, ParserRegistr
      */
 
     public void onPluginEnable();
+
+    /**
+     * Called by a {@link me.deltaorion.extapi.animation.MinecraftAnimation} when a running animation is created.
+     * All animations will be weakly stored here and when the server shuts down all will be automatically cancelled.
+     *
+     * @param animation The animation to cache.
+     */
+    public void cacheRunning(RunningAnimation<?> animation);
+
+    /**
+     * Gets a list of all cached running animations
+     */
+
+    public Collection<RunningAnimation<?>> getCachedRunning();
+
+    /**
+     * Called by {@link me.deltaorion.extapi.animation.MinecraftAnimation} when a running animation has finished
+     * and should be removed.
+     *
+     * @param animation The animation to remove from the cache
+     */
+    public void removeCachedRunning(RunningAnimation<?> animation);
 }

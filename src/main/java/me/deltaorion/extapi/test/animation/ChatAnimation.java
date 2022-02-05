@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class ChatAnimation implements AnimationRenderer<String,Sender> {
 
     @Override
-    public void render(@NotNull MinecraftFrame<String> frame, Sender screen) {
+    public void render(@NotNull RunningAnimation<Sender> animation, @NotNull MinecraftFrame<String> frame, @NotNull Sender screen) {
         if(frame.getObject()==null)
             throw new NullPointerException("Frame cannot be null!");
         screen.sendMessage(frame.getObject());

@@ -3,6 +3,7 @@ package me.deltaorion.extapi.test.animation;
 import me.deltaorion.extapi.animation.AnimationRenderer;
 import me.deltaorion.extapi.animation.MinecraftAnimation;
 import me.deltaorion.extapi.animation.MinecraftFrame;
+import me.deltaorion.extapi.animation.RunningAnimation;
 import me.deltaorion.extapi.animation.factory.AnimationFactories;
 import me.deltaorion.extapi.common.logger.PluginLogger;
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
@@ -23,7 +24,7 @@ public class LoggingAnimation extends MinecraftAnimation<String, PluginLogger> {
 
     private static class LoggingRenderer implements AnimationRenderer<String,PluginLogger> {
         @Override
-        public void render(@NotNull MinecraftFrame<String> frame, PluginLogger screen) {
+        public void render(@NotNull RunningAnimation<PluginLogger> animation, @NotNull MinecraftFrame<String> frame, @NotNull PluginLogger screen) {
             screen.info(frame.getObject());
         }
 

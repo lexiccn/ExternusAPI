@@ -71,4 +71,22 @@ public interface RunningAnimation<S> extends Runnable {
      */
     @NotNull
     public Collection<S> getScreens();
+
+    /**
+     * Pauses the animation. The animation can be played again with {@link #play()}
+     *    - If the animation has been cancelled this will not do anything.
+     *    - The animation will pause as soon as it can, any frames that are currently being rendered will render first
+     *    - While paused the animation can still cancel
+     *
+     *    Note if the animation is paused it will be your responsibility to ensure that the animation is shutdown
+     *    correctly when the server shuts down. You should not leave paused animations hanging on server shutdown!
+     */
+    public void pause();
+
+    /**
+     * Unpauses the animation. The animation can be paused with {@link #pause()}
+     *   - If the animation has been cancelled this will not do anything.
+     *   - The animation will resume as soon as possible.
+     */
+    public void play();
 }

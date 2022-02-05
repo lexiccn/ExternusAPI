@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 
 public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S> {
 
@@ -20,6 +21,9 @@ public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
     @NotNull private final EPlugin plugin;
     @NotNull private final AnimationRenderer<T,S> animationRenderer;
     @Nullable private SchedulerTask runningTask = null;
+    @NotNull private CountDownLatch pauseLatch = new CountDownLatch(1);
+    @NotNull private final Object pauseLock = new Object();
+    @GuardedBy("this") private volatile boolean paused = false;
     private final long taskID;
 
     public SleepAsyncRunningAnimation(@NotNull MinecraftAnimation<T, S> animation, @NotNull EPlugin plugin, @NotNull AnimationRenderer<T,S> animationRenderer, long taskID) {
@@ -40,6 +44,7 @@ public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
                 return;
 
             this.cancelled = true;
+            forcePlay();
 
             if (!this.running)
                 return;
@@ -113,6 +118,49 @@ public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
     }
 
     @Override
+    public void pause() {
+        synchronized (this) {
+            if(this.cancelled || !this.running)
+                return;
+        }
+        synchronized (pauseLock) {
+            if(this.paused)
+                return;
+
+            paused = true;
+            pauseLatch = new CountDownLatch(1);
+        }
+
+    }
+
+    @Override
+    public void play() {
+        synchronized (this) {
+            if(this.cancelled || !this.running)
+                return;
+        }
+        forcePlay();
+    }
+
+    private void forcePlay() {
+        synchronized (pauseLock) {
+            if(!paused)
+                return;
+
+            this.paused = false;
+            if(this.pauseLatch.getCount()>0) {
+                pauseLatch.countDown();
+            }
+        }
+    }
+
+    private boolean isPaused() {
+        synchronized (pauseLock) {
+            return this.paused;
+        }
+    }
+
+    @Override
     public String toString() {
         return com.google.common.base.Objects.toStringHelper(this)
                 .add("Task",taskID)
@@ -146,6 +194,16 @@ public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
         while(!Thread.currentThread().isInterrupted()) {
             //check each time before beginning the sleep that this hasn't been cancelled. This
             //is essential as cancelling the future wont actually interrupt the thread.
+            //check before scheduling next task
+            if(isPaused()) {
+                try {
+                    pauseLatch.await();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+
             if(cancelled || !this.running)
                 return;
 
@@ -164,7 +222,7 @@ public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
             Collection<S> screens = getScreens();
             for (S screen : screens) {
                 try {
-                    animationRenderer.render(Objects.requireNonNull(nextFrame), screen);
+                    animationRenderer.render(this,Objects.requireNonNull(nextFrame), screen);
                 } catch (Throwable e) {
                     throw new AnimationException("An error occurred whilst attempting to render this animation on frame '" + nextFrame + "' on screen '" + screen + "'", e);
                 }

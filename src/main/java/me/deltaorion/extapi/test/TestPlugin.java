@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.test;
 
+import me.deltaorion.extapi.animation.RunningAnimation;
 import me.deltaorion.extapi.command.Command;
 import me.deltaorion.extapi.command.parser.ArgumentParser;
 import me.deltaorion.extapi.command.parser.ArgumentParsers;
@@ -11,6 +12,8 @@ import me.deltaorion.extapi.common.depend.SimpleDependencyManager;
 import me.deltaorion.extapi.common.logger.JavaPluginLogger;
 import me.deltaorion.extapi.common.logger.PluginLogger;
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
+import me.deltaorion.extapi.common.plugin.BaseApiPlugin;
+import me.deltaorion.extapi.common.plugin.SharedApiPlugin;
 import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
 import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.common.sender.TestSender;
@@ -27,44 +30,42 @@ import java.util.logging.Logger;
 
 public class TestPlugin implements ApiPlugin {
 
-    private final DependencyManager manager;
     private final EServer server;
     private final Random random = new Random();
     private final PluginLogger logger = new JavaPluginLogger(Logger.getLogger("Test-Plugin"));
-    private final PluginTranslator translator;
     private boolean enabled = true;
-    private final ParserRegistry registry;
+    private final BaseApiPlugin baseApiPlugin;
     private final TestSchedularAdapter adapter;
 
     public TestPlugin(EServer server) {
         this.server = server;
-        this.manager = new SimpleDependencyManager(this);
-        this.translator = new PluginTranslator(this,"en.yml");
-        this.registry = new SimpleParserRegistry();
-
-        this.registry.registerParser(Sender.class, ArgumentParsers.SENDER_PARSER(server));
         this.adapter = new TestSchedularAdapter();
+        //a little dodgy but doesnt really matter
+        this.baseApiPlugin = new SharedApiPlugin(this);
+        this.baseApiPlugin.registerParser(Sender.class, ArgumentParsers.SENDER_PARSER(server));
+        this.baseApiPlugin.registerParser(TestEnum.class,ArgumentParsers.TEST_PARSER());
     }
 
     @Override
     public void registerDependency(@NotNull String name, boolean required) {
-        manager.registerDependency(name,required);
+        baseApiPlugin.registerDependency(name,required);
     }
 
     @Nullable
     @Override
     public Dependency getDependency(@NotNull String name) {
-        return manager.getDependency(name);
+        return baseApiPlugin.getDependency(name);
     }
 
     @Override
     public boolean hasDependency(@NotNull String name) {
-        return manager.hasDependency(name);
+        return baseApiPlugin.hasDependency(name);
     }
 
+    @NotNull
     @Override
     public Set<String> getDependencies() {
-        return manager.getDependencies();
+        return baseApiPlugin.getDependencies();
     }
 
     @NotNull
@@ -157,7 +158,7 @@ public class TestPlugin implements ApiPlugin {
 
     @Override
     public PluginTranslator getTranslator() {
-        return translator;
+        return baseApiPlugin.getTranslator();
     }
 
     @Override
@@ -171,23 +172,38 @@ public class TestPlugin implements ApiPlugin {
     }
 
     @Override
+    public void cacheRunning(RunningAnimation<?> animation) {
+        baseApiPlugin.cacheRunning(animation);
+    }
+
+    @Override
+    public Collection<RunningAnimation<?>> getCachedRunning() {
+        return baseApiPlugin.getCachedRunning();
+    }
+
+    @Override
+    public void removeCachedRunning(RunningAnimation<?> animation) {
+        baseApiPlugin.removeCachedRunning(animation);
+    }
+
+    @Override
     public void registerCommand(@NotNull Command command, @NotNull String... names) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public <T> void registerParser(@NotNull Class<T> clazz, @NotNull ArgumentParser<T> parser) {
-        registry.registerParser(clazz,parser);
+        baseApiPlugin.registerParser(clazz,parser);
     }
 
     @NotNull
     @Override
     public <T> Collection<ArgumentParser<T>> getParser(@NotNull Class<T> clazz) {
-        return registry.getParser(clazz);
+        return baseApiPlugin.getParser(clazz);
     }
 
     @Override
     public <T> void clearParsers(@NotNull Class<T> clazz) {
-        this.registry.clearParsers(clazz);
+        baseApiPlugin.clearParsers(clazz);
     }
 }

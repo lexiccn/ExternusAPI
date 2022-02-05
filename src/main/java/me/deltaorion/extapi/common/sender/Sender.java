@@ -37,6 +37,10 @@ public interface Sender {
 
     boolean isConsole();
 
+    /**
+     *
+     * @return whether the sender is online.
+     */
     boolean isValid();
 
     boolean isOP();

@@ -153,6 +153,7 @@ public class MinecraftAnimation<T,S> {
         synchronized (this.runningAnimations) {
             this.runningAnimations.add(animation);
         }
+        plugin.cacheRunning(animation);
         return animation;
     }
 
@@ -222,6 +223,7 @@ public class MinecraftAnimation<T,S> {
         synchronized (runningAnimations) {
             runningAnimations.remove(animation);
         }
+        plugin.removeCachedRunning(animation);
     }
 
     public String toString() {

@@ -23,10 +23,11 @@ public interface AnimationRenderer<T,S> {
     /**
      * Render the object stored in the frame to the given screen.
      *
+     * @param animation The animation that is currently rendering this frame
      * @param frame The frame to render
      * @param screen The screen to render to
      */
-    public void render(@NotNull MinecraftFrame<T> frame, @Nullable S screen);
+    public void render(@NotNull RunningAnimation<S> animation, @NotNull MinecraftFrame<T> frame, @NotNull S screen);
 
     /**
      * Create a new copy of the animation renderer. This should not clone the current renderer but should rather

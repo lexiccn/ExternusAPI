@@ -10,7 +10,6 @@ import me.deltaorion.extapi.common.server.BukkitServer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +23,7 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
     @NotNull private final AnimationRenderer<T,S> renderer;
     @Nullable private SchedulerTask task;
     @Nullable private MinecraftFrame<T> currentFrame = null;
+    private boolean paused = false;
     private boolean cancelled = false;
     private final long taskId;
     private int timeElapsed = 0;
@@ -53,7 +53,17 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
             return;
 
         this.running = true;
-        plugin.getScheduler().runTaskTimer(this,0L,BukkitServer.MILLIS_PER_TICK, TimeUnit.MILLISECONDS);
+        this.task = plugin.getScheduler().runTaskTimer(this,0L,BukkitServer.MILLIS_PER_TICK, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public void pause() {
+        this.paused = true;
+    }
+
+    @Override
+    public void play() {
+        this.paused = false;
     }
 
     @Override
@@ -94,7 +104,7 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
 
                 for (S screen : getScreens()) {
                     try {
-                        renderer.render(Objects.requireNonNull(currentFrame), screen);
+                        renderer.render(this,Objects.requireNonNull(currentFrame), screen);
                     } catch (Throwable e) {
                         throw new AnimationException("An error occurred when running the animation on frame '" + currentFrame + "' rendering to screen '" + screen + "'", e);
                     }
@@ -107,7 +117,9 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
                 currentFrame = frameIterator.next();
             } while (toTicks(currentFrame.getTime())==0);
         } else {
-            timeElapsed++;
+            if(!paused) {
+                timeElapsed++;
+            }
         }
     }
 
@@ -117,7 +129,7 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
 
     private void stop() {
         this.running = false;
-
+        this.timeElapsed = 0;
         if(this.task!=null) {
             this.task.cancel();
         }

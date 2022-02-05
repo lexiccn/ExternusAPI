@@ -11,7 +11,9 @@ import me.deltaorion.extapi.test.TestServer;
 import me.deltaorion.extapi.test.animation.LoggingAnimation;
 import me.deltaorion.extapi.test.animation.StateAnimationTest;
 import me.deltaorion.extapi.test.animation.TestAnimation;
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Scoreboard;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
@@ -31,11 +33,20 @@ public class Main {
     public static Main main = new Main();
 
     public static void main(String[] args) {
-        try {
+        String title = "Hello World";
+        for(int i=0;i<title.length();i++) {
+            String splitA = title.substring(0,i);
+            String letter = title.substring(i,i+1);
+            String splitB = title.substring(i+1);
+            System.out.println("First: " + splitA);
+            System.out.println("Letter: " + letter);
+            System.out.println("Finish: "+ splitB);
+        }
+        /*try {
             main.run();
         } catch (URISyntaxException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public void run() throws URISyntaxException {
@@ -174,6 +185,4 @@ public class Main {
             e.printStackTrace();
         }
     }
-
-
 }

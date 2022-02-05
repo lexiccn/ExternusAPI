@@ -9,13 +9,10 @@ import me.deltaorion.extapi.test.cmd.locale.LocaleTestBukkit;
 import me.deltaorion.extapi.test.cmd.playerparse.PlayerParseCommand;
 import me.deltaorion.extapi.test.cmd.sender.SenderTest;
 import me.deltaorion.extapi.test.cmd.server.ServerTest;
-import me.deltaorion.extapi.test.unit.EMaterialTest;
-import me.deltaorion.extapi.test.unit.LocaleTest;
+import me.deltaorion.extapi.test.unit.*;
 import me.deltaorion.extapi.test.unit.generic.McTestTest;
 import me.deltaorion.extapi.test.unit.generic.McTester;
 import me.deltaorion.extapi.test.cmd.version.VersionTest;
-import me.deltaorion.extapi.test.unit.ArgTest;
-import me.deltaorion.extapi.test.unit.CustomItemTest;
 
 public final class ExtAPI extends BukkitPlugin {
 
@@ -38,6 +35,7 @@ public final class ExtAPI extends BukkitPlugin {
         registerCommand(new CustomItemTestCommand(this),"citest");
         registerCommand(new FailCommand(),"failcommand");
         registerCommand(new AnimationTest(this),"animationtest");
+        registerCommand(new ScoreboardTest(this),"scoreboardtest");
 
         getPluginLogger().info("This should work!");
 
@@ -53,6 +51,7 @@ public final class ExtAPI extends BukkitPlugin {
         tester.addTest(new CustomItemTest(this));
         tester.addTest(new LocaleTest(this));
         tester.addTest(new EMaterialTest());
+        tester.addTest(new ScoreboardingTest(this));
     }
 
     @Override

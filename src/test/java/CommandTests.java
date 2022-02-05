@@ -134,7 +134,7 @@ public class CommandTests {
         });
 
         TestEnum testEnum = pass.parseOrDefault(TestEnum.class,null);
-        TestEnum testEnum2 = fail.parseOrDefault(TestEnum.class,null);
+        TestEnum testEnum2 = plug.parseOrDefault(TestEnum.class,null);
         assertEquals(TestEnum.HELLO,testEnum);
         assertNull(testEnum2);
         plugin.registerParser(TestEnum.class, new ArgumentParser<TestEnum>() {

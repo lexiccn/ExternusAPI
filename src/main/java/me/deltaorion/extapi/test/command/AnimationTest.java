@@ -2,6 +2,7 @@ package me.deltaorion.extapi.test.command;
 
 import me.deltaorion.extapi.animation.MinecraftAnimation;
 import me.deltaorion.extapi.animation.MinecraftFrame;
+import me.deltaorion.extapi.animation.RunningAnimation;
 import me.deltaorion.extapi.animation.factory.AnimationFactories;
 import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.command.FunctionalCommand;
@@ -25,7 +26,7 @@ public class AnimationTest extends FunctionalCommand {
         super(NO_PERMISSION);
         animation = new MinecraftAnimation<>(
                 plugin,
-                AnimationFactories.SCHEDULE_ASYNC(),
+                AnimationFactories.SYNC_BUKKIT(),
                 new CobbleLineAnimation(plugin)
         );
         animation2 = new MinecraftAnimation<>(
@@ -45,6 +46,20 @@ public class AnimationTest extends FunctionalCommand {
         if(command.getArgOrBlank(0).asString().equalsIgnoreCase("cancel")) {
             animation.stopAll();
             animation2.stopAll();
+            return;
+        }
+
+        if(command.getArgOrBlank(0).asString().equalsIgnoreCase("pause")) {
+            for(RunningAnimation<?> animation : animation.getCurrentlyRunning()) {
+                animation.pause();
+            }
+            return;
+        }
+
+        if(command.getArgOrBlank(0).asString().equalsIgnoreCase("play")) {
+            for(RunningAnimation<?> animation : animation.getCurrentlyRunning()) {
+                animation.play();
+            }
             return;
         }
 

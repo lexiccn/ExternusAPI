@@ -8,7 +8,6 @@ import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.common.scheduler.SchedulerTask;
 import net.jcip.annotations.GuardedBy;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -25,8 +24,11 @@ public class ScheduleAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation
     @NotNull private final AnimationRenderer<T,S> renderer;
     @GuardedBy("this") private volatile boolean running;
     @GuardedBy("this") private volatile boolean cancelled = false;
-    @Nullable private CountDownLatch pauseLatch = null;
-    @GuardedBy("this") private boolean paused = false;
+    @NotNull private CountDownLatch pauseLatch = new CountDownLatch(1);
+    @NotNull private final Object pauseLock = new Object();
+    @GuardedBy("this") private volatile boolean paused = false;
+    @NotNull private final Object runningLock = new Object();
+    @GuardedBy("this") private boolean executing = false;
     private final long taskID;
 
     public ScheduleAsyncRunningAnimation(@NotNull MinecraftAnimation<T, S> animation, @NotNull ApiPlugin plugin, @NotNull AnimationRenderer<T, S> renderer, long taskID) {
@@ -46,6 +48,14 @@ public class ScheduleAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation
                 return;
             //do not cancel if it is not running
             this.cancelled = true;
+            forcePlay();
+            synchronized (runningLock) {
+                if(!this.executing && running) {
+                    //halting will delete the task from existence
+                    halt();
+                    stop();
+                }
+            }
         }
     }
 
@@ -80,6 +90,50 @@ public class ScheduleAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation
     }
 
     @Override
+    public void pause() {
+        synchronized (this) {
+            //if the animation has been cancelled then do nothing
+            if(this.cancelled)
+                return;
+        }
+        synchronized (pauseLock) {
+            if(this.paused)
+                return;
+
+            paused = true;
+            pauseLatch = new CountDownLatch(1);
+        }
+
+    }
+
+    @Override
+    public void play() {
+        synchronized (this) {
+            if(this.cancelled || !this.running)
+                return;
+        }
+        forcePlay();
+    }
+
+    private void forcePlay() {
+        synchronized (pauseLock) {
+            if(!paused)
+                return;
+
+            this.paused = false;
+            if(this.pauseLatch.getCount()>0) {
+                pauseLatch.countDown();
+            }
+        }
+    }
+
+    private boolean isPaused() {
+        synchronized (pauseLock) {
+            return this.paused;
+        }
+    }
+
+    @Override
     public String toString() {
         return com.google.common.base.Objects.toStringHelper(this)
                 .add("Task",taskID)
@@ -94,6 +148,7 @@ public class ScheduleAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation
         synchronized (this) {
             this.running = false;
             this.currentTask.set(null);
+            this.executing = false;
         }
         //drop the lock before cleanup
         boolean restart = false;
@@ -127,9 +182,8 @@ public class ScheduleAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation
             this.running = true;
         }
 
-        if(this.cancelled || Thread.currentThread().isInterrupted()) {
-            stop();
-            return;
+        synchronized (runningLock) {
+            this.executing = true;
         }
 
         if(!frameIterator.hasNext()) {
@@ -137,9 +191,16 @@ public class ScheduleAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation
             return;
         }
 
+        if(this.cancelled || Thread.currentThread().isInterrupted()) {
+            stop();
+            return;
+        }
+
+        synchronized (runningLock) {
+            this.executing = false;
+        }
+
         MinecraftFrame<T> frame = frameIterator.next();
-
-
         this.currentTask.set(plugin.getScheduler().runTaskLaterAsynchronously(new AnimationRunnable<>(
                 frame,
                 animation,
@@ -179,21 +240,20 @@ public class ScheduleAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation
 
             MinecraftFrame<T> frame = this.frame;
 
+            synchronized (runningAnimation.runningLock) {
+                runningAnimation.executing = true;
+            }
+
             do {
                 //check for any kind of cancellation before rendering the next frames
-                if (Thread.currentThread().isInterrupted()) {
-                    runningAnimation.stop();
-                    return;
-                }
-
-                if (!runningAnimation.running || runningAnimation.cancelled) {
+                if (!runningAnimation.running || runningAnimation.cancelled || Thread.currentThread().isInterrupted()) {
                     runningAnimation.stop();
                     return;
                 }
 
                 for (S screen : runningAnimation.getScreens()) {
                     try {
-                        runningAnimation.renderer.render(Objects.requireNonNull(frame), screen);
+                        runningAnimation.renderer.render(runningAnimation,Objects.requireNonNull(frame), screen);
                     } catch (Throwable e) {
                         throw new AnimationException("An error occurred whilst attempting to render this animation on frame '" + frame + "' on screen '" + screen + "'", e);
                     }
@@ -208,9 +268,23 @@ public class ScheduleAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation
             } while (frame.getTime() == 0);
 
             //check before scheduling next task
+            if(runningAnimation.isPaused()) {
+                try {
+                    runningAnimation.pauseLatch.await();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    runningAnimation.stop();
+                    return;
+                }
+            }
+
             if (!runningAnimation.running || runningAnimation.cancelled) {
                 runningAnimation.stop();
                 return;
+            }
+
+            synchronized (runningAnimation.runningLock) {
+                runningAnimation.executing = false;
             }
 
             runningAnimation.currentTask.set(plugin.getScheduler().runTaskLaterAsynchronously(new AnimationRunnable<>(

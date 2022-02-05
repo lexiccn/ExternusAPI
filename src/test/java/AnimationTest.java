@@ -105,6 +105,8 @@ public class AnimationTest {
             animation.addFrame(new MinecraftFrame<>("Gamer",10));
         }
         RunningAnimation<List<String>> runningAnimation = animation.start(screenA);
+        assertEquals(1,plugin.getCachedRunning().size());
+        assertEquals(1,animation.getCurrentlyRunning().size());
         animation.getFrameLatch().await();
         //1 frame have passed, the animation must be alive
         assertTrue(runningAnimation.isRunning());
@@ -138,7 +140,9 @@ public class AnimationTest {
         //double check that none of them did anything
         assertEquals(size,screenA.size());
         assertEquals(size2,screenB.size());
+
         assertEquals(0,animation.getCurrentlyRunning().size());
+        assertEquals(0,plugin.getCachedRunning().size());
     }
 
     private void testScreens(TestAnimation animation) {

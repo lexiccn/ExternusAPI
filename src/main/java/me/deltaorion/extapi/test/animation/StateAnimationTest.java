@@ -28,7 +28,7 @@ public class StateAnimationTest extends MinecraftAnimation<String, List<String>>
         }
 
         @Override
-        public void render(@NotNull MinecraftFrame<String> frame, List<String> screen) {
+        public void render(@NotNull RunningAnimation<List<String>> animation, @NotNull MinecraftFrame<String> frame, @NotNull List<String> screen) {
 
             if(frame.getObject()==null)
                 throw new NullPointerException();

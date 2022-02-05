@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.common.plugin;
 
+import me.deltaorion.extapi.animation.RunningAnimation;
 import me.deltaorion.extapi.command.Command;
 import me.deltaorion.extapi.command.parser.ArgumentParser;
 import me.deltaorion.extapi.command.implementation.BungeeCommand;
@@ -96,6 +97,21 @@ public class BungeePlugin extends Plugin implements ApiPlugin {
 
     @Override
     public void onPluginEnable() { }
+
+    @Override
+    public void cacheRunning(RunningAnimation<?> animation) {
+        this.plugin.cacheRunning(animation);
+    }
+
+    @Override
+    public Collection<RunningAnimation<?>> getCachedRunning() {
+        return plugin.getCachedRunning();
+    }
+
+    @Override
+    public void removeCachedRunning(RunningAnimation<?> animation) {
+        plugin.removeCachedRunning(animation);
+    }
 
     @Override
     public void registerCommand(@NotNull Command command, @NotNull String... names) {

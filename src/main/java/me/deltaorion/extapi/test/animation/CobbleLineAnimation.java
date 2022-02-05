@@ -4,9 +4,11 @@ import me.deltaorion.extapi.animation.AnimationRenderer;
 import me.deltaorion.extapi.animation.MinecraftFrame;
 import me.deltaorion.extapi.animation.RunningAnimation;
 import me.deltaorion.extapi.common.plugin.EPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.plugin.IllegalPluginAccessException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +28,7 @@ public class CobbleLineAnimation implements AnimationRenderer<PolarVector, Locat
     private PolarVector previous = null;
 
     @Override
-    public void render(@NotNull MinecraftFrame<PolarVector> frame, Location screen) {
+    public void render(@NotNull RunningAnimation<Location> animation , @NotNull MinecraftFrame<PolarVector> frame, @NotNull Location screen) {
         if (frame.getObject() == null)
             throw new NullPointerException();
 
@@ -42,14 +44,20 @@ public class CobbleLineAnimation implements AnimationRenderer<PolarVector, Locat
 
     private void completeDraw() {
         List<LocationSet> deepCopy = new ArrayList<>(toSet);
-        plugin.getScheduler().scheduleSyncDelayedTask(new Runnable() {
-            @Override
-            public void run() {
-                for (LocationSet set : deepCopy) {
-                    set.location.getWorld().getBlockAt(set.location).setType(set.material);
-                }
+        if(Bukkit.isPrimaryThread()) {
+            for (LocationSet set : deepCopy) {
+                set.location.getWorld().getBlockAt(set.location).setType(set.material);
             }
-        });
+        } else {
+            plugin.getScheduler().scheduleSyncDelayedTask(new Runnable() {
+                @Override
+                public void run() {
+                    for (LocationSet set : deepCopy) {
+                        set.location.getWorld().getBlockAt(set.location).setType(set.material);
+                    }
+                }
+            });
+        }
         toSet.clear();
     }
 
@@ -102,13 +110,17 @@ public class CobbleLineAnimation implements AnimationRenderer<PolarVector, Locat
 
     @Override
     public boolean beforeCompletion(@NotNull RunningAnimation<Location> animation) {
-        System.out.println("Before Completion");
         for(Location screen : animation.getScreens()) {
             if(previous!=null) {
                 draw(previous, screen, Material.AIR);
             }
         }
-        completeDraw();
+
+        try {
+            completeDraw();
+        } catch (IllegalPluginAccessException ignored) {
+
+        }
         previous=null;
         return true;
     }
