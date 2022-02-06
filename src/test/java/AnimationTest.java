@@ -1,3 +1,4 @@
+import com.google.common.collect.ImmutableList;
 import me.deltaorion.extapi.animation.MinecraftFrame;
 import me.deltaorion.extapi.animation.RunningAnimation;
 import me.deltaorion.extapi.animation.factory.AnimationFactories;
@@ -11,9 +12,11 @@ import org.junit.Test;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
+import java.util.function.Supplier;
 
 import static org.junit.Assert.*;
 
@@ -161,6 +164,21 @@ public class AnimationTest {
         sTest.addScreen(screenA);
         sTest.addScreen(screenB);
         assertEquals(2,sTest.getScreens().size());
+        sTest.setScreenFunction(new Supplier<Collection<List<String>>>() {
+            @Override
+            public Collection<List<String>> get() {
+                List<String> screen = new ArrayList<>();
+                screen.add("hi");
+                return ImmutableList.of(screen);
+            }
+        });
+        assertEquals(1,sTest.getScreens().size());
+        for(List<String> screen : sTest.getScreens()) {
+            assertEquals(ImmutableList.of("hi"),screen);
+        }
+        sTest.removeScreenFunction();
+        assertEquals(0,sTest.getScreens().size());
+
         try {
             animation.getFinishLatch().await();
         } catch (InterruptedException e) {
@@ -207,6 +225,7 @@ public class AnimationTest {
             }
             assertEquals(size, screenA.size()); //make sure we get no extras lol
         }
+
         assertEquals(0,stateAnimationTest.getCurrentlyRunning().size());
     }
 

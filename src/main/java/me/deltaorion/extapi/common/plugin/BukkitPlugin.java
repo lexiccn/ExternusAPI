@@ -1,7 +1,7 @@
 package me.deltaorion.extapi.common.plugin;
 
 import me.deltaorion.extapi.animation.RunningAnimation;
-import me.deltaorion.extapi.bukkit.BukkitPlayerManager;
+import me.deltaorion.extapi.display.bukkit.BukkitPlayerManager;
 import me.deltaorion.extapi.command.Command;
 import me.deltaorion.extapi.command.parser.ArgumentParser;
 import me.deltaorion.extapi.command.parser.ArgumentParsers;
@@ -18,7 +18,6 @@ import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.common.thread.ErrorReportingThreadPool;
 import me.deltaorion.extapi.item.custom.CustomItemManager;
 import me.deltaorion.extapi.locale.translator.PluginTranslator;
-import org.apache.commons.lang.reflect.FieldUtils;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Objects;

@@ -98,4 +98,13 @@ public class TestSender implements Sender {
     public Locale getLocale() {
         return locale;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof TestSender))
+            return false;
+
+        TestSender sender = (TestSender) o;
+        return sender.uuid.equals(this.uuid) && sender.isConsole == this.isConsole;
+    }
 }

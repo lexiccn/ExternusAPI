@@ -1,8 +1,9 @@
-package me.deltaorion.extapi.bukkit;
+package me.deltaorion.extapi.display.bukkit;
 
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.display.scoreboard.EScoreboard;
+import me.deltaorion.extapi.display.scoreboard.WrapperScoreboard;
 import me.deltaorion.extapi.locale.message.Message;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -117,5 +118,13 @@ public class BukkitApiPlayer implements Sender {
     @NotNull
     public Player getPlayer() {
         return player;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof BukkitApiPlayer))
+            return false;
+
+        return ((BukkitApiPlayer) o).getPlayer().getUniqueId().equals(this.player.getUniqueId());
     }
 }

@@ -100,4 +100,13 @@ public class BukkitSenderInfo implements SenderInfo {
                 .add("op",isOP())
                 .add("locale",getLocale()).toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof BukkitSenderInfo))
+            return false;
+
+        BukkitSenderInfo senderInfo = (BukkitSenderInfo) o;
+        return senderInfo.getUniqueId().equals(this.getUniqueId()) && senderInfo.isConsole() == this.isConsole();
+    }
 }

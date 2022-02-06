@@ -3,7 +3,7 @@ package me.deltaorion.extapi.test.animation;
 import me.deltaorion.extapi.animation.AnimationRenderer;
 import me.deltaorion.extapi.animation.MinecraftFrame;
 import me.deltaorion.extapi.animation.RunningAnimation;
-import me.deltaorion.extapi.bukkit.BukkitApiPlayer;
+import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

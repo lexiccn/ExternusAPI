@@ -3,6 +3,7 @@ package me.deltaorion.extapi.locale.message;
 import me.deltaorion.extapi.common.server.EServer;
 import net.jcip.annotations.GuardedBy;
 import org.bukkit.ChatColor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -12,7 +13,7 @@ public class Message {
 
     public final static String PLACEHOLDER = "%s";
     private final List<MessageComponent> composition;
-    @Nullable @GuardedBy("this") private Object[] defaultArgs;
+    @Nullable @GuardedBy("this") private String[] defaultArgs;
 
     private Message(MessageComponent... components) {
         List<MessageComponent> temp = new ArrayList<>(Arrays.asList(components));
@@ -21,9 +22,9 @@ public class Message {
 
     private Message(Builder builder) {
         this.composition = Collections.unmodifiableList(builder.components);
-        defaultArgs = new Object[builder.defArgs.size()];
+        defaultArgs = new String[builder.defArgs.size()];
         for(int i=0;i<builder.defArgs.size();i++) {
-            defaultArgs[i] = builder.defArgs.get(i);
+            defaultArgs[i] = String.valueOf(builder .defArgs.get(i));
         }
     }
 
@@ -85,18 +86,25 @@ public class Message {
     }
 
     public synchronized void setDefaults(@Nullable Object... defaultArgs) {
-        this.defaultArgs = defaultArgs;
+        if(defaultArgs==null) {
+            this.defaultArgs = null;
+        } else {
+            this.defaultArgs = new String[defaultArgs.length];
+            for(int i=0;i<defaultArgs.length;i++) {
+                this.defaultArgs[i] = String.valueOf(defaultArgs[i]);
+            }
+        }
     }
 
-    private String substitutePlaceHolders(String rendered, Object... args) {
+    private String substitutePlaceHolders(@NotNull String rendered, Object... args) {
         StringBuilder fin = new StringBuilder();
         int i = 0;
         int objCount = 0;
-        Object[] defArgs;
+        String[] defArgs;
         synchronized (this) {
             defArgs = this.defaultArgs;
         }
-
+        
         while(i<rendered.length()-PLACEHOLDER.length()+1) {
             boolean placeholder = isPlaceHolder(rendered,PLACEHOLDER,i);
 
@@ -122,9 +130,9 @@ public class Message {
         return fin.toString();
     }
 
-    private Object getArg(int objCount, Object[] args, Object[] defaultArgs) {
+    private String getArg(int objCount, Object[] args, String[] defaultArgs) {
         if (objCount < args.length) {
-            return args[objCount];
+            return String.valueOf(args[objCount]);
         } else {
             if (defaultArgs != null) {
                 if (objCount < defaultArgs.length) {
@@ -146,7 +154,24 @@ public class Message {
         return true;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof Message))
+            return false;
 
+        Message message = (Message) o;
+        if(message.composition.size()!=this.composition.size())
+            return false;
+
+        for(int i=0;i<composition.size();i++) {
+            MessageComponent component = composition.get(i);
+            if(!component.equals(message.composition.get(i))) {
+                return false;
+            }
+        }
+
+        return Arrays.equals(this.defaultArgs, message.defaultArgs);
+    }
 
     public static class Builder {
         private final List<MessageComponent> components;

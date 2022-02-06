@@ -12,8 +12,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class LocaleTests {
 
@@ -51,7 +50,7 @@ public class LocaleTests {
 
         Message nullable = Message.valueOf("Insert %s Null");
         String a = null;
-        assertEquals(nullable.toString(a),"Insert %s Null");
+        assertEquals("Insert null Null",nullable.toString(a));
 
         Message end = Message.valueOf("Gamer%s");
         assertEquals(end.toString("s"),"Gamers");
@@ -64,6 +63,28 @@ public class LocaleTests {
         assertEquals(translatable.toString(Translator.parseLocale("en_PT")),"Ahoy There Mateys");
         assertEquals(translatable.toString(Locale.FRANCE),"Bonjour");
         assertEquals(translatable.toString(Locale.CANADA_FRENCH),"Bonjour");
+
+        Message trick = Message.valueOf("Gamer%rs Unite");
+        assertEquals("Gamer%rs Unite",trick.toString("otij"));
+
+        Message trick2 = Message.valueOf("Gamer%ss Unite");
+        assertEquals("Gamerrs Unite",trick2.toString("r"));
+
+        Message trick3 = Message.valueOf("Gamer%Ss Unite");
+        assertEquals("Gamer%Ss Unite",trick3.toString("r"));
+
+        Message trick4 = Message.valueOf("Gamer% s Unite");
+        assertEquals("Gamer% s Unite",trick4.toString("reoijgr"));
+
+        Message trick5 = Message.valueOf("Gamer%%s Unite");
+        assertEquals("Gamer%s Unite",trick5.toString("s"));
+
+        Message trick6 = Message.valueOf("Gamer%%s Unite");
+        assertEquals("Gamer%%s Unite",trick6.toString("%s"));
+
+        Message trick7 = Message.valueOf("%s%s%s%ss%%%ss%s");
+        assertEquals("%s%s%s%ss%%%ss%s",trick7.toString("%s","%s","%s","%s","%s","%s","%s"));
+        assertEquals("3333s%%3s3",trick7.toString(3,3,3,3,3,3,3,3,3,3,3));
 
         Message everything = Message.valueOfBuilder(builder -> {
             builder.appendTranslatable("hello")
@@ -88,5 +109,52 @@ public class LocaleTests {
 
         assertEquals(everything.toString("abc"),"Hello World §e abc 7.5 b §0 Gamer");
         assertEquals(everything.toString("a.b","bc","e"),"Hello World §e a.b bc e §0 Gamer");
+    }
+
+    @Test
+    public void testEquals() {
+        Message message = Message.valueOf("");
+        Message copy = Message.valueOf("");
+        assertEquals(message, message);
+        assertEquals(message,copy);
+
+        Message integer = Message.valueOf(3);
+        assertEquals(integer,integer);
+        assertEquals(integer,Message.valueOf(3));
+
+        Message stringify = Message.valueOf("hello");
+        Message translatable = Message.valueOfTranslatable("hello");
+
+        assertNotSame(stringify,translatable);
+        assertNotSame(message,integer);
+        assertEquals(translatable,translatable);
+        assertEquals(translatable,Message.valueOfTranslatable("hello"));
+
+        copy.setDefaults("Gamer");
+        assertNotSame(copy,message);
+
+        Message builder = Message.valueOfBuilder(builder1 -> {
+            builder1.append(3)
+                    .append("gamer")
+                    .appendTranslatable("hello");
+        });
+
+        Message copyBuilder = Message.valueOfBuilder(builder1 -> {
+            builder1.append(3)
+                    .append("gamer")
+                    .appendTranslatable("hello");
+        });
+
+        Message notCopyBuilder = Message.valueOfBuilder(builder1 -> {
+            builder1.append(4)
+                    .append("gamer")
+                    .appendTranslatable("hello");
+        });
+
+        assertEquals(builder,copyBuilder);
+        assertNotSame(copyBuilder,notCopyBuilder);
+        copyBuilder.setDefaults("gamer");
+        assertNotSame(builder,copyBuilder);
+
     }
 }

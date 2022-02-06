@@ -8,13 +8,17 @@ import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.command.FunctionalCommand;
 import me.deltaorion.extapi.command.sent.SentCommand;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
-import me.deltaorion.extapi.display.scoreboard.EScoreboard;
+import me.deltaorion.extapi.display.scoreboard.WrapperScoreboard;
 import me.deltaorion.extapi.locale.message.Message;
 import me.deltaorion.extapi.test.animation.ScoreboardAnimation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.function.Supplier;
 
 public class ScoreboardTest extends FunctionalCommand {
 
@@ -27,7 +31,7 @@ public class ScoreboardTest extends FunctionalCommand {
         this.plugin = plugin;
     }
 
-    private EScoreboard scoreboard;
+    private WrapperScoreboard scoreboard;
 
     @Override
     public void commandLogic(SentCommand command) throws CommandException {
@@ -57,7 +61,7 @@ public class ScoreboardTest extends FunctionalCommand {
         }
 
         if(scoreboard==null) {
-            scoreboard = new EScoreboard(scoreboardName, plugin, 3);
+            scoreboard = new WrapperScoreboard(scoreboardName, plugin, 3);
             final String title = "Hello World";
             scoreboard.setTitle(ChatColor.WHITE + "" + ChatColor.BOLD + title);
             scoreboard.setLine(ChatColor.GRAY + "Test Server", 0);
@@ -79,7 +83,12 @@ public class ScoreboardTest extends FunctionalCommand {
                 animation.addFrame(new MinecraftFrame<>(entry,400));
             }
             animation.addFrame(new MinecraftFrame<>(altColor + title,400));
-            this.runningAnimation = animation.start(player);
+            this.runningAnimation = animation.start(new Supplier<Collection<Player>>() {
+                @Override
+                public Collection<Player> get() {
+                    return new ArrayList<>(plugin.getServer().getOnlinePlayers());
+                }
+            });
         }
     }
 }

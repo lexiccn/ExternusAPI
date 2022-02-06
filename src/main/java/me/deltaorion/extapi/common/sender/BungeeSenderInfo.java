@@ -91,4 +91,13 @@ public class BungeeSenderInfo implements SenderInfo {
                 .add("locale",getLocale()).toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof BungeeSenderInfo))
+            return false;
+
+        BungeeSenderInfo senderInfo = (BungeeSenderInfo) o;
+        return senderInfo.getUniqueId().equals(this.getUniqueId()) && senderInfo.isConsole() == this.isConsole();
+    }
+
 }

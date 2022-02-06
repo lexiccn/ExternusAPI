@@ -1,4 +1,4 @@
-package me.deltaorion.extapi.bukkit;
+package me.deltaorion.extapi.display.bukkit;
 
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import org.bukkit.entity.Player;

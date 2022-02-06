@@ -55,7 +55,7 @@ public class LocaleTest implements MinecraftTest {
 
         Message nullable = Message.valueOf("Insert %s Null");
         String a = null;
-        assertEquals(nullable.toString(a),"Insert %s Null");
+        assertEquals(nullable.toString(a),"Insert null Null");
 
         Message end = Message.valueOf("Gamer%s");
         assertEquals(end.toString("s"),"Gamers");

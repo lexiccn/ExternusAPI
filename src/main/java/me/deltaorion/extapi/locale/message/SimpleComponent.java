@@ -41,4 +41,13 @@ public class SimpleComponent implements MessageComponent {
     public String toString(Locale locale) {
         return component;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof SimpleComponent))
+            return false;
+
+        SimpleComponent component = (SimpleComponent) o;
+        return component.component.equals(this.component);
+    }
 }

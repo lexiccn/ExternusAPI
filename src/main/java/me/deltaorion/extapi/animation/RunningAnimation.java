@@ -1,8 +1,11 @@
 package me.deltaorion.extapi.animation;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * This abstract interface represents an animation that is running. A running animation will play the frames it was loaded
@@ -17,8 +20,10 @@ import java.util.Collection;
  * screens that are currently hooked to this running animation. See more at {@link AnimationRenderer}. One can immediately
  * add screens using {@link MinecraftAnimation#start(Iterable)}
  *
- * Implementations can be found in
- *  - {@link me.deltaorion.extapi.animation.factory.AnimationFactories}
+ * Current Implementations
+ *  - {@link me.deltaorion.extapi.animation.running.ScheduleAsyncRunningAnimation}
+ *  - {@link me.deltaorion.extapi.animation.running.SleepAsyncRunningAnimation}
+ *  - {@link me.deltaorion.extapi.animation.running.SyncBukkitRunningAnimation}
  *
  * @param <S> The screen's type
  */
@@ -48,14 +53,14 @@ public interface RunningAnimation<S> extends Runnable {
     public void start();
 
     /**
-     * Adds a screen to the running animation.
+     * Adds a screen to the running animation. If a screen function is set this will do nothing
      *
      * @param screen The screen to add
      */
     public void addScreen(@NotNull S screen);
 
     /**
-     * Removes the specified screen from the animation
+     * Removes the specified screen from the animation. If a screen function is set this will do nothing.
      *
      * @param screen The screen to remove
      */
@@ -65,6 +70,30 @@ public interface RunningAnimation<S> extends Runnable {
      * Removes all screens from the animation
      */
     public void clearScreens();
+
+
+    /**
+     * Instead of the animation keeping its own list of screen. The animation retrieves its screens
+     * from a predetermined function. This is very useful if you want to avoid memory leaks or managing
+     * the storage of screens on this animation.
+     *
+     * if this is set then
+     *   - the existing list of screens will be cleared
+     *   - no new screens can be added or removed
+     *
+     *  If set to null
+     *    - the screen function will be removed.
+     *    - screens will be retrieved from a list of screens instead
+     *
+     * @param screenFunction the function used to retrieve all the screens
+     */
+    public void setScreenFunction(@Nullable Supplier<Collection<S>> screenFunction);
+
+    default void removeScreenFunction() {
+        setScreenFunction(null);
+    }
+
+    public boolean hasScreenFunction();
 
     /**
      * @return Returns a collection of all the screens that are currently hooked to the animation

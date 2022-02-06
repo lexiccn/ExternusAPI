@@ -18,4 +18,13 @@ public class TranslatableComponent implements MessageComponent {
     public String toString(Locale locale) {
         return Translator.getInstance().translate(location,locale);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof TranslatableComponent))
+            return false;
+
+        TranslatableComponent component = (TranslatableComponent) o;
+        return component.location.equals(this.location);
+    }
 }

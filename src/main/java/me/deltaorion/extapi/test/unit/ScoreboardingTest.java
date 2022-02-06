@@ -2,6 +2,7 @@ package me.deltaorion.extapi.test.unit;
 
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.display.scoreboard.EScoreboard;
+import me.deltaorion.extapi.display.scoreboard.WrapperScoreboard;
 import me.deltaorion.extapi.locale.message.Message;
 import me.deltaorion.extapi.test.unit.generic.McTest;
 import me.deltaorion.extapi.test.unit.generic.MinecraftTest;
@@ -18,8 +19,8 @@ public class ScoreboardingTest implements MinecraftTest {
 
     @McTest
     public void testScoreboard() {
-        EScoreboard scoreboard = new EScoreboard("gamer",plugin,10);
-        assertEquals(10,scoreboard.getLineCount());
+        EScoreboard scoreboard = new WrapperScoreboard("gamer",plugin,10);
+        assertEquals(10,scoreboard.getSize());
         assertEquals("",scoreboard.getTitle().toString());
         assertFalse(scoreboard.isRunning());
 
@@ -64,7 +65,7 @@ public class ScoreboardingTest implements MinecraftTest {
         assertEquals("Gamer 3",scoreboard.getLineFromName("Gamer").toString());
 
         try {
-            new EScoreboard("epwok",plugin,17);
+            new WrapperScoreboard("epwok",plugin,17);
             fail();
         } catch (IllegalStateException e) {
         }
@@ -77,14 +78,14 @@ public class ScoreboardingTest implements MinecraftTest {
         }
 
         try {
-            new EScoreboard("epwok",plugin,-5);
+            new WrapperScoreboard("epwok",plugin,-5);
             fail();
         } catch (IllegalStateException e) {
         }
 
         try {
-            new EScoreboard("wepokf",plugin,0);
-            new EScoreboard("ewopk",plugin,16);
+            new WrapperScoreboard("wepokf",plugin,0);
+            new WrapperScoreboard("ewopk",plugin,16);
         } catch (IllegalStateException e) {
             fail();
         }

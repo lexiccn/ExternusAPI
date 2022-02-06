@@ -1,295 +1,177 @@
 package me.deltaorion.extapi.display.scoreboard;
 
-import com.google.common.base.Preconditions;
-import me.deltaorion.extapi.bukkit.BukkitApiPlayer;
-import me.deltaorion.extapi.common.plugin.BukkitPlugin;
+import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import me.deltaorion.extapi.locale.message.Message;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-
 /**
- * @author RienBijl, DeltaOrion
- * @website https://github.com/RienBijl
+ * A scoreboard is a data structure that represents a panel that is displayed on the side of the users screen. A scoreboard
+ * has
+ *  - A title that can be modified
+ *  - n lines, up to 16
+ *  - Each line can be modified at any time. A line can have up to 32 characters (1.8.8-1.12) or 128 (1.13+) characters
+ *  - Each line is represented by a positional index, i.e its position relative to the top (top line = 0, bottom = n) and
+ *    an optional unique name to identify it.
  *
- * Some work on this class was taken from
- * https://github.com/RienBijl/Scoreboard-revision/blob/53c30cfd740eda28a80710dc9fd69f2d0955337f/src/main/java/rien/bijl/Scoreboard/r/Board/Implementations/Drivers/V1/ScoreboardDriverV1.java#L124
+ *
+ * If using an {@link EScoreboard} over a {@link org.bukkit.scoreboard.Scoreboard} the original scoreboard should not be
+ * mutated or updated.
+ *
+ * Implementations
+ *   - {@link WrapperScoreboard} wraps around a bukkit scoreboard
  */
+public interface EScoreboard {
 
-public class EScoreboard {
+    int LINE_LIMIT = 16; //the amount of lines that can be displayed
 
-    @NotNull private Message title;
-    @NotNull private final Map<Integer,ScoreboardLine> scoreboardLines;
-    @NotNull private final BukkitPlugin plugin;
-    @NotNull private final String name;
-    private final int lines;
+    /**
+     * Mutates the content of a line. If the scoreboard is running, this will update the scoreboard shown to the player. If the scoreboard
+     * is not running, args will be used to set the default args of the message.
+     *
+     * @param content The new content for the line.
+     * @param line The line index to change
+     * @param args Any args that the message requires
+     * @throws ArrayIndexOutOfBoundsException if the line is above the amount of lines this scoreboard hosts
+     */
+    public void setLine(@NotNull Message content, int line, Object... args);
 
-    @Nullable private BukkitApiPlayer player;
-    @Nullable private Objective objective;
-    @Nullable private Scoreboard scoreboard;
+    /**
+     * Mutates the content of a line. If the scoreboard is running, this will update the scoreboard shown to the player.
+     *
+     * @param content The new content for the line.
+     * @param line The line index to change
+     * @throws ArrayIndexOutOfBoundsException if the line is above the amount of lines this scoreboard hosts
+     */
+    public void setLine(@NotNull String content, int line);
 
-    private static final int LINE_LIMIT = 16; //the amount of lines that can be displayed
-    private final int CHARACTER_LIMIT; //the amount of characters per line is double this
+    /**
+     * Mutates the content of a line. If the scoreboard is running, this will update the scoreboard shown to the player.
+     *
+     * @param content The new content for the line.
+     * @param line The line index to change
+     * @param lineName An optional unique name for the line.
+     * @throws ArrayIndexOutOfBoundsException if the line is above the amount of lines this scoreboard hosts
+     * @throws IllegalArgumentException If a line with this line name already exists (unless you are editing the line with that name). Use
+     *         {@link #setLineByName(String, String)} to edit an existing line by name.
+     */
+    public void setLine(@NotNull String content, int line, @Nullable String lineName);
 
-    public EScoreboard(@NotNull String name, @NotNull BukkitPlugin plugin) {
-        this(name,plugin,LINE_LIMIT);
-    }
+    /**
+     * Mutates the content of a line. If the scoreboard is running, this will update the scoreboard shown to the player. If the scoreboard
+     * is not running, args will be used to set the default args of the message.
+     *
+     * @param content The new content for the line.
+     * @param line The line index to change
+     * @param lineName An optional unique name for the line.
+     * @param args Any arguments the message should have
+     * @throws ArrayIndexOutOfBoundsException if the line is above the amount of lines this scoreboard hosts
+     * @throws IllegalArgumentException If a line with this line name already exists (unless you are editing the line with that name). Use
+     *         {@link #setLineByName(String, String)} to edit an existing line by name.
+     */
+    public void setLine(@NotNull Message content, int line, @Nullable String lineName, Object... args);
 
-    public EScoreboard(@NotNull String name, @NotNull BukkitPlugin plugin, int lines) {
-        Preconditions.checkState(lines >=0 && lines<=LINE_LIMIT,"A scoreboard can only have '"+LINE_LIMIT+"' lines");
-        this.lines = lines;
-        this.plugin = plugin;
-        this.scoreboardLines = new HashMap<>();
-        this.title = Message.valueOf("");
-        CHARACTER_LIMIT = getCharacterLimit(plugin);
-        this.name = name;
-    }
+    /**
+     * Mutates the content of a line. If the scoreboard is running, this will update the scoreboard shown to the player. If
+     * a line with the given name does not exist nothing happens.
+     *
+     * @param content The new content for the line.
+     * @param lineName THe name of the line that needs to be changed
+     */
+    public void setLineByName(@NotNull String content, @NotNull String lineName);
 
-    private int getCharacterLimit(BukkitPlugin plugin) {
-        if(plugin.getEServer().getServerVersion().getMajor()>=13) {
-            return 64;
-        } else {
-            return 16;
-        }
-    }
+    /**
+     * Mutates the content of a line. If the scoreboard is running, this will update the scoreboard shown to the player. If
+     * a line with the given name does not exist nothing happens.  If the scoreboard is not running,
+     * args will be used to set the default args of the message.
+     *
+     * @param content The new content for the line.
+     * @param lineName THe name of the line that needs to be changed
+     * @param args any arguments for the message.
+     */
+    public void setLineByName(@NotNull Message content, @NotNull String lineName, Object... args);
 
-    public void setLine(@NotNull Message content, int line, Object... args) {
-        setLine(content,line,null,args);
-    }
-    
-    public void setLine(@NotNull String content, int line) {
-        setLine(Message.valueOf(content),line);
-    }
+    /**
+     * Mutates the line arguments of a message. If the scoreboard is running this will update the scoreboard shown to the player.
+     * This function will set the args of the message with {@link Message#toString(Object...)}
+     *
+     * @param line the positional index of the scoreboard line to mutate
+     * @param args the new arguments for the message
+     * @throws ArrayIndexOutOfBoundsException if the line is above the amount of lines this scoreboard hosts
+     */
+    public void setLineArgs(int line, Object... args);
 
-    public void setLine(@NotNull String content, int line, @Nullable String lineName) {
-        setLine(Message.valueOf(content),line,lineName);
-    }
+    /**
+     * Mutates the line arguments of a message. If the scoreboard is running this will update the scoreboard shown to the player.
+     * This function will set the args of the message with {@link Message#toString(Object...)}. If a scoreboard line does no
+     *
+     * @param lineName the positional index of the scoreboard line to mutate
+     * @param args the new arguments for the message
+     */
+    public void setLineArgs(@NotNull String lineName, Object... args);
 
-    public void setLineByName(@NotNull String content, @NotNull String lineName) {
-        setLineByName(Message.valueOf(content),lineName);
-    }
+    /**
+     * Mutates the scoreboard title. If the scoreboard is running this will update the scoreboard shown to the player.
+     * 
+     * @param title The new title for the scoreboard
+     * @param args The args for the title
+     */
+    public void setTitle(@NotNull Message title, Object... args);
 
-    public void setLineByName(@NotNull Message content, @NotNull String lineName, Object... args) {
-        ScoreboardLine line = getLineByName(lineName);
-        if(line!=null)
-            setLine(content,line.getLine(),lineName,args);
-    }
+    /**
+     * Mutates the scoreboard title. If the scoreboard is running this will update the scoreboard shown to the player. 
+     * 
+     * @param title The new title 
+     */
+    public void setTitle(@NotNull String title);
 
-    public void setLine(@NotNull Message content, int line, @Nullable String lineName, Object... args) {
-        lineValid(line);
-        if(lineName!=null) {
-            ScoreboardLine l = getLineByName(lineName);
-            if(l!=null) {
-                if(l.getLine()!=line)
-                    throw new IllegalArgumentException("Two lines cannot have the same line name. The line name '"+lineName+"' already exists!");
-            }
-        }
-        ScoreboardLine l = new ScoreboardLine(Objects.requireNonNull(content),lineName,line);
-        scoreboardLines.put(line,l);
-        //if should update
-        if(this.player==null) {
-            content.setDefaults(args);
-        } else {
-            updateLine(l,args);
-        }
-    }
+    /**
+     * Starts the scoreboard showing it to a player. This scoreboard will now be 'bound to the player'. When accessing the scoreboard one
+     * should use {@link BukkitApiPlayer#getScoreboard()}. For removing the scoreboard from the player use 
+     * {@link BukkitApiPlayer#setScoreboard(EScoreboard)}
+     * 
+     * @param player the player to bind this scoreboard with.
+     */
+    public void setPlayer(@NotNull Player player);
 
-    public void setLineArgs(int line, Object... args) {
-        lineValid(line);
-        if(this.scoreboardLines.containsKey(line)) {
-            ScoreboardLine sLine = this.scoreboardLines.get(line);
-            if(this.player==null) {
-                sLine.getMessage().setDefaults(line);
-            } else {
-                updateLine(sLine,args);
-            }
-        }
-    }
+    /**
+     *
+     * @param index the positional index of the line to retrieve
+     * @return the message at that line
+     */
+    @NotNull
+    public Message getLineAt(int index);
 
-    public void setLineArgs(@NotNull String lineName, Object... args) {
-        ScoreboardLine sLine = getLineByName(lineName);
-        if(sLine==null)
-            return;
-
-        if(this.player==null) {
-            sLine.getMessage().setDefaults(args);
-        } else {
-            updateLine(sLine, args);
-        }
-    }
-
-    public void setTitle(@NotNull Message title, Object... args) {
-        this.title = title;
-        if(this.objective==null) {
-            title.setDefaults(args);
-        } else {
-            Objects.requireNonNull(player,"Bad Initialisation");
-            this.objective.setDisplayName(title.toString(player.getLocale(),args));
-        }
-    }
-
-    public void setTitle(@NotNull String title) {
-        this.setTitle(Message.valueOf(title));
-    }
-
-    private void updateLine(ScoreboardLine line, Object... args) {
-        Objects.requireNonNull(player);
-        updateLine(line,line.getMessage().toString(player.getLocale(),args));
-    }
-
-    private void updateLine(ScoreboardLine line, String content) {
-        Objects.requireNonNull(scoreboard,"This should not be called unless the scoreboard exists!");
-        Team team = scoreboard.getTeam(line.getTeamName());
-        String[] split = split(content);
-
-        assert team != null;
-
-        team.setPrefix(split[0]);
-        team.setSuffix(split[1]);
-    }
-
-
-    private String[] split(String line) {
-        if (line.length() < CHARACTER_LIMIT) {
-            return new String[]{line, ""};
-        }
-
-        String prefix = line.substring(0, CHARACTER_LIMIT);
-        String suffix = line.substring(CHARACTER_LIMIT);
-
-        if (prefix.endsWith("§")) { // Check if we accidentally cut off a color
-            prefix = removeLastCharacter(prefix);
-            suffix = "§" + suffix;
-        } else if(prefix.contains("§")) { // Are there any colors we need to continue?
-            suffix = ChatColor.getLastColors(prefix) + suffix;
-        } else { // Just make sure the team color doesn't mess up anything
-            suffix = "§f" + suffix;
-        }
-
-        if (suffix.length() > CHARACTER_LIMIT) {
-            suffix = suffix.substring(0, CHARACTER_LIMIT);
-        }
-
-        return new String[]{prefix, suffix};
-    }
-
-    private String removeLastCharacter(String str) {
-        String result = null;
-        if ((str != null) && (str.length() > 0)) {
-            result = str.substring(0, str.length() - 1);
-        }
-        return result;
-    }
-
-
-
-    public void setPlayer(@NotNull Player player) {
-        if(this.player!=null)
-            return;
-
-        this.player = plugin.getBukkitPlayerManager().getPlayer(player);
-        this.scoreboard = Objects.requireNonNull(plugin.getServer().getScoreboardManager().getNewScoreboard());
-        this.objective = Objects.requireNonNull(scoreboard.registerNewObjective(name,"dummy"));
-        this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        this.objective.setDisplayName(title.toString(this.player.getLocale()));
-
-        this.createTeams();
-        this.setBoard();
-    }
-
-    private void setBoard() {
-        Objects.requireNonNull(player,"Bad initialisation");
-        player.getPlayer().setScoreboard(scoreboard);
-        player.setScoreboard(this);
-    }
-
-    private void createTeams() {
-        int score = this.lines;
-
-        Objects.requireNonNull(this.scoreboard,"Bad Initialisation");
-        Objects.requireNonNull(this.objective,"Bad Initialisation");
-
-        for (int i = 0; i < this.lines; i++) {
-            Team t = this.scoreboard.registerNewTeam(ScoreboardLine.getTeamName(i));
-            t.addEntry(ChatColor.values()[i] + "");
-            this.objective.getScore(ChatColor.values()[i] + "").setScore(score);
-            score--;
-        }
-
-        for(ScoreboardLine scoreboardLine : scoreboardLines.values()) {
-            updateLine(scoreboardLine);
-        }
-    }
-
+    /**
+     *
+     * @param name The name of the line to retrieve from
+     * @return null if there is no message with that line or the message with that line name
+     */
     @Nullable
-    private ScoreboardLine getLineByName(@NotNull String lineName) {
-        Objects.requireNonNull(lineName);
-        for(ScoreboardLine scoreboardLine : scoreboardLines.values()) {
-            if(Objects.equals(lineName,scoreboardLine.getName())) {
-                return scoreboardLine;
-            }
-        }
-        return null;
-    }
+    public Message getLineFromName(@NotNull String name);
 
+    /**
+     * @return The scoreboard title
+     */
     @NotNull
-    public Message getLineAt(int index) {
-        lineValid(index);
-        if(scoreboardLines.get(index)==null) {
-            return Message.valueOf("");
-        } else {
-            return scoreboardLines.get(index).getMessage();
-        }
-    }
+    public Message getTitle();
 
-    @Nullable
-    public Message getLineFromName(@NotNull String name) {
-        Objects.requireNonNull(name);
-        ScoreboardLine line = getLineByName(name);
-        if(line==null) {
-            return null;
-        } else {
-            return line.getMessage();
-        }
-    }
+    /**
+     * @return the amount of lines the scoreboard has
+     */
+    public int getSize();
 
+    /**
+     *
+     * @return The name of this scoreboard
+     */
     @NotNull
-    public Message getTitle() {
-        return this.title;
-    }
+    public String getName();
 
-    public int getLineCount() {
-        return this.lines;
-    }
-
-    private void lineValid(int line) {
-        if(line >= 0 && line <= this.lines-1)
-            return;
-
-        throw new ArrayIndexOutOfBoundsException("A scoreboard line number must be >= '0' AND < '"+this.lines+"'");
-    }
-
-    @NotNull
-    public String getName() {
-        return name;
-    }
-
-    public boolean isRunning() {
-        return player!=null;
-    }
-
-    @NotNull
-    public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
-                .add("name",name)
-                .add("running",isRunning())
-                .add("title",title).toString();
-    }
+    /**
+     *
+     * @return Whether the scoreboard is being shown to a player or not.
+     */
+    public boolean isRunning();
 }

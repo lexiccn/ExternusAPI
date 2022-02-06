@@ -7,6 +7,7 @@ import me.deltaorion.extapi.animation.MinecraftFrame;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.scheduler.SchedulerTask;
 import me.deltaorion.extapi.common.server.BukkitServer;
+import net.jcip.annotations.NotThreadSafe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,6 +15,20 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * A sync bukkit running animation is an animation that synchronously runs with the bukkit scheduler.
+ *   - All logic and control is done synchronously
+ *   - All frames are rendered synchronously
+ *   - The animation starts a sync runnable that is called once per tick, the runnable keeps track
+ *     of the elapsed time per frame and renders frames if necessary
+ *   - If the time between this frame and the next is 0, they will be rendered in a loop.
+ *  - This running animation is NOT THREAD SAFE. Although methods can be called off the main thread you should
+ *    take thread safety precautions. This class provides no synchronisation.
+ *
+ * @param <T> The information type for each frame
+ * @param <S> The screen to render the information to
+ */
+@NotThreadSafe
 public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S> {
 
     private boolean running = false;
@@ -83,6 +98,7 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
 
     }
 
+    //this loop is called once per tick
     private void animate() throws AnimationException {
         //init
         if(this.currentFrame==null) {
@@ -93,15 +109,18 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
 
             currentFrame = frameIterator.next();
         }
-
+        //the smallest unit of time is a tick or 50ms. Thus all control should be done using ticks
         long convertedTime = toTicks(currentFrame.getTime());
+        //check if it is time to render a frame
         if(timeElapsed==convertedTime) {
             do {
+                //before rendering frames check if the animation has been cancelled
                 if(!this.running || this.cancelled) {
                     stop();
                     return;
                 }
 
+                //render the frames
                 for (S screen : getScreens()) {
                     try {
                         renderer.render(this,Objects.requireNonNull(currentFrame), screen);
@@ -110,6 +129,7 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
                     }
                 }
                 timeElapsed = 0;
+                //get the next frame
                 if (!frameIterator.hasNext()) {
                     stop();
                     return;
@@ -117,11 +137,14 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
                 currentFrame = frameIterator.next();
             } while (toTicks(currentFrame.getTime())==0);
         } else {
+            //otherwise tell the animation that time has elapsed.
+            //Time cannot elapse if the animation is paused
             if(!paused) {
                 timeElapsed++;
             }
         }
     }
+
 
     private long toTicks(long time) {
         return time / BukkitServer.MILLIS_PER_TICK;
@@ -130,6 +153,7 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
     private void stop() {
         this.running = false;
         this.timeElapsed = 0;
+        //check if we need to restart the animation
         if(this.task!=null) {
             this.task.cancel();
         }
@@ -140,7 +164,7 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
         } catch (Throwable e) {
             plugin.getPluginLogger().severe("An error occurred when attempting to run beforeCompletion",e);
         }
-
+        //you cannot restart if cancelled.
         if(cancelled)
             restart = false;
 

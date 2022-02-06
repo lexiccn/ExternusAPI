@@ -101,4 +101,13 @@ public class SimpleSender implements Sender {
         return Objects.toStringHelper(this)
                 .add("Wrapper",senderInfo).toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof SimpleSender))
+            return false;
+
+        SimpleSender sender = (SimpleSender) o;
+        return sender.senderInfo.equals(senderInfo);
+    }
 }

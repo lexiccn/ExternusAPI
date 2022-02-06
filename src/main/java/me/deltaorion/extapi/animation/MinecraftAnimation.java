@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-
+import java.util.function.Supplier;
 
 
 /**
@@ -103,6 +103,23 @@ public class MinecraftAnimation<T,S> {
     }
 
     /**
+     * Gets and starts a running animation with the given screen function. Instead of the animation storing its own list
+     * of screens, it instead uses a predetermined function to determine how to get the screens. See
+     * {@link RunningAnimation#setScreenFunction(Supplier)}.
+     *
+     * @param screenFunction The function used to get the screens
+     * @return A running animation
+     */
+    @NotNull
+    public RunningAnimation<S> start(@NotNull Supplier<Collection<S>> screenFunction) {
+        RunningAnimation<S> animation = get(screenFunction);
+        animation.start();
+        return animation;
+    }
+
+    @NotNull
+
+    /**
      * Creates a new running animation. This animation will NOT be running. This animation will have NO SCREENS and will thus
      * render nothing. More screens can be added later with {@link RunningAnimation#addScreen(Object)}
      *
@@ -144,11 +161,32 @@ public class MinecraftAnimation<T,S> {
      */
     public RunningAnimation<S> get(@NotNull Iterable<S> screens) {
         Objects.requireNonNull(screens);
-        RunningAnimation<S> animation;
-        animation = factory.get(this,plugin,renderer.copy(),animationCount.getAndIncrement());
+        RunningAnimation<S> animation = getFresh();
         for(S screen : screens) {
             animation.addScreen(screen);
         }
+        return animation;
+    }
+
+    /**
+     * Gets a running animation with the given screen function. Instead of the animation storing its own list
+     * of screens, it instead uses a predetermined function to determine how to get the screens. See
+     * {@link RunningAnimation#setScreenFunction(Supplier)}. The animation will not be running.
+     *
+     * @param screenFunction The function used to get the screens
+     * @return A running animation
+     */
+    @NotNull
+    public RunningAnimation<S> get(@NotNull Supplier<Collection<S>> screenFunction) {
+        Objects.requireNonNull(screenFunction);
+        RunningAnimation<S> animation = getFresh();
+        animation.setScreenFunction(screenFunction);
+        return animation;
+    }
+
+    private RunningAnimation<S> getFresh() {
+        RunningAnimation<S> animation;
+        animation = factory.get(this,plugin,renderer.copy(),animationCount.getAndIncrement());
         //cannot add a running animation is some other manipulation is being executed
         synchronized (this.runningAnimations) {
             this.runningAnimations.add(animation);
