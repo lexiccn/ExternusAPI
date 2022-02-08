@@ -24,6 +24,11 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface EScoreboard {
 
+    /**
+     * TODO
+     *  - Add Scoreboard Builder
+     */
+
     int LINE_LIMIT = 16; //the amount of lines that can be displayed
 
     /**
@@ -126,14 +131,6 @@ public interface EScoreboard {
      */
     public void setTitle(@NotNull String title);
 
-    /**
-     * Starts the scoreboard showing it to a player. This scoreboard will now be 'bound to the player'. When accessing the scoreboard one
-     * should use {@link BukkitApiPlayer#getScoreboard()}. For removing the scoreboard from the player use 
-     * {@link BukkitApiPlayer#setScoreboard(EScoreboard)}
-     * 
-     * @param player the player to bind this scoreboard with.
-     */
-    public void setPlayer(@NotNull Player player);
 
     /**
      *
@@ -150,6 +147,22 @@ public interface EScoreboard {
      */
     @Nullable
     public Message getLineFromName(@NotNull String name);
+
+    /**
+     *
+     * @param index the positional index of the line
+     * @return What is seen by the player of the scoreboard at this line
+     * @throws ArrayIndexOutOfBoundsException If no line exists with that index
+     */
+    @NotNull
+    public String getDisplayedAt(int index);
+
+    /**
+     * @param name The name of the scoreboard line
+     * @return null if there is no line with that name or what is seen by the player at the line with that name
+     */
+    @Nullable
+    public String getDisplayedAt(@NotNull String name);
 
     /**
      * @return The scoreboard title
@@ -171,7 +184,7 @@ public interface EScoreboard {
 
     /**
      *
-     * @return Whether the scoreboard is being shown to a player or not.
+     * @return the player who this scoreboard is displayed to
      */
-    public boolean isRunning();
+    public BukkitApiPlayer getPlayer();
 }

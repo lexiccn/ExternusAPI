@@ -2,9 +2,8 @@ package me.deltaorion.extapi.display.bukkit;
 
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.common.sender.Sender;
-import me.deltaorion.extapi.display.actionbar.ActionBarFactories;
 import me.deltaorion.extapi.display.actionbar.ActionBarManager;
-import me.deltaorion.extapi.display.actionbar.renderer.PacketActionBarRenderer;
+import me.deltaorion.extapi.display.bossbar.BossBar;
 import me.deltaorion.extapi.display.scoreboard.EScoreboard;
 import me.deltaorion.extapi.locale.message.Message;
 import org.bukkit.entity.Player;
@@ -12,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 public class BukkitApiPlayer implements Sender {
@@ -21,6 +21,7 @@ public class BukkitApiPlayer implements Sender {
     @NotNull private final Player player;
     @Nullable private EScoreboard scoreboard;
     @NotNull private final ActionBarManager actionBarManager;
+    @Nullable private BossBar bossBar;
 
     public BukkitApiPlayer(@NotNull BukkitPlugin plugin, @NotNull Player player, APIPlayerSettings settings) {
         this.player = player;
@@ -107,9 +108,7 @@ public class BukkitApiPlayer implements Sender {
 
     public void setScoreboard(@Nullable EScoreboard scoreboard) {
         if(scoreboard==null) {
-            player.setScoreboard(null);
-        } else {
-            scoreboard.setPlayer(player);
+            player.setScoreboard(plugin.getServer().getScoreboardManager().getNewScoreboard());
         }
         this.scoreboard = scoreboard;
     }
@@ -135,5 +134,20 @@ public class BukkitApiPlayer implements Sender {
     @NotNull
     public ActionBarManager getActionBarManager() {
         return actionBarManager;
+    }
+
+    @Nullable
+    public BossBar getBossBar() {
+        return bossBar;
+    }
+
+    public void setBossBar(@Nullable BossBar bossBar) {
+        if(Objects.equals(bossBar,this.bossBar))
+            return;
+
+        if(this.bossBar!=null) {
+            this.bossBar.setVisible(false);
+        }
+        this.bossBar = bossBar;
     }
 }

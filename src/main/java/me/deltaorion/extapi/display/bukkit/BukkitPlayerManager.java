@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,6 +46,16 @@ public class BukkitPlayerManager implements Listener, Iterable<BukkitApiPlayer> 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onLeave(PlayerQuitEvent event) {
         playerCache.remove(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onMove(PlayerMoveEvent event) {
+        BukkitApiPlayer player = this.playerCache.get(event.getPlayer());
+        if(player==null)
+            return;
+
+        if(player.getBossBar()!=null)
+            player.getBossBar().update();
     }
 
     @NotNull @Override

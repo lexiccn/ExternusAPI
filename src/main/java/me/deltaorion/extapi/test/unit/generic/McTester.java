@@ -2,6 +2,7 @@ package me.deltaorion.extapi.test.unit.generic;
 
 import me.deltaorion.extapi.common.plugin.EPlugin;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +21,17 @@ public class McTester {
         this.tests.add(test);
     }
 
-    private void runTest(Object object) throws Exception {
-        Class<?> clazz = object.getClass();
-        for (Method method : clazz.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(McTest.class)) {
-                method.setAccessible(true);
-                method.invoke(object);
+    private void runTest(Object object) throws Throwable {
+        try {
+            Class<?> clazz = object.getClass();
+            for (Method method : clazz.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(McTest.class)) {
+                    method.setAccessible(true);
+                    method.invoke(object);
+                }
             }
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            throw e.getCause();
         }
     }
 
@@ -35,8 +40,8 @@ public class McTester {
             plugin.getPluginLogger().info("Running Test ["+test.getName()+"]");
             try {
                 runTest(test);
-            } catch (Exception e) {
-                e.getCause().printStackTrace();
+            } catch (Throwable e) {
+                plugin.getPluginLogger().severe("Test '"+test.getName()+"' failed!",e);
             }
         }
         plugin.getPluginLogger().info("All Tests - Complete");

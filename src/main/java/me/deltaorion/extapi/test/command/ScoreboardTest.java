@@ -19,8 +19,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.function.Supplier;
 
 public class ScoreboardTest extends FunctionalCommand {
 
@@ -39,6 +37,13 @@ public class ScoreboardTest extends FunctionalCommand {
         registerArgument("cancel", (command) -> {
             if(runningAnimation!=null)
                 runningAnimation.cancel();
+
+            if(command.getSender().isConsole())
+                return;
+
+            Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
+            BukkitApiPlayer p = plugin.getBukkitPlayerManager().getPlayer(player);
+            p.setScoreboard(null);
         });
 
         registerArgument("pause", (command) -> {
@@ -61,12 +66,11 @@ public class ScoreboardTest extends FunctionalCommand {
         BukkitApiPlayer apiPlayer = plugin.getBukkitPlayerManager().getPlayer(player);
         final String title = command.getArgOrDefault(0, "Hello World").asString();
 
-        EScoreboard scoreboard;
         if (apiPlayer.getScoreboard() == null)
-            scoreboard = createScoreboard(player, title);
+            createScoreboard(player, title);
 
         if (!apiPlayer.getScoreboard().getName().equals(scoreboardName))
-            scoreboard = createScoreboard(player, title);
+            createScoreboard(player, title);
 
         if (this.runningAnimation != null)
             this.runningAnimation.cancel();
@@ -90,21 +94,14 @@ public class ScoreboardTest extends FunctionalCommand {
             animation.addFrame(new MinecraftFrame<>(entry,400));
         }
         animation.addFrame(new MinecraftFrame<>(altColor + title,400));
-        this.runningAnimation = animation.start(new Supplier<Collection<Player>>() {
-            @Override
-            public Collection<Player> get() {
-                return new ArrayList<>(plugin.getServer().getOnlinePlayers());
-            }
-        });
+        this.runningAnimation = animation.start(() -> new ArrayList<>(plugin.getServer().getOnlinePlayers()));
     }
 
-    private EScoreboard createScoreboard(Player player, String title) {
-        EScoreboard scoreboard = new WrapperScoreboard(scoreboardName,plugin,3);
+    private void createScoreboard(Player player, String title) {
+        EScoreboard scoreboard = new WrapperScoreboard(player,scoreboardName,plugin,3);
         scoreboard.setTitle(ChatColor.WHITE + "" + ChatColor.BOLD + title);
         scoreboard.setLine(ChatColor.GRAY + "Test Server", 0);
         scoreboard.setLine(ChatColor.WHITE + "abcdefghijklmnopqrstuvwxyz32", 1);
         scoreboard.setLine(Message.valueOf(ChatColor.GOLD + "TPS: " + ChatColor.WHITE + "%s"), 2, "TPS", plugin.getServer().spigot().getTPS()[0]);
-        scoreboard.setPlayer(player);
-        return scoreboard;
     }
 }

@@ -31,6 +31,7 @@ public class TestPlayer implements Player {
     private final PlayerInventory inventory = new PlayerInventoryMock(this);
     private final EntityEquipment entityEquipment = new MockEntityEquipment(inventory,this);
     private final UUID uuid;
+    private Scoreboard scoreboard;
 
     public TestPlayer(String name) {
         this.name = name;
@@ -834,12 +835,12 @@ public class TestPlayer implements Player {
 
     @Override
     public Scoreboard getScoreboard() {
-        throw new UnsupportedOperationException();
+        return scoreboard;
     }
 
     @Override
     public void setScoreboard(Scoreboard scoreboard) throws IllegalArgumentException, IllegalStateException {
-        throw new UnsupportedOperationException();
+        this.scoreboard = scoreboard;
     }
 
     @Override

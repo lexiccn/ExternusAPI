@@ -4,6 +4,7 @@ import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.display.scoreboard.EScoreboard;
 import me.deltaorion.extapi.display.scoreboard.WrapperScoreboard;
 import me.deltaorion.extapi.locale.message.Message;
+import me.deltaorion.extapi.test.unit.bukkit.TestPlayer;
 import me.deltaorion.extapi.test.unit.generic.McTest;
 import me.deltaorion.extapi.test.unit.generic.MinecraftTest;
 
@@ -19,10 +20,10 @@ public class ScoreboardingTest implements MinecraftTest {
 
     @McTest
     public void testScoreboard() {
-        EScoreboard scoreboard = new WrapperScoreboard("gamer",plugin,10);
+        TestPlayer player = new TestPlayer("gamer");
+        EScoreboard scoreboard = new WrapperScoreboard(player,"gamer",plugin,10);
         assertEquals(10,scoreboard.getSize());
         assertEquals("",scoreboard.getTitle().toString());
-        assertFalse(scoreboard.isRunning());
 
         scoreboard.setLine("Gamer",0);
         scoreboard.setLine("Gamer",1,"Hallo");
@@ -45,7 +46,8 @@ public class ScoreboardingTest implements MinecraftTest {
         assertEquals("Gamer",scoreboard.getLineFromName("Hallo").toString());
         assertEquals("",scoreboard.getLineAt(9).toString());
         assertEquals("Gamer",scoreboard.getLineAt(1).toString());
-        assertEquals("Gamer 3",scoreboard.getLineAt(2).toString());
+        assertEquals("Gamer %s",scoreboard.getLineAt(2).toString());
+        assertEquals("Gamer 3",scoreboard.getDisplayedAt(2));
         assertNull(scoreboard.getLineFromName("rrerpok"));
         assertEquals("Hello World",scoreboard.getLineFromName("Gamer").toString());
 
@@ -61,11 +63,11 @@ public class ScoreboardingTest implements MinecraftTest {
         scoreboard.setLineArgs(3,"3");
         scoreboard.setLineArgs("Hallo",3);
 
-        assertEquals("Gamer 3",scoreboard.getLineFromName("Hallo").toString());
-        assertEquals("Gamer 3",scoreboard.getLineFromName("Gamer").toString());
+        assertEquals("Gamer 3",scoreboard.getDisplayedAt("Hallo"));
+        assertEquals("Gamer 3",scoreboard.getDisplayedAt("Gamer"));
 
         try {
-            new WrapperScoreboard("epwok",plugin,17);
+            new WrapperScoreboard(player,"epwok",plugin,17);
             fail();
         } catch (IllegalStateException e) {
         }
@@ -78,17 +80,18 @@ public class ScoreboardingTest implements MinecraftTest {
         }
 
         try {
-            new WrapperScoreboard("epwok",plugin,-5);
+            new WrapperScoreboard(player,"epwok",plugin,-5);
             fail();
         } catch (IllegalStateException e) {
         }
 
         try {
-            new WrapperScoreboard("wepokf",plugin,0);
-            new WrapperScoreboard("ewopk",plugin,16);
+            new WrapperScoreboard(player,"wepokf",plugin,0);
+            new WrapperScoreboard(player,"ewopk",plugin,16);
         } catch (IllegalStateException e) {
             fail();
         }
+
     }
 
     @Override

@@ -12,11 +12,11 @@ import org.jetbrains.annotations.Nullable;
  *   - an optional unique name that can be used to identify a line.
  *   - a message that should be displayed.
  */
-@Immutable
 public class ScoreboardLine {
     @NotNull private final Message message;
     @Nullable private final String name;
     private final int line;
+    private volatile String asDisplayed;
 
     /**
      *
@@ -28,6 +28,7 @@ public class ScoreboardLine {
         this.message = message;
         this.name = name;
         this.line = line;
+        this.asDisplayed = "";
     }
 
     /**
@@ -53,6 +54,15 @@ public class ScoreboardLine {
 
     public static String getTeamName(int line) {
         return line + "";
+    }
+
+    @NotNull
+    public String getAsDisplayed() {
+        return asDisplayed;
+    }
+
+    public void setAsDisplayed(@NotNull String asDisplayed) {
+        this.asDisplayed = java.util.Objects.requireNonNull(asDisplayed);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.locale.message.Message;
+import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -29,13 +30,12 @@ public class WrapperScoreboard implements EScoreboard {
 
     @NotNull private Message title;
     @NotNull private final Map<Integer,ScoreboardLine> scoreboardLines;
-    @NotNull private final BukkitPlugin plugin;
     @NotNull private final String name;
     private final int lines;
 
-    @Nullable private BukkitApiPlayer player;
-    @Nullable private Objective objective;
-    @Nullable private Scoreboard scoreboard;
+    @NotNull private final BukkitApiPlayer player;
+    @NotNull private final Objective objective;
+    @NotNull private final Scoreboard scoreboard;
 
 
     private final int CHARACTER_LIMIT; //the amount of characters per line is double this
@@ -46,26 +46,39 @@ public class WrapperScoreboard implements EScoreboard {
      * @param name The name of the scoreboard
      * @param plugin The plugin which the scoreboard is hosted on.
      */
-    public WrapperScoreboard(@NotNull String name, @NotNull BukkitPlugin plugin) {
-        this(name,plugin,LINE_LIMIT);
+    public WrapperScoreboard(@NotNull Player player, @NotNull String name, @NotNull BukkitPlugin plugin) {
+        this(player,name,plugin,LINE_LIMIT);
     }
 
     /**
-     * Creates a new scoreboard
+     * Creates a new scoreboard. The scoreboard will be tied to the player. Doing this will replace whatever scoreboard the player has
+     * with this new scoreboard. You can retrieve the scoreboard using {@link BukkitApiPlayer#getScoreboard()}
      *
      * @param name The name of the scoreboard
      * @param plugin The plugin which this scoreboard is hosted on
      * @param lines The amount of lines for the scoreboard
      * @throws IllegalStateException If the amount of lines is less than 0 or greater than {@link #LINE_LIMIT}
      */
-    public WrapperScoreboard(@NotNull String name, @NotNull BukkitPlugin plugin, int lines) {
+    public WrapperScoreboard(@NotNull Player player, @NotNull String name, @NotNull BukkitPlugin plugin, int lines) {
         Preconditions.checkState(lines >=0 && lines<=LINE_LIMIT,"A scoreboard can only have '"+LINE_LIMIT+"' lines");
+        Objects.requireNonNull(player);
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(plugin);
+
         this.lines = lines;
-        this.plugin = plugin;
         this.scoreboardLines = new HashMap<>();
         this.title = Message.valueOf("");
         CHARACTER_LIMIT = getCharacterLimit(plugin);
         this.name = name;
+
+        this.player = plugin.getBukkitPlayerManager().getPlayer(player);
+        this.scoreboard = Objects.requireNonNull(plugin.getServer().getScoreboardManager().getNewScoreboard());
+        this.objective = Objects.requireNonNull(scoreboard.registerNewObjective(name,"dummy"));
+        this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        this.objective.setDisplayName(title.toString(this.player.getLocale()));
+
+        this.createTeams();
+        this.setBoard();
     }
 
     //returns the maximum amount of characters for this server version.
@@ -111,11 +124,7 @@ public class WrapperScoreboard implements EScoreboard {
         ScoreboardLine l = new ScoreboardLine(Objects.requireNonNull(content),lineName,line);
         scoreboardLines.put(line,l);
         //if should update
-        if(this.player==null) {
-            content.setDefaults(args);
-        } else {
-            updateLine(l,args);
-        }
+        updateLine(l,args);
     }
 
     public void setLineArgs(int line, Object... args) {
@@ -136,22 +145,13 @@ public class WrapperScoreboard implements EScoreboard {
         if(sLine==null)
             return;
 
-        if(this.player==null) {
-            sLine.getMessage().setDefaults(args);
-        } else {
-            updateLine(sLine, args);
-        }
+        updateLine(sLine, args);
     }
 
     @Override
     public void setTitle(@NotNull Message title, Object... args) {
         this.title = title;
-        if(this.objective==null) {
-            title.setDefaults(args);
-        } else {
-            Objects.requireNonNull(player,"Bad Initialisation");
-            this.objective.setDisplayName(title.toString(player.getLocale(),args));
-        }
+        this.objective.setDisplayName(title.toString(player.getLocale(),args));
     }
 
     @Override
@@ -173,6 +173,8 @@ public class WrapperScoreboard implements EScoreboard {
 
         team.setPrefix(split[0]);
         team.setSuffix(split[1]);
+
+        line.setAsDisplayed(split[0] + split[1]);
     }
 
     private String[] split(String line) {
@@ -205,21 +207,6 @@ public class WrapperScoreboard implements EScoreboard {
             result = str.substring(0, str.length() - 1);
         }
         return result;
-    }
-
-    @Override
-    public void setPlayer(@NotNull Player player) {
-        if(this.player!=null)
-            return;
-
-        this.player = plugin.getBukkitPlayerManager().getPlayer(player);
-        this.scoreboard = Objects.requireNonNull(plugin.getServer().getScoreboardManager().getNewScoreboard());
-        this.objective = Objects.requireNonNull(scoreboard.registerNewObjective(name,"dummy"));
-        this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        this.objective.setDisplayName(title.toString(this.player.getLocale()));
-
-        this.createTeams();
-        this.setBoard();
     }
 
     private void setBoard() {
@@ -278,6 +265,23 @@ public class WrapperScoreboard implements EScoreboard {
         }
     }
 
+    @NotNull
+    @Override
+    public String getDisplayedAt(int index) {
+        lineValid(index);
+        return scoreboardLines.get(index).getAsDisplayed();
+    }
+
+    @Nullable
+    @Override
+    public String getDisplayedAt(@NotNull String name) {
+        ScoreboardLine line = getLineByName(Objects.requireNonNull(name));
+        if(line==null)
+            return null;
+
+        return line.getAsDisplayed();
+    }
+
     @NotNull @Override
     public Message getTitle() {
         return this.title;
@@ -301,15 +305,16 @@ public class WrapperScoreboard implements EScoreboard {
     }
 
     @Override
-    public boolean isRunning() {
-        return player!=null;
+    public BukkitApiPlayer getPlayer() {
+        return player;
     }
+
 
     @NotNull
     public String toString() {
         return com.google.common.base.Objects.toStringHelper(this)
                 .add("name",name)
-                .add("running",isRunning())
                 .add("title",title).toString();
     }
+
 }
