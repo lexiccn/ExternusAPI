@@ -1,9 +1,8 @@
-package me.deltaorion.extapi.test.cmd.sender;
+package me.deltaorion.extapi.test.cmdold.sender;
 
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.common.sender.Sender;
-import me.deltaorion.extapi.common.plugin.EPlugin;
-import me.deltaorion.extapi.test.cmd.JointTests;
+import me.deltaorion.extapi.test.cmdold.JointTests;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 

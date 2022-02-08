@@ -93,4 +93,9 @@ public class LocaleTest implements MinecraftTest {
         assertEquals(everything.toString("abc"),"Hello World §e abc 7.5 b §0 Gamer");
         assertEquals(everything.toString("a.b","bc","e"),"Hello World §e a.b bc e §0 Gamer");
     }
+
+    @Override
+    public String getName() {
+        return "Locale Test";
+    }
 }

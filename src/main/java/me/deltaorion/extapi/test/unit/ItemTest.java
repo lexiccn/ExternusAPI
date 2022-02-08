@@ -225,4 +225,9 @@ public class ItemTest implements MinecraftTest {
 
 
     }
+
+    @Override
+    public String getName() {
+        return "ItemBuilder Test";
+    }
 }

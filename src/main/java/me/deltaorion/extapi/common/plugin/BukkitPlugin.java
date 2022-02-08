@@ -18,6 +18,7 @@ import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.common.thread.ErrorReportingThreadPool;
 import me.deltaorion.extapi.item.custom.CustomItemManager;
 import me.deltaorion.extapi.locale.translator.PluginTranslator;
+import me.deltaorion.extapi.test.TestPlugin;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -55,7 +56,8 @@ public class BukkitPlugin extends JavaPlugin implements ApiPlugin {
     }
 
     private void registerDefaultDepends() {
-        plugin.registerDependency("NBTAPI",false);
+        plugin.registerDependency(BukkitAPIDepends.NBTAPI.getName(), false);
+        plugin.registerDependency(BukkitAPIDepends.PROTOCOL_LIB.getName(), false);
     }
 
     private void registerDefaultParsers() {
@@ -207,6 +209,7 @@ public class BukkitPlugin extends JavaPlugin implements ApiPlugin {
         this.plugin.cacheRunning(animation);
     }
 
+    @NotNull
     @Override
     public Collection<RunningAnimation<?>> getCachedRunning() {
         return plugin.getCachedRunning();

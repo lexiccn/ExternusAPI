@@ -25,4 +25,8 @@ public class McTestTest implements MinecraftTest {
     }
 
 
+    @Override
+    public String getName() {
+        return "Minecraft Test Initial";
+    }
 }

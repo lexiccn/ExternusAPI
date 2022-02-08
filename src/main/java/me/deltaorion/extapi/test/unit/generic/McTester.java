@@ -1,14 +1,18 @@
 package me.deltaorion.extapi.test.unit.generic;
 
+import me.deltaorion.extapi.common.plugin.EPlugin;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 public class McTester {
 
+    private final EPlugin plugin;
     private final List<MinecraftTest> tests;
 
-    public McTester() {
+    public McTester(EPlugin plugin) {
+        this.plugin = plugin;
         this.tests = new ArrayList<>();
     }
 
@@ -28,12 +32,14 @@ public class McTester {
 
     public void runTests() {
         for(MinecraftTest test : tests) {
+            plugin.getPluginLogger().info("Running Test ["+test.getName()+"]");
             try {
                 runTest(test);
             } catch (Exception e) {
                 e.getCause().printStackTrace();
             }
         }
+        plugin.getPluginLogger().info("All Tests - Complete");
     }
 
     public void clearTests() {

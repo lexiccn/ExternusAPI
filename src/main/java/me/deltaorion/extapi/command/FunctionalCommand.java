@@ -96,6 +96,18 @@ public abstract class FunctionalCommand implements  Command {
         this.commandArgs.put(arg.toLowerCase(Locale.ROOT),Objects.requireNonNull(command));
     }
 
+    protected void registerArgument(@NotNull String arg, @NotNull CommandLogic logic) {
+        Objects.requireNonNull(arg);
+        Objects.requireNonNull(logic);
+        Command command = new FunctionalCommand(NO_PERMISSION) {
+            @Override
+            public void commandLogic(SentCommand command) throws CommandException {
+                logic.onCommand(command);
+            }
+        };
+        registerArgument(arg,command);
+    }
+
     /**
      * Registers tab completion logic that should be run when this index is being typed. The CompletionSupplier will be called if
      * the user is not typing a subcommand(the base {@link #commandLogic(SentCommand)} would have been run given what they type)

@@ -8,6 +8,8 @@ import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.command.FunctionalCommand;
 import me.deltaorion.extapi.command.sent.SentCommand;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
+import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
+import me.deltaorion.extapi.display.scoreboard.EScoreboard;
 import me.deltaorion.extapi.display.scoreboard.WrapperScoreboard;
 import me.deltaorion.extapi.locale.message.Message;
 import me.deltaorion.extapi.test.animation.ScoreboardAnimation;
@@ -25,70 +27,84 @@ public class ScoreboardTest extends FunctionalCommand {
     @Nullable private RunningAnimation<Player> runningAnimation;
     @Nullable private MinecraftAnimation<String,Player> animation;
     private final BukkitPlugin plugin;
+    private final String scoreboardName = "sb-1";
 
     public ScoreboardTest(BukkitPlugin plugin) {
         super(NO_PERMISSION);
         this.plugin = plugin;
+        registerArguments();
     }
 
-    private WrapperScoreboard scoreboard;
+    private void registerArguments() {
+        registerArgument("cancel", (command) -> {
+            if(runningAnimation!=null)
+                runningAnimation.cancel();
+        });
+
+        registerArgument("pause", (command) -> {
+            if(runningAnimation!=null)
+                runningAnimation.pause();
+        });
+
+        registerArgument("play", command -> {
+            if(runningAnimation!=null)
+                runningAnimation.play();
+        });
+    }
 
     @Override
     public void commandLogic(SentCommand command) throws CommandException {
-        if(command.getSender().isConsole())
+        if (command.getSender().isConsole())
             return;
 
-        final String scoreboardName = "sb-1";
         Player player = Bukkit.getPlayer(command.getSender().getUniqueId());
+        BukkitApiPlayer apiPlayer = plugin.getBukkitPlayerManager().getPlayer(player);
+        final String title = command.getArgOrDefault(0, "Hello World").asString();
 
-        if(command.getArgOrBlank(0).asString().equalsIgnoreCase("cancel")) {
-            if(runningAnimation!=null)
-                runningAnimation.cancel();
-            return;
+        EScoreboard scoreboard;
+        if (apiPlayer.getScoreboard() == null)
+            scoreboard = createScoreboard(player, title);
+
+        if (!apiPlayer.getScoreboard().getName().equals(scoreboardName))
+            scoreboard = createScoreboard(player, title);
+
+        if (this.runningAnimation != null)
+            this.runningAnimation.cancel();
+
+        createAnimation(title);
+
+    }
+
+    private void createAnimation(String title) {
+        animation = new MinecraftAnimation<>(plugin,
+                AnimationFactories.SCHEDULE_ASYNC(),
+                new ScoreboardAnimation(scoreboardName,plugin));
+
+        String altColor = ChatColor.YELLOW + "" + ChatColor.BOLD;
+        animation.addFrame(new MinecraftFrame<>(ChatColor.WHITE + "" + ChatColor.BOLD + title,400));
+        for(int i=0;i<title.length();i++) {
+            String splitA = title.substring(0,i);
+            String letter = title.substring(i,i+1);
+            String splitB = title.substring(i+1);
+            String entry = ChatColor.WHITE + "" + ChatColor.BOLD + splitA + altColor + letter + ChatColor.WHITE + ChatColor.BOLD + "" + splitB;
+            animation.addFrame(new MinecraftFrame<>(entry,400));
         }
-
-        if(command.getArgOrBlank(0).asString().equalsIgnoreCase("pause")) {
-            if(runningAnimation!=null) {
-                runningAnimation.pause();
+        animation.addFrame(new MinecraftFrame<>(altColor + title,400));
+        this.runningAnimation = animation.start(new Supplier<Collection<Player>>() {
+            @Override
+            public Collection<Player> get() {
+                return new ArrayList<>(plugin.getServer().getOnlinePlayers());
             }
-            return;
-        }
+        });
+    }
 
-        if(command.getArgOrBlank(0).asString().equalsIgnoreCase("play")) {
-            if(runningAnimation!=null)
-                runningAnimation.play();
-            return;
-        }
-
-        if(scoreboard==null) {
-            scoreboard = new WrapperScoreboard(scoreboardName, plugin, 3);
-            final String title = "Hello World";
-            scoreboard.setTitle(ChatColor.WHITE + "" + ChatColor.BOLD + title);
-            scoreboard.setLine(ChatColor.GRAY + "Test Server", 0);
-            scoreboard.setLine(ChatColor.WHITE + "abcdefghijklmnopqrstuvwxyz32", 1);
-            scoreboard.setLine(Message.valueOf(ChatColor.GOLD + "TPS: " + ChatColor.WHITE + "%s"), 2, "TPS", plugin.getServer().spigot().getTPS()[0]);
-            scoreboard.setPlayer(player);
-
-            animation = new MinecraftAnimation<>(plugin,
-                    AnimationFactories.SCHEDULE_ASYNC(),
-                    new ScoreboardAnimation(scoreboardName,plugin));
-
-            String altColor = ChatColor.YELLOW + "" + ChatColor.BOLD;
-            animation.addFrame(new MinecraftFrame<>(ChatColor.WHITE + "" + ChatColor.BOLD + title,400));
-            for(int i=0;i<title.length();i++) {
-                String splitA = title.substring(0,i);
-                String letter = title.substring(i,i+1);
-                String splitB = title.substring(i+1);
-                String entry = ChatColor.WHITE + "" + ChatColor.BOLD + splitA + altColor + letter + ChatColor.WHITE + ChatColor.BOLD + "" + splitB;
-                animation.addFrame(new MinecraftFrame<>(entry,400));
-            }
-            animation.addFrame(new MinecraftFrame<>(altColor + title,400));
-            this.runningAnimation = animation.start(new Supplier<Collection<Player>>() {
-                @Override
-                public Collection<Player> get() {
-                    return new ArrayList<>(plugin.getServer().getOnlinePlayers());
-                }
-            });
-        }
+    private EScoreboard createScoreboard(Player player, String title) {
+        EScoreboard scoreboard = new WrapperScoreboard(scoreboardName,plugin,3);
+        scoreboard.setTitle(ChatColor.WHITE + "" + ChatColor.BOLD + title);
+        scoreboard.setLine(ChatColor.GRAY + "Test Server", 0);
+        scoreboard.setLine(ChatColor.WHITE + "abcdefghijklmnopqrstuvwxyz32", 1);
+        scoreboard.setLine(Message.valueOf(ChatColor.GOLD + "TPS: " + ChatColor.WHITE + "%s"), 2, "TPS", plugin.getServer().spigot().getTPS()[0]);
+        scoreboard.setPlayer(player);
+        return scoreboard;
     }
 }

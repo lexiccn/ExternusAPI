@@ -1,8 +1,9 @@
-package me.deltaorion.extapi.test.cmd.item;
+package me.deltaorion.extapi.test.command.item;
 
 import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.command.FunctionalCommand;
 import me.deltaorion.extapi.command.sent.SentCommand;
+import me.deltaorion.extapi.common.plugin.BukkitAPIDepends;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.item.custom.CustomItem;
 import me.deltaorion.extapi.test.unit.item.*;
@@ -23,6 +24,9 @@ public class CustomItemTestCommand extends FunctionalCommand {
     public void commandLogic(SentCommand command) throws CommandException {
         if(command.getSender().isConsole())
             throw new CommandException("Test as a player");
+
+        if(!plugin.getDependency(BukkitAPIDepends.NBTAPI.name()).isActive())
+            throw new CommandException("Please enable the NBT API on the test server to use this command!");
 
         Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
 

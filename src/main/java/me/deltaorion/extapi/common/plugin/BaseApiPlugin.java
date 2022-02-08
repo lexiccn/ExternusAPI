@@ -4,6 +4,7 @@ import me.deltaorion.extapi.animation.RunningAnimation;
 import me.deltaorion.extapi.command.parser.ParserRegistry;
 import me.deltaorion.extapi.common.depend.DependencyManager;
 import me.deltaorion.extapi.locale.translator.PluginTranslator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
@@ -38,6 +39,7 @@ public interface BaseApiPlugin extends EPlugin, DependencyManager, ParserRegistr
      * Gets a list of all cached running animations
      */
 
+    @NotNull
     public Collection<RunningAnimation<?>> getCachedRunning();
 
     /**

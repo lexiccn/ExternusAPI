@@ -90,4 +90,9 @@ public class ScoreboardingTest implements MinecraftTest {
             fail();
         }
     }
+
+    @Override
+    public String getName() {
+        return "Scoreboard Test";
+    }
 }

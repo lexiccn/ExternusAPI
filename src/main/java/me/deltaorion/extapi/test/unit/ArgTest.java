@@ -50,4 +50,9 @@ public class ArgTest implements MinecraftTest {
 
         }
     }
+
+    @Override
+    public String getName() {
+        return "Command Argument Test";
+    }
 }

@@ -1,4 +1,4 @@
-package me.deltaorion.extapi.test.cmd;
+package me.deltaorion.extapi.test.cmdold;
 
 import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.common.plugin.EPlugin;

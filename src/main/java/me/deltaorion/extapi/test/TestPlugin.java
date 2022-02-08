@@ -176,6 +176,7 @@ public class TestPlugin implements ApiPlugin {
         baseApiPlugin.cacheRunning(animation);
     }
 
+    @NotNull
     @Override
     public Collection<RunningAnimation<?>> getCachedRunning() {
         return baseApiPlugin.getCachedRunning();

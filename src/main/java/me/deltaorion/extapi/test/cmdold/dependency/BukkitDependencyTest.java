@@ -1,8 +1,7 @@
-package me.deltaorion.extapi.test.cmd.dependency;
+package me.deltaorion.extapi.test.cmdold.dependency;
 
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.common.sender.Sender;
-import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.testdepend.TestDepend;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

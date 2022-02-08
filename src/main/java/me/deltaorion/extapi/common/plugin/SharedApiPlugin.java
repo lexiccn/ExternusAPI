@@ -82,6 +82,7 @@ public class SharedApiPlugin implements BaseApiPlugin {
         animationCache.put(animation,new Object());
     }
 
+    @NotNull
     @Override
     public Collection<RunningAnimation<?>> getCachedRunning() {
         return Collections.unmodifiableSet(animationCache.keySet());

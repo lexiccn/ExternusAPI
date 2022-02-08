@@ -1,4 +1,4 @@
-package me.deltaorion.extapi.test.cmd.version;
+package me.deltaorion.extapi.test.cmdold.version;
 
 import me.deltaorion.extapi.common.version.VersionFactory;
 import org.bukkit.command.Command;

@@ -30,9 +30,11 @@ public class TestPlayer implements Player {
     private String name;
     private final PlayerInventory inventory = new PlayerInventoryMock(this);
     private final EntityEquipment entityEquipment = new MockEntityEquipment(inventory,this);
+    private final UUID uuid;
 
     public TestPlayer(String name) {
         this.name = name;
+        this.uuid = UUID.randomUUID();
     }
 
     @Override
@@ -732,7 +734,7 @@ public class TestPlayer implements Player {
 
     @Override
     public UUID getUniqueId() {
-        throw new UnsupportedOperationException();
+        return uuid;
     }
 
     @Override
@@ -882,7 +884,14 @@ public class TestPlayer implements Player {
 
     @Override
     public Spigot spigot() {
-        throw new UnsupportedOperationException();
+        return new TestSpigot();
+    }
+
+    private static class TestSpigot extends Player.Spigot {
+        @Override
+        public String getLocale() {
+            return "en";
+        }
     }
 
     @Override

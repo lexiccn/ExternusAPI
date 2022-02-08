@@ -2,11 +2,11 @@ package me.deltaorion.extapi;
 
 import me.deltaorion.extapi.common.plugin.BungeePlugin;
 import me.deltaorion.extapi.test.command.*;
-import me.deltaorion.extapi.test.cmd.dependency.BungeeDependencyTest;
-import me.deltaorion.extapi.test.cmd.locale.LocaleTestBungee;
-import me.deltaorion.extapi.test.cmd.sender.SenderTestBungee;
-import me.deltaorion.extapi.test.cmd.server.ServerTestBungee;
-import me.deltaorion.extapi.test.cmd.version.BungeeVersionTest;
+import me.deltaorion.extapi.test.cmdold.dependency.BungeeDependencyTest;
+import me.deltaorion.extapi.test.cmdold.locale.LocaleTestBungee;
+import me.deltaorion.extapi.test.cmdold.sender.SenderTestBungee;
+import me.deltaorion.extapi.test.cmdold.server.ServerTestBungee;
+import me.deltaorion.extapi.test.cmdold.version.BungeeVersionTest;
 
 public class TestBungee extends BungeePlugin {
 

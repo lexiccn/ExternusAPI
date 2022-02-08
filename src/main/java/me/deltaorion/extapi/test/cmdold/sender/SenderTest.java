@@ -1,8 +1,8 @@
-package me.deltaorion.extapi.test.cmd.sender;
+package me.deltaorion.extapi.test.cmdold.sender;
 
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.common.sender.Sender;
-import me.deltaorion.extapi.test.cmd.JointTests;
+import me.deltaorion.extapi.test.cmdold.JointTests;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

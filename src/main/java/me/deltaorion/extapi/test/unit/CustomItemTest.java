@@ -184,4 +184,9 @@ public class CustomItemTest implements MinecraftTest {
         ;
 
     }
+
+    @Override
+    public String getName() {
+        return "Custom Item Test";
+    }
 }

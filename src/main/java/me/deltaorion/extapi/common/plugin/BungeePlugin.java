@@ -103,6 +103,7 @@ public class BungeePlugin extends Plugin implements ApiPlugin {
         this.plugin.cacheRunning(animation);
     }
 
+    @NotNull
     @Override
     public Collection<RunningAnimation<?>> getCachedRunning() {
         return plugin.getCachedRunning();

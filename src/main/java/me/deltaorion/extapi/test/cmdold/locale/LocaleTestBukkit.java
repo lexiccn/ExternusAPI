@@ -1,7 +1,7 @@
-package me.deltaorion.extapi.test.cmd.locale;
+package me.deltaorion.extapi.test.cmdold.locale;
 
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
-import me.deltaorion.extapi.test.cmd.JointTests;
+import me.deltaorion.extapi.test.cmdold.JointTests;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

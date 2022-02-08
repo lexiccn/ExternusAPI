@@ -1,22 +1,22 @@
 package me.deltaorion.extapi;
 
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
-import me.deltaorion.extapi.test.cmd.item.CustomItemTestCommand;
-import me.deltaorion.extapi.test.cmd.item.ItemTest;
+import me.deltaorion.extapi.test.command.item.CustomItemTestCommand;
+import me.deltaorion.extapi.test.command.item.ItemTest;
 import me.deltaorion.extapi.test.command.*;
-import me.deltaorion.extapi.test.cmd.dependency.BukkitDependencyTest;
-import me.deltaorion.extapi.test.cmd.locale.LocaleTestBukkit;
-import me.deltaorion.extapi.test.cmd.playerparse.PlayerParseCommand;
-import me.deltaorion.extapi.test.cmd.sender.SenderTest;
-import me.deltaorion.extapi.test.cmd.server.ServerTest;
+import me.deltaorion.extapi.test.cmdold.dependency.BukkitDependencyTest;
+import me.deltaorion.extapi.test.cmdold.locale.LocaleTestBukkit;
+import me.deltaorion.extapi.test.cmdold.playerparse.PlayerParseCommand;
+import me.deltaorion.extapi.test.cmdold.sender.SenderTest;
+import me.deltaorion.extapi.test.cmdold.server.ServerTest;
 import me.deltaorion.extapi.test.unit.*;
 import me.deltaorion.extapi.test.unit.generic.McTestTest;
 import me.deltaorion.extapi.test.unit.generic.McTester;
-import me.deltaorion.extapi.test.cmd.version.VersionTest;
+import me.deltaorion.extapi.test.cmdold.version.VersionTest;
 
 public final class ExtAPI extends BukkitPlugin {
 
-    private final McTester tester = new McTester();
+    private final McTester tester = new McTester(this);
 
     @Override
     public void onPluginEnable() {
@@ -36,6 +36,9 @@ public final class ExtAPI extends BukkitPlugin {
         registerCommand(new FailCommand(),"failcommand");
         registerCommand(new AnimationTest(this),"animationtest");
         registerCommand(new ScoreboardTest(this),"scoreboardtest");
+        registerAsyncCommand(new ActionBarCommand(this),"ActionBarCommand");
+        registerCommand(new TitleTest(this),"titletest");
+
 
         getPluginLogger().info("This should work!");
 
@@ -52,6 +55,7 @@ public final class ExtAPI extends BukkitPlugin {
         tester.addTest(new LocaleTest(this));
         tester.addTest(new EMaterialTest());
         tester.addTest(new ScoreboardingTest(this));
+        tester.addTest(new ActionBarTest(this));
     }
 
     @Override

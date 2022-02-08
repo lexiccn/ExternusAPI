@@ -28,4 +28,9 @@ public class EMaterialTest implements MinecraftTest {
             assertEquals(material.getBukkitMaterial(),itemStack.getType());
         }
     }
+
+    @Override
+    public String getName() {
+        return "EMaterial Test";
+    }
 }

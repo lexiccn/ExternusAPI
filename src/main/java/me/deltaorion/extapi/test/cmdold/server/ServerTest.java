@@ -1,9 +1,8 @@
-package me.deltaorion.extapi.test.cmd.server;
+package me.deltaorion.extapi.test.cmdold.server;
 
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
-import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.server.EServer;
-import me.deltaorion.extapi.test.cmd.JointTests;
+import me.deltaorion.extapi.test.cmdold.JointTests;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

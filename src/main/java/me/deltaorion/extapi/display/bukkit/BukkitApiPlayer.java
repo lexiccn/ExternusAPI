@@ -2,8 +2,10 @@ package me.deltaorion.extapi.display.bukkit;
 
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.common.sender.Sender;
+import me.deltaorion.extapi.display.actionbar.ActionBarFactories;
+import me.deltaorion.extapi.display.actionbar.ActionBarManager;
+import me.deltaorion.extapi.display.actionbar.renderer.PacketActionBarRenderer;
 import me.deltaorion.extapi.display.scoreboard.EScoreboard;
-import me.deltaorion.extapi.display.scoreboard.WrapperScoreboard;
 import me.deltaorion.extapi.locale.message.Message;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -18,12 +20,14 @@ public class BukkitApiPlayer implements Sender {
     @NotNull private final Sender sender;
     @NotNull private final Player player;
     @Nullable private EScoreboard scoreboard;
+    @NotNull private final ActionBarManager actionBarManager;
 
-    public BukkitApiPlayer(@NotNull BukkitPlugin plugin, @NotNull Player player) {
+    public BukkitApiPlayer(@NotNull BukkitPlugin plugin, @NotNull Player player, APIPlayerSettings settings) {
         this.player = player;
         this.plugin = plugin;
         this.sender = plugin.wrapSender(player);
         this.scoreboard = null;
+        this.actionBarManager = new ActionBarManager(plugin,this, settings.getFactory());
     }
 
     @Override
@@ -126,5 +130,10 @@ public class BukkitApiPlayer implements Sender {
             return false;
 
         return ((BukkitApiPlayer) o).getPlayer().getUniqueId().equals(this.player.getUniqueId());
+    }
+
+    @NotNull
+    public ActionBarManager getActionBarManager() {
+        return actionBarManager;
     }
 }

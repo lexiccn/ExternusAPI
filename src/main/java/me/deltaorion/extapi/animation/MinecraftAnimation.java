@@ -208,12 +208,28 @@ public class MinecraftAnimation<T,S> {
         }
     }
 
+    public void pauseAll() {
+        for(RunningAnimation<S> runningAnimation : getCurrentlyRunning()) {
+            runningAnimation.pause();
+        }
+    }
+
+    public void playAll() {
+        for(RunningAnimation<S> runningAnimation : getCurrentlyRunning()) {
+            runningAnimation.play();
+        }
+    }
+
     /**
      * @return A collection of all currently running animations
      */
     @NotNull
     public Collection<RunningAnimation<S>> getCurrentlyRunning() {
-        return Collections.unmodifiableList(this.runningAnimations);
+        List<RunningAnimation<S>> copy;
+        synchronized (this) {
+            copy = new ArrayList<>(this.runningAnimations);
+        }
+        return Collections.unmodifiableList(copy);
     }
 
     /**
