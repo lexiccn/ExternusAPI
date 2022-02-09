@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.UUID;
 
 public class WrappedPlayerManager implements BukkitPlayerManager {
 
@@ -15,9 +16,16 @@ public class WrappedPlayerManager implements BukkitPlayerManager {
         this.wrapped = wrapped;
     }
 
+    @NotNull
     @Override
     public BukkitApiPlayer getPlayer(@NotNull Player player) {
         return wrapped.getPlayer(player);
+    }
+
+    @Nullable
+    @Override
+    public BukkitApiPlayer getPlayer(@NotNull UUID uuid) {
+        return wrapped.getPlayer(uuid);
     }
 
     @Override
@@ -31,7 +39,7 @@ public class WrappedPlayerManager implements BukkitPlayerManager {
     }
 
     @Override
-    public void removeCached(@Nullable Player player) {
+    public void removeCached(@NotNull Player player) {
         wrapped.removeCached(player);
     }
 

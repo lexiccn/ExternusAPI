@@ -33,9 +33,13 @@ public class WrapperScoreboard implements EScoreboard {
     @NotNull private final String name;
     private final int lines;
 
+    private final BukkitPlugin plugin;
+
     @NotNull private final BukkitApiPlayer player;
     @NotNull private final Objective objective;
     @NotNull private final Scoreboard scoreboard;
+
+    private boolean visible = true;
 
 
     private final int CHARACTER_LIMIT; //the amount of characters per line is double this
@@ -70,6 +74,8 @@ public class WrapperScoreboard implements EScoreboard {
         this.title = Message.valueOf("");
         CHARACTER_LIMIT = getCharacterLimit(plugin);
         this.name = name;
+
+        this.plugin = Objects.requireNonNull(plugin);
 
         this.player = plugin.getBukkitPlayerManager().getPlayer(player);
         this.scoreboard = Objects.requireNonNull(plugin.getServer().getScoreboardManager().getNewScoreboard());
@@ -213,7 +219,6 @@ public class WrapperScoreboard implements EScoreboard {
         Player p = this.player.getPlayer();
         if(p!=null)
             p.setScoreboard(scoreboard);
-        player.setScoreboard(this);
     }
 
     private void createTeams() {
@@ -305,6 +310,24 @@ public class WrapperScoreboard implements EScoreboard {
     @NotNull @Override
     public BukkitApiPlayer getPlayer() {
         return player;
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        if(visible==this.visible)
+            return;
+
+        this.visible = visible;
+        if(visible) {
+            player.getPlayer().setScoreboard(scoreboard);
+        } else {
+            player.getPlayer().setScoreboard(plugin.getServer().getScoreboardManager().getNewScoreboard());
+        }
+    }
+
+    @Override
+    public boolean isVisible() {
+        return visible;
     }
 
 

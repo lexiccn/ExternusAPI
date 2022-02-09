@@ -3,21 +3,38 @@ package me.deltaorion.extapi.display.bukkit;
 import me.deltaorion.extapi.display.actionbar.ActionBarFactories;
 import me.deltaorion.extapi.display.actionbar.ActionBarFactory;
 import me.deltaorion.extapi.display.actionbar.renderer.PacketActionBarRenderer;
+import me.deltaorion.extapi.display.scoreboard.ScoreboardFactory;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class APIPlayerSettings {
 
-    private ActionBarFactory factory;
+    @NotNull private ActionBarFactory actionBarFactory;
+    @NotNull private ScoreboardFactory scoreboardFactory;
 
     public APIPlayerSettings() {
-        this.factory = ActionBarFactories.SCHEDULE(new PacketActionBarRenderer());
+        this.actionBarFactory = ActionBarFactories.SCHEDULE(new PacketActionBarRenderer());
+        this.scoreboardFactory = ScoreboardFactory.WRAPPER;
     }
 
-    public APIPlayerSettings setFactory(ActionBarFactory factory) {
-        this.factory = factory;
+    public APIPlayerSettings setActionBarFactory(@NotNull ActionBarFactory factory) {
+        this.actionBarFactory = Objects.requireNonNull(factory);
         return this;
     }
 
-    public ActionBarFactory getFactory() {
-        return factory;
+    @NotNull
+    public ActionBarFactory getActionBarFactory() {
+        return actionBarFactory;
+    }
+
+    public APIPlayerSettings setScoreboardFactory(@NotNull ScoreboardFactory factory) {
+        this.scoreboardFactory = Objects.requireNonNull(factory);
+        return this;
+    }
+
+    @NotNull
+    public ScoreboardFactory getScoreboardFactory() {
+        return scoreboardFactory;
     }
 }

@@ -43,7 +43,7 @@ public class ScoreboardTest extends FunctionalCommand {
 
             Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
             BukkitApiPlayer p = plugin.getBukkitPlayerManager().getPlayer(player);
-            p.setScoreboard(null);
+            p.removeScoreboard();
         });
 
         registerArgument("pause", (command) -> {
@@ -54,6 +54,15 @@ public class ScoreboardTest extends FunctionalCommand {
         registerArgument("play", command -> {
             if(runningAnimation!=null)
                 runningAnimation.play();
+        });
+
+        registerArgument("visible",command -> {
+            Player player = Bukkit.getPlayer(command.getSender().getUniqueId());
+            EScoreboard scoreboard = plugin.getBukkitPlayerManager().getPlayer(player).getScoreboard();
+            if(scoreboard==null)
+                return;
+
+            scoreboard.setVisible(!scoreboard.isVisible());
         });
     }
 
@@ -67,10 +76,10 @@ public class ScoreboardTest extends FunctionalCommand {
         final String title = command.getArgOrDefault(0, "Hello World").asString();
 
         if (apiPlayer.getScoreboard() == null)
-            createScoreboard(player, title);
+            createScoreboard(apiPlayer, title);
 
         if (!apiPlayer.getScoreboard().getName().equals(scoreboardName))
-            createScoreboard(player, title);
+            createScoreboard(apiPlayer, title);
 
         if (this.runningAnimation != null)
             this.runningAnimation.cancel();
@@ -97,8 +106,9 @@ public class ScoreboardTest extends FunctionalCommand {
         this.runningAnimation = animation.start(() -> new ArrayList<>(plugin.getServer().getOnlinePlayers()));
     }
 
-    private void createScoreboard(Player player, String title) {
-        EScoreboard scoreboard = new WrapperScoreboard(player,scoreboardName,plugin,3);
+    private void createScoreboard(BukkitApiPlayer player, String title) {
+        EScoreboard scoreboard = player.setScoreboard(scoreboardName,3);
+        assert scoreboard != null;
         scoreboard.setTitle(ChatColor.WHITE + "" + ChatColor.BOLD + title);
         scoreboard.setLine(ChatColor.GRAY + "Test Server", 0);
         scoreboard.setLine(ChatColor.WHITE + "abcdefghijklmnopqrstuvwxyz32", 1);

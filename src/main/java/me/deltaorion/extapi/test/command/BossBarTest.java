@@ -8,6 +8,9 @@ import me.deltaorion.extapi.display.bossbar.BossBar;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BossBarTest extends FunctionalCommand {
 
     private final BukkitPlugin plugin;
@@ -15,6 +18,46 @@ public class BossBarTest extends FunctionalCommand {
     public BossBarTest(BukkitPlugin plugin) {
         super(NO_PERMISSION);
         this.plugin = plugin;
+        registerArgument("message",command -> {
+            Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
+            BossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
+            if(bossBar==null)
+                return;
+
+            bossBar.setMessage(command.getArgOrDefault(0,"Gamer").asString());
+        });
+
+        registerArgument("visible",command -> {
+            Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
+            BossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
+            if(bossBar==null)
+                return;
+
+            bossBar.setVisible(!bossBar.isVisible());
+        });
+
+        registerArgument("progress",command -> {
+            Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
+            BossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
+            if(bossBar==null)
+                return;
+
+            bossBar.setProgress(command.getArgOrBlank(0).asFloatOrDefault(1));
+        });
+
+        registerArgument("remove",command -> {
+            Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
+            plugin.getBukkitPlayerManager().getPlayer(player).setBossBar(null);
+        });
+
+        registerArgument("args",command -> {
+            Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
+            BossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
+            if(bossBar==null)
+                return;
+            List<String> args = new ArrayList<>(command.getRawArgs());
+            bossBar.setArgs(args.toArray());
+        });
     }
 
     @Override
@@ -26,6 +69,5 @@ public class BossBarTest extends FunctionalCommand {
         BossBar bossBar = new BossBar(plugin,player,"bb-1");
         bossBar.setMessage(name);
         bossBar.setProgress(progress);
-
     }
 }

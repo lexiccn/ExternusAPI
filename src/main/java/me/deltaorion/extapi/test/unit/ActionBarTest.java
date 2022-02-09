@@ -53,7 +53,7 @@ public class ActionBarTest implements MinecraftTest {
         CountDownLatch renderLatch = new CountDownLatch(1);
         AtomicReference<ScheduleRunningActionBar> actionBarRunning = new AtomicReference<>();
         Player tPlayer = new TestPlayer("Gamer");
-        BukkitApiPlayer player = new BukkitApiPlayer(plugin, tPlayer, new APIPlayerSettings().setFactory(new ActionBarFactory() {
+        BukkitApiPlayer player = new BukkitApiPlayer(plugin, tPlayer, new APIPlayerSettings().setActionBarFactory(new ActionBarFactory() {
             @NotNull
             @Override
             public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager) {
@@ -113,7 +113,7 @@ public class ActionBarTest implements MinecraftTest {
         CountDownLatch renderLatch = new CountDownLatch(1);
         AtomicReference<ScheduleRunningActionBar> actionBarRunning = new AtomicReference<>();
         Player tPlayer = new TestPlayer("Gamer");
-        BukkitApiPlayer player = new BukkitApiPlayer(plugin, tPlayer, new APIPlayerSettings().setFactory(new ActionBarFactory() {
+        BukkitApiPlayer player = new BukkitApiPlayer(plugin, tPlayer, new APIPlayerSettings().setActionBarFactory(new ActionBarFactory() {
             @NotNull
             @Override
             public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager) {
@@ -162,7 +162,7 @@ public class ActionBarTest implements MinecraftTest {
 
 
     public void failTest() {
-        BukkitApiPlayer player = new BukkitApiPlayer(plugin, new TestPlayer("Gamer"), new APIPlayerSettings().setFactory(new ActionBarFactory() {
+        BukkitApiPlayer player = new BukkitApiPlayer(plugin, new TestPlayer("Gamer"), new APIPlayerSettings().setActionBarFactory(new ActionBarFactory() {
             @NotNull
             @Override
             public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager) {

@@ -9,8 +9,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 
-public class TitleTest extends FunctionalCommand {
-    public TitleTest(BukkitPlugin plugin) {
+public class FakeWitherTest extends FunctionalCommand {
+    public FakeWitherTest(BukkitPlugin plugin) {
         super(NO_PERMISSION);
         this.plugin = plugin;
 

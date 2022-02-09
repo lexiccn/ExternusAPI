@@ -5,8 +5,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import com.google.common.base.Objects;
-import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.display.actionbar.ActionBarRenderer;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import org.bukkit.entity.Player;

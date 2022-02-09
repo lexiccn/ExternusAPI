@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.display.scoreboard;
 
+import me.deltaorion.extapi.display.TiedDisplayItem;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import me.deltaorion.extapi.locale.message.Message;
 import org.bukkit.entity.Player;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
  * Implementations
  *   - {@link WrapperScoreboard} wraps around a bukkit scoreboard
  */
-public interface EScoreboard {
+public interface EScoreboard extends TiedDisplayItem {
 
     /**
      * TODO
@@ -186,5 +187,6 @@ public interface EScoreboard {
      *
      * @return the player who this scoreboard is displayed to
      */
+    @NotNull
     public BukkitApiPlayer getPlayer();
 }

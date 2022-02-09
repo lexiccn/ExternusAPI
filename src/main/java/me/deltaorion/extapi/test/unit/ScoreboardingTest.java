@@ -1,6 +1,8 @@
 package me.deltaorion.extapi.test.unit;
 
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
+import me.deltaorion.extapi.display.bukkit.APIPlayerSettings;
+import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import me.deltaorion.extapi.display.scoreboard.EScoreboard;
 import me.deltaorion.extapi.display.scoreboard.WrapperScoreboard;
 import me.deltaorion.extapi.locale.message.Message;
@@ -21,7 +23,8 @@ public class ScoreboardingTest implements MinecraftTest {
     @McTest
     public void testScoreboard() {
         TestPlayer player = new TestPlayer("gamer");
-        EScoreboard scoreboard = new WrapperScoreboard(player,"gamer",plugin,10);
+        BukkitApiPlayer p = new BukkitApiPlayer(plugin,player,new APIPlayerSettings());
+        EScoreboard scoreboard = p.setScoreboard("gamer",10);
         assertEquals(10,scoreboard.getSize());
         assertEquals("",scoreboard.getTitle().toString());
 
