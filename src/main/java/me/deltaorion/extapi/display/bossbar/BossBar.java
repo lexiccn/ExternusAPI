@@ -1,7 +1,5 @@
 package me.deltaorion.extapi.display.bossbar;
 
-import me.deltaorion.extapi.common.exception.MissingDependencyException;
-import me.deltaorion.extapi.common.plugin.BukkitAPIDepends;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import me.deltaorion.extapi.locale.message.Message;
@@ -32,6 +30,7 @@ public class BossBar {
         this(plugin,player,name,Message.valueOf(""));
     }
 
+
     public BossBar(@NotNull BukkitPlugin plugin, @NotNull Player player, @NotNull String name, @NotNull Message message) {
         this.plugin = Objects.requireNonNull(plugin);
         this.player = plugin.getBukkitPlayerManager().getPlayer(player);
@@ -39,10 +38,12 @@ public class BossBar {
         this.message = Objects.requireNonNull(message);
         BossBarRendererFactory factory = Objects.requireNonNull(BossBarRendererFactory.fromVersion(plugin.getEServer().getServerVersion()));
         this.asDisplayed = message.toString(this.player.getLocale());
-        this.visible = DEFAULT_VISIBILITY;
-        this.progress = DEFAULT_PROGRESS;
-        this.renderer = factory.get(plugin,this.player,visible,progress,asDisplayed);
+        this.renderer = factory.get(plugin,this.player);
         this.player.setBossBar(this);
+
+        setVisible(DEFAULT_VISIBILITY);
+        setProgress(DEFAULT_PROGRESS);
+        setMessage(message);
     }
 
     @NotNull
@@ -58,17 +59,23 @@ public class BossBar {
     public void setMessage(@NotNull Message message, Object... args) {
         this.message = message;
         this.asDisplayed = message.toString(player.getLocale(),args);
-        renderer.setMessage(asDisplayed);
+        try {
+            renderer.setMessage(asDisplayed);
+        } catch (Throwable e) {
+            handle(e);
+        }
+    }
+
+    private void handle(Throwable e) {
+        plugin.getPluginLogger().severe("An error occurred when rendering the BossBar", e);
     }
 
     public void setMessage(@NotNull String message) {
-        this.message = Message.valueOf(message);
-        this.asDisplayed = message;
-        renderer.setMessage(asDisplayed);
+        setMessage(Message.valueOf(message));
     }
 
     public void setArgs(Object... args) {
-        this.asDisplayed = message.toString(player.getLocale(),args);
+        setMessage(getMessage(),args);
     }
 
     @NotNull
@@ -84,7 +91,11 @@ public class BossBar {
         if(this.visible==visible)
             return;
         this.visible = visible;
-        renderer.setVisible(visible);
+        try {
+            renderer.setVisible(visible);
+        } catch (Throwable e) {
+            handle(e);
+        }
     }
 
     public float getProgress() {
@@ -96,7 +107,11 @@ public class BossBar {
         if(progress==this.progress)
             return;
         this.progress = progress;
-        renderer.setProgress(progress);
+        try {
+            renderer.setProgress(progress);
+        } catch (Throwable e) {
+            handle(e);
+        }
 
     }
 
@@ -106,7 +121,11 @@ public class BossBar {
     }
 
     public void update() {
-        renderer.update();
+        try {
+            renderer.update();
+        } catch (Throwable e) {
+            handle(e);
+        }
     }
 
 }

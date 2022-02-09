@@ -54,6 +54,7 @@ public final class ExtAPI extends BukkitPlugin {
         tester.addTest(new CustomItemTest(this));
         tester.addTest(new LocaleTest(this));
         tester.addTest(new EMaterialTest());
+        tester.addTest(new PTest(this));
         tester.addTest(new ScoreboardingTest(this));
         tester.addTest(new ActionBarTest(this));
     }

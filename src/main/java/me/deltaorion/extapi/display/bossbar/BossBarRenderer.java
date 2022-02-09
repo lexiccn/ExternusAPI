@@ -1,6 +1,5 @@
 package me.deltaorion.extapi.display.bossbar;
 
-import me.deltaorion.extapi.locale.message.Message;
 import org.jetbrains.annotations.NotNull;
 
 public interface BossBarRenderer {

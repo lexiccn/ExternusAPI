@@ -210,16 +210,14 @@ public class WrapperScoreboard implements EScoreboard {
     }
 
     private void setBoard() {
-        Objects.requireNonNull(player,"Bad initialisation");
-        player.getPlayer().setScoreboard(scoreboard);
+        Player p = this.player.getPlayer();
+        if(p!=null)
+            p.setScoreboard(scoreboard);
         player.setScoreboard(this);
     }
 
     private void createTeams() {
         int score = this.lines;
-
-        Objects.requireNonNull(this.scoreboard,"Bad Initialisation");
-        Objects.requireNonNull(this.objective,"Bad Initialisation");
 
         for (int i = 0; i < this.lines; i++) {
             Team t = this.scoreboard.registerNewTeam(ScoreboardLine.getTeamName(i));
@@ -304,7 +302,7 @@ public class WrapperScoreboard implements EScoreboard {
         return name;
     }
 
-    @Override
+    @NotNull @Override
     public BukkitApiPlayer getPlayer() {
         return player;
     }

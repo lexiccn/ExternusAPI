@@ -1,7 +1,5 @@
 package me.deltaorion.extapi.display.actionbar.running;
 
-import me.deltaorion.extapi.common.exception.MissingDependencyException;
-import me.deltaorion.extapi.common.plugin.BukkitAPIDepends;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.common.scheduler.SchedulerTask;
 import me.deltaorion.extapi.display.actionbar.ActionBar;
@@ -16,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -28,10 +27,10 @@ public class ScheduleRunningActionBar implements RunningActionBar {
 
     @NotNull private final BukkitPlugin plugin;
     @NotNull private final BukkitApiPlayer player;
-    private final ActionBarManager manager;
-    private final ActionBarRenderer renderer;
+    @NotNull private final ActionBarManager manager;
+    @NotNull private final ActionBarRenderer renderer;
 
-    private AtomicBoolean dodgyRenderer = new AtomicBoolean(false);
+    @NotNull private final AtomicBoolean dodgyRenderer = new AtomicBoolean(false);
 
     private long timeCounter;
 
@@ -41,23 +40,20 @@ public class ScheduleRunningActionBar implements RunningActionBar {
 
     private final long INTERVAL = Duration.of(2, ChronoUnit.SECONDS).toMillis();
     private final long PERFECT = Duration.of(3,ChronoUnit.SECONDS).toMillis();
-    private final Message BLANK = Message.valueOf("");
+    @NotNull private final Message BLANK = Message.valueOf("");
 
-    public ScheduleRunningActionBar(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, ActionBarManager manager, ActionBarRenderer renderer) {
-        this.actionBar = actionBar;
-        this.plugin = plugin;
-        this.player = player;
+    public ScheduleRunningActionBar(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager, @NotNull ActionBarRenderer renderer) {
+        this.actionBar = Objects.requireNonNull(actionBar);
+        this.plugin = Objects.requireNonNull(plugin);
+        this.player = Objects.requireNonNull(player);
         this.args = args;
-        this.manager = manager;
-        this.renderer = renderer;
+        this.manager = Objects.requireNonNull(manager);
+        this.renderer = Objects.requireNonNull(renderer);
         this.finishLatch = new CountDownLatch(1);
     }
 
     @Override
     public void start() {
-        if(!plugin.getDependency(BukkitAPIDepends.PROTOCOL_LIB.getName()).isActive())
-            throw new MissingDependencyException("Cannot Render action bar as dependency '"+BukkitAPIDepends.PROTOCOL_LIB.getName() +"' is missing!");
-
         synchronized (this) {
             if(isRunning() || this.cancelled)
                 return;
@@ -75,10 +71,12 @@ public class ScheduleRunningActionBar implements RunningActionBar {
                 return;
 
             this.cancelled = true;
+            //if it isn't running then the task has already been halted
             if(!isRunning())
                 return;
         }
         halt();
+        //if not overwriting then don't bother with clearing so the next can be played seamlessly
         if(!overwrite) {
             clear();
         }
@@ -101,6 +99,7 @@ public class ScheduleRunningActionBar implements RunningActionBar {
             this.runningTask = null;
             this.cancelled = true;
         }
+        //alert manager to avoid memory leak
         this.manager.removeActionBar();
         finishLatch.countDown();
         //notify that this has stopped
@@ -114,16 +113,18 @@ public class ScheduleRunningActionBar implements RunningActionBar {
                     stop();
                     return;
                 }
+                render();
             }
-
-            render();
-
+            //an action bar will fade and render perfectly if it lasts for 3 seconds.
+            //However if the duration is less than 3 seconds that can never be guaranteed. A blank
+            //screen must be played to give the illusion of lowered duration
             if(timeCounter<=PERFECT) {
                 scheduleCancel(timeCounter);
                 return;
             }
             long timeCopy = timeCounter;
             timeCopy = timeCopy-INTERVAL;
+            //this here adjusts to make sure that we always end off with the perfect amount
             if(timeCopy<PERFECT) {
                 long diff = timeCounter-PERFECT;
                 timeCounter = PERFECT;
@@ -140,6 +141,7 @@ public class ScheduleRunningActionBar implements RunningActionBar {
             throw new IllegalArgumentException("Cannot cancel in less than 0 millis! Received '"+cancelWhen+"'");
 
         synchronized (this) {
+            //if it has been cancelled dont schedule
             if(this.cancelled || Thread.currentThread().isInterrupted()) {
                 return;
             }
@@ -182,8 +184,8 @@ public class ScheduleRunningActionBar implements RunningActionBar {
 
     private void renderText(Message message, Object... args) {
         try {
-            //all renders must be done in order through the render lock to stop race conditions
-            renderer.render(player,message,args);
+            String toRender = message.toString(player.getLocale(),args);
+            renderer.render(player,toRender);
         } catch (Throwable e) {
             if(!dodgyRenderer.get()) {
                 plugin.getPluginLogger().severe("An error occurred when rendering action bar '" + actionBar + "'", e);
@@ -209,8 +211,19 @@ public class ScheduleRunningActionBar implements RunningActionBar {
         render();
     }
 
+    @NotNull
     @Override
     public CountDownLatch getFinishLatch() {
         return finishLatch;
+    }
+
+    @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(this)
+                .add("Action-Bar",actionBar)
+                .add("Running",isRunning())
+                .add("Cancelled",cancelled)
+                .add("as-displayed", actionBar.getMessage().toString(player.getLocale(),args))
+                .toString();
     }
 }

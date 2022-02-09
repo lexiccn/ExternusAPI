@@ -7,13 +7,13 @@ import org.jetbrains.annotations.NotNull;
 
 public interface BossBarRendererFactory {
 
-    public BossBarRenderer get(@NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, boolean visible, float progress,@NotNull String message);
+    public BossBarRenderer get(@NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player);
 
     static BossBarRendererFactory WITHER_ENTITY() {
         return new BossBarRendererFactory() {
             @Override
-            public BossBarRenderer get(@NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, boolean visible, float progress, @NotNull String message) {
-                return new EntityBossBarRenderer(plugin,player,visible,progress,message);
+            public BossBarRenderer get(@NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player) {
+                return new EntityBossBarRenderer(plugin,player);
             }
         };
     }

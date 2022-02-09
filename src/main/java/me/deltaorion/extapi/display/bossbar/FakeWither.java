@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicInteger;
 
 //https://gist.github.com/aadnk/9373802
@@ -40,11 +41,11 @@ public class FakeWither {
     private boolean created;
 
     @NotNull private Location location;
-    @NotNull private final Player player;
+    @NotNull private final WeakReference<Player> player;
 
     public FakeWither(@NotNull Player player, @NotNull Location location) {
         this.location = location;
-        this.player = player;
+        this.player = new WeakReference<>(player);
     }
 
     public int getHealth() {
@@ -98,16 +99,27 @@ public class FakeWither {
 
     public void teleport(Location location) {
         if(created) {
-            WrapperPlayServerEntityTeleport packet = new WrapperPlayServerEntityTeleport();
-            packet.setEntityID(id);
-            packet.setX(location.getX());
-            packet.setY(location.getY());
-            packet.setZ(location.getZ());
-            packet.setPitch(location.getPitch());
-            packet.setYaw(location.getYaw());
-            packet.sendPacket(player);
+            sendTeleport(location);
         }
         this.location = location;
+    }
+
+    private void sendTeleport(Location location) {
+        Player player = getPlayer();
+        if(player==null)
+            return;
+        WrapperPlayServerEntityTeleport packet = new WrapperPlayServerEntityTeleport();
+        packet.setEntityID(id);
+        packet.setX(location.getX());
+        packet.setY(location.getY());
+        packet.setZ(location.getZ());
+        packet.setPitch(location.getPitch());
+        packet.setYaw(location.getYaw());
+        packet.sendPacket(player);
+    }
+
+    private Player getPlayer() {
+        return player.get();
     }
 
     @NotNull
@@ -116,8 +128,10 @@ public class FakeWither {
     }
 
     private void sendMetadata(WrappedDataWatcher watcher) {
+        Player player = getPlayer();
+        if(player==null)
+            return;
         WrapperPlayServerEntityMetadata update = new WrapperPlayServerEntityMetadata();
-
         update.setEntityId(id);
         update.setEntityMetadata(watcher.getWatchableObjects());
         update.sendPacket(player);
@@ -133,6 +147,10 @@ public class FakeWither {
 
     public void spawn() {
         if(created)
+            return;
+
+        Player player = getPlayer();
+        if(player==null)
             return;
 
         WrapperPlayServerSpawnEntityLiving spawnMob = new WrapperPlayServerSpawnEntityLiving();
@@ -153,13 +171,16 @@ public class FakeWither {
         spawnMob.setY(location.getY());
         spawnMob.setZ(location.getZ());
         spawnMob.setMetadata(watcher);
-
         spawnMob.sendPacket(player);
         created = true;
     }
 
     public void destroy() {
         if (!created)
+            return;
+
+        Player player = getPlayer();
+        if(player==null)
             return;
 
         WrapperPlayServerEntityDestroy destroyMe = new WrapperPlayServerEntityDestroy();

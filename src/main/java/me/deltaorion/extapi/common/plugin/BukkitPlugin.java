@@ -2,6 +2,7 @@ package me.deltaorion.extapi.common.plugin;
 
 import me.deltaorion.extapi.animation.RunningAnimation;
 import me.deltaorion.extapi.display.bukkit.BukkitPlayerManager;
+import me.deltaorion.extapi.display.bukkit.SimpleBukkitPlayerManager;
 import me.deltaorion.extapi.command.Command;
 import me.deltaorion.extapi.command.parser.ArgumentParser;
 import me.deltaorion.extapi.command.parser.ArgumentParsers;
@@ -16,9 +17,9 @@ import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
 import me.deltaorion.extapi.common.sender.SimpleSender;
 import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.common.thread.ErrorReportingThreadPool;
+import me.deltaorion.extapi.display.bukkit.WrappedPlayerManager;
 import me.deltaorion.extapi.item.custom.CustomItemManager;
 import me.deltaorion.extapi.locale.translator.PluginTranslator;
-import me.deltaorion.extapi.test.TestPlugin;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -42,7 +43,7 @@ public class BukkitPlugin extends JavaPlugin implements ApiPlugin {
     @NotNull private final BukkitCommandMap commandMap;
     @Nullable private CustomItemManager itemManager;
     @NotNull private final ExecutorService commandService;
-    @Nullable private BukkitPlayerManager bukkitPlayerManager;
+    @Nullable private SimpleBukkitPlayerManager bukkitPlayerManager;
 
     public BukkitPlugin() {
         super();
@@ -75,7 +76,7 @@ public class BukkitPlugin extends JavaPlugin implements ApiPlugin {
     private void onEnableLogic() {
         registerDefaultDepends();
         this.itemManager = new CustomItemManager(this);
-        this.bukkitPlayerManager = new BukkitPlayerManager(this);
+        this.bukkitPlayerManager = new SimpleBukkitPlayerManager(this);
     }
 
     @Override
@@ -95,6 +96,7 @@ public class BukkitPlugin extends JavaPlugin implements ApiPlugin {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+        Objects.requireNonNull(bukkitPlayerManager,"Plugin is enabled and thus the player manager should not be null").shutdown();
     }
 
     @Override
@@ -281,6 +283,6 @@ public class BukkitPlugin extends JavaPlugin implements ApiPlugin {
     public BukkitPlayerManager getBukkitPlayerManager() {
         if(this.bukkitPlayerManager==null)
             throw new IllegalStateException("Cannot Access this API method before the plugin has enabled. Are you overriding onEnable instead of onPluginEnable?");
-        return bukkitPlayerManager;
+        return new WrappedPlayerManager(bukkitPlayerManager);
     }
 }

@@ -11,6 +11,7 @@ import me.deltaorion.extapi.locale.message.Message;
 import me.deltaorion.extapi.test.unit.bukkit.TestPlayer;
 import me.deltaorion.extapi.test.unit.generic.McTest;
 import me.deltaorion.extapi.test.unit.generic.MinecraftTest;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
@@ -51,9 +52,11 @@ public class ActionBarTest implements MinecraftTest {
         List<String> screen = new ArrayList<>();
         CountDownLatch renderLatch = new CountDownLatch(1);
         AtomicReference<ScheduleRunningActionBar> actionBarRunning = new AtomicReference<>();
-        BukkitApiPlayer player = new BukkitApiPlayer(plugin, new TestPlayer("Gamer"), new APIPlayerSettings().setFactory(new ActionBarFactory() {
+        Player tPlayer = new TestPlayer("Gamer");
+        BukkitApiPlayer player = new BukkitApiPlayer(plugin, tPlayer, new APIPlayerSettings().setFactory(new ActionBarFactory() {
+            @NotNull
             @Override
-            public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, ActionBarManager manager) {
+            public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager) {
                 ScheduleRunningActionBar bar = new ScheduleRunningActionBar(actionBar, plugin, player, args, manager, new TestRenderer(screen, renderLatch));
                 actionBarRunning.set(bar);
                 return bar;
@@ -87,7 +90,7 @@ public class ActionBarTest implements MinecraftTest {
         player.getActionBarManager().removeActionBar();
         player.getActionBarManager().removeActionBar();
         player.getActionBarManager().removeActionBar();
-
+        plugin.getBukkitPlayerManager().removeCached(tPlayer);
     }
 
     @McTest
@@ -109,9 +112,11 @@ public class ActionBarTest implements MinecraftTest {
         List<String> screen = new ArrayList<>();
         CountDownLatch renderLatch = new CountDownLatch(1);
         AtomicReference<ScheduleRunningActionBar> actionBarRunning = new AtomicReference<>();
-        BukkitApiPlayer player = new BukkitApiPlayer(plugin, new TestPlayer("Gamer"), new APIPlayerSettings().setFactory(new ActionBarFactory() {
+        Player tPlayer = new TestPlayer("Gamer");
+        BukkitApiPlayer player = new BukkitApiPlayer(plugin, tPlayer, new APIPlayerSettings().setFactory(new ActionBarFactory() {
+            @NotNull
             @Override
-            public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, ActionBarManager manager) {
+            public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager) {
                 ScheduleRunningActionBar bar = new ScheduleRunningActionBar(actionBar, plugin, player, args, manager, new TestRenderer(screen, renderLatch));
                 actionBarRunning.set(bar);
                 return bar;
@@ -150,14 +155,17 @@ public class ActionBarTest implements MinecraftTest {
             throw new RuntimeException(e);
         }
 
+        plugin.getBukkitPlayerManager().removeCached(tPlayer);
+
 
     }
 
 
     public void failTest() {
         BukkitApiPlayer player = new BukkitApiPlayer(plugin, new TestPlayer("Gamer"), new APIPlayerSettings().setFactory(new ActionBarFactory() {
+            @NotNull
             @Override
-            public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, ActionBarManager manager) {
+            public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager) {
                 return new ScheduleRunningActionBar(actionBar, plugin, player, args, manager, new FailRenderer());
             }
         }));

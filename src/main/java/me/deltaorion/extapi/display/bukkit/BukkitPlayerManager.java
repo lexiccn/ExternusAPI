@@ -1,69 +1,20 @@
 package me.deltaorion.extapi.display.bukkit;
 
-import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
-public class BukkitPlayerManager implements Listener, Iterable<BukkitApiPlayer> {
+public interface BukkitPlayerManager extends Iterable<BukkitApiPlayer> {
 
-    @NotNull private final ConcurrentMap<Player,BukkitApiPlayer> playerCache;
-    @NotNull private final BukkitPlugin plugin;
-    @NotNull private ApiPlayerFactory factory;
+    BukkitApiPlayer getPlayer(@NotNull final Player player);
 
-    public BukkitPlayerManager(@NotNull BukkitPlugin plugin) {
-        this.plugin = plugin;
-        this.playerCache = new ConcurrentHashMap<>();
-        plugin.getServer().getPluginManager().registerEvents(this,plugin);
-        this.factory = ApiPlayerFactory.DEFAULT;
-    }
+    boolean hasPlayer(@NotNull Player player);
 
-    @NotNull
-    public BukkitApiPlayer getPlayer(@NotNull final Player player) {
-        return playerCache.computeIfAbsent(player,p -> factory.get(plugin,player));
-    }
+    Collection<BukkitApiPlayer> getPlayers();
 
-    public boolean hasPlayer(@NotNull Player player) {
-        return playerCache.containsKey(player);
-    }
+    void removeCached(@Nullable Player player);
 
-    @NotNull
-    public Collection<BukkitApiPlayer> getPlayers() {
-        return Collections.unmodifiableCollection(playerCache.values());
-    }
-
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onLeave(PlayerQuitEvent event) {
-        playerCache.remove(event.getPlayer());
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onMove(PlayerMoveEvent event) {
-        BukkitApiPlayer player = this.playerCache.get(event.getPlayer());
-        if(player==null)
-            return;
-
-        if(player.getBossBar()!=null)
-            player.getBossBar().update();
-    }
-
-    @NotNull @Override
-    public Iterator<BukkitApiPlayer> iterator() {
-        return getPlayers().iterator();
-    }
-
-    public void setFactory(@NotNull ApiPlayerFactory factory) {
-        this.factory = factory;
-    }
+    void setFactory(@NotNull ApiPlayerFactory factory);
 }

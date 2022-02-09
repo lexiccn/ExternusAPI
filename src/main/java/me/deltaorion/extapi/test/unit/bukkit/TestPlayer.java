@@ -902,7 +902,7 @@ public class TestPlayer implements Player {
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException();
+        return name;
     }
 
     @Override

@@ -2,13 +2,23 @@ package me.deltaorion.extapi.display.actionbar;
 
 import com.google.common.base.Objects;
 import jdk.nashorn.internal.ir.annotations.Immutable;
+import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import me.deltaorion.extapi.locale.message.Message;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 
-//data structure that stores info about an action bar
+/**
+ * An Action Bar is a display item which shows a line of text at the bottom of the players screen just on top of where item names
+ * are normally displayed. This class represents the contents of an action bar that can be sent to a user. To actually send one use
+ * {@link BukkitApiPlayer#getActionBarManager()}.
+ *
+ * Action bars have
+ *   - a optional name that can identify the action bar
+ *   - a duration for how long it is shown to the user
+ *   - the message that is displayed to the player
+ */
 @Immutable
 public class ActionBar {
 
@@ -16,29 +26,61 @@ public class ActionBar {
     @NotNull private final Message message;
     @NotNull private final Duration duration;
 
+    /**
+     * Creates an action bar. If the duration is less than 3s then the action bar will not fade out.
+     *
+     * @param message The message to show to the player
+     * @param duration How long the action bar should be displayed for.
+     * @param name An optional name for this action bar to identify it.
+     */
     public ActionBar(@NotNull Message message, @NotNull Duration duration, @Nullable String name) {
         this.message = message;
         this.duration = duration;
         this.name = name;
     }
-
+    /**
+     * Creates an action bar. If the duration is less than 3s then the action bar will not fade out. The action
+     * bar will have no name
+     *
+     * @param message The message to show to the player
+     * @param duration How long the action bar should be displayed for.
+     */
     public ActionBar(@NotNull Message message, @NotNull Duration duration) {
         this(message,duration,null);
     }
 
+    /**
+     * Creates an action bar. If the duration is less than 3s then the action bar will not fade out. The action
+     * bar will have no name
+     *
+     * @param message The message to show to the player
+     * @param duration How long the action bar should be displayed for.
+     */
     public ActionBar(@NotNull String message, @NotNull Duration duration) {
         this(Message.valueOf(message),duration);
     }
 
+    /**
+     *
+     * @return The message to display to the player
+     */
     @NotNull
     public Message getMessage() {
         return message;
     }
 
+    /**
+     *
+     * @return The duration of the action bar in millis
+     */
     public long getTime() {
         return duration.toMillis();
     }
 
+    /**
+     *
+     * @return The name of the action bar, null if there is no name
+     */
     @Nullable
     public String getName() {
         return name;

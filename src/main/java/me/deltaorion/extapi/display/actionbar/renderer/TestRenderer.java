@@ -2,7 +2,7 @@ package me.deltaorion.extapi.display.actionbar.renderer;
 
 import me.deltaorion.extapi.display.actionbar.ActionBarRenderer;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
-import me.deltaorion.extapi.locale.message.Message;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -18,8 +18,8 @@ public class TestRenderer implements ActionBarRenderer {
     }
 
     @Override
-    public void render(BukkitApiPlayer player, Message message, Object... args) {
-        list.add(message.toString(player.getLocale(),args));
+    public void render(@NotNull BukkitApiPlayer player, @NotNull String toRender) {
+        list.add(toRender);
         if(list.size()>3) {
             throw new RuntimeException("Animation Failed to cancel! Action Bar Test Failed!");
         }
