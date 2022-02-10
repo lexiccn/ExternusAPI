@@ -1,7 +1,9 @@
-package me.deltaorion.extapi.test.cmdold.playerparse;
+package me.deltaorion.extapi.test.commandold.playerparse;
 
+import me.deltaorion.extapi.APIPermissions;
 import me.deltaorion.extapi.command.sent.CommandArg;
 import me.deltaorion.extapi.command.CommandException;
+import me.deltaorion.extapi.command.sent.MessageErrors;
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.test.TestEnum;
 import org.bukkit.command.Command;
@@ -19,6 +21,10 @@ public class PlayerParseCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if(!sender.hasPermission(APIPermissions.COMMAND)) {
+            sender.sendMessage(MessageErrors.NO_PERMISSION().toString(APIPermissions.COMMAND));
+            return true;
+        }
         String arg = args.length == 0 ? "DeltaOrion" : args[0];
         CommandArg cArg = new CommandArg(plugin,arg,0);
         sender.sendMessage("Parsed: "+cArg.parseOrDefault(Player.class,null));

@@ -1,5 +1,7 @@
-package me.deltaorion.extapi.test.cmdold.version;
+package me.deltaorion.extapi.test.commandold.version;
 
+import me.deltaorion.extapi.APIPermissions;
+import me.deltaorion.extapi.command.sent.MessageErrors;
 import me.deltaorion.extapi.common.version.VersionFactory;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,6 +18,10 @@ public class VersionTest implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if(!sender.hasPermission(APIPermissions.COMMAND)) {
+            sender.sendMessage(MessageErrors.NO_PERMISSION().toString());
+            return true;
+        }
         sender.sendMessage(plugin.getServer().getVersion());
         sender.sendMessage(plugin.getServer().getBukkitVersion());
         sender.sendMessage(VersionFactory.parse(plugin.getServer().getBukkitVersion()).toString());

@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.test.command;
 
+import me.deltaorion.extapi.APIPermissions;
 import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.command.FunctionalCommand;
 import me.deltaorion.extapi.command.sent.SentCommand;
@@ -13,7 +14,7 @@ public class MessageCommand extends FunctionalCommand {
     private final EPlugin plugin;
 
     public MessageCommand(EPlugin plugin) {
-        super("ExtApi.Test.Command", "/msg <player> <msg>", Message.valueOf("Sends a direct message privately to the specified player"));
+        super(APIPermissions.COMMAND, "/msg <player> <msg>", Message.valueOf("Sends a direct message privately to the specified player"));
         this.plugin = plugin;
         registerCompleter(1, Completers.ONLINE_SENDERS(plugin.getEServer()));
     }

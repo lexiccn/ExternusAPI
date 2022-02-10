@@ -31,6 +31,8 @@ public class ActionBarManager {
     @NotNull private final BukkitApiPlayer player;
     @NotNull private final ActionBarFactory factory;
 
+    private boolean shutdown = false;
+
     public ActionBarManager(@NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, @NotNull ActionBarFactory factory) {
         this.plugin = Objects.requireNonNull(plugin);
         this.player = Objects.requireNonNull(player);
@@ -53,6 +55,8 @@ public class ActionBarManager {
      * if an action bar is currently running. Several implementations can be found in {@link RejectionPolicy} such as
      * {@link RejectionPolicy#OVERWRITE()} or {@link RejectionPolicy#QUEUE()}
      *
+     * This will do nothing if the manager has been shutdown (caused by player disconnect)
+     *
      * @param actionBar The action bar to send
      * @param policy The Rejection Policy to use. This will affect what occurs if an action bar is currently running.
      * @param args Any message args
@@ -61,6 +65,9 @@ public class ActionBarManager {
         Objects.requireNonNull(actionBar);
         Objects.requireNonNull(policy);
         synchronized (this) {
+            if(shutdown)
+                return;
+
             if (rendered == null) {
                 //at this point rendered is now an ongoing calculation
                 rendered = render(actionBar, args);
@@ -165,6 +172,13 @@ public class ActionBarManager {
             return null;
 
         return actionBar.getActionBar();
+    }
+
+    public void shutdown() {
+        synchronized (this) {
+            shutdown = true;
+        }
+        clear();
     }
 
     @Override

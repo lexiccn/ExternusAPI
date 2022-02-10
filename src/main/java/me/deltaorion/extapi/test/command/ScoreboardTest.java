@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.test.command;
 
+import me.deltaorion.extapi.APIPermissions;
 import me.deltaorion.extapi.animation.MinecraftAnimation;
 import me.deltaorion.extapi.animation.MinecraftFrame;
 import me.deltaorion.extapi.animation.RunningAnimation;
@@ -28,7 +29,7 @@ public class ScoreboardTest extends FunctionalCommand {
     private final String scoreboardName = "sb-1";
 
     public ScoreboardTest(BukkitPlugin plugin) {
-        super(NO_PERMISSION);
+        super(APIPermissions.COMMAND);
         this.plugin = plugin;
         registerArguments();
     }

@@ -197,4 +197,23 @@ public class BossBar implements TiedDisplayItem {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof BossBar))
+            return false;
+
+        BossBar bossBar = (BossBar) o;
+        return bossBar.player.equals(this.player) && bossBar.visible==this.visible && bossBar.progress == this.progress && bossBar.message.equals(this.message);
+    }
+
+    @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(this)
+                .add("Message",message)
+                .add("Rendered",asDisplayed)
+                .add("Visible",visible)
+                .add("Progress",progress)
+                .toString();
+    }
+
 }

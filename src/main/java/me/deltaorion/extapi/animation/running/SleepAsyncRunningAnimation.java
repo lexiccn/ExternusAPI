@@ -1,5 +1,7 @@
 package me.deltaorion.extapi.animation.running;
 
+import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.AtomicDouble;
 import me.deltaorion.extapi.animation.*;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.scheduler.SchedulerTask;
@@ -25,6 +27,7 @@ public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
     @NotNull private final Object pauseLock = new Object();
     @GuardedBy("this") private volatile boolean paused = false;
     private final long taskID;
+    private final AtomicDouble playBackSpeed;
 
     public SleepAsyncRunningAnimation(@NotNull MinecraftAnimation<T, S> animation, @NotNull EPlugin plugin, @NotNull AnimationRenderer<T,S> animationRenderer, long taskID) {
         this.frameIterator = animation.getFrames();
@@ -33,6 +36,7 @@ public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
         this.animationRenderer = animationRenderer;
         running = false;
         this.taskID = taskID;
+        playBackSpeed = new AtomicDouble(1);
     }
 
     @Override
@@ -154,6 +158,21 @@ public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
         }
     }
 
+    private int getTime(@NotNull MinecraftFrame<?> frame) {
+        return (int) (frame.getTime() * playBackSpeed.get());
+    }
+
+    @Override
+    public void setPlaySpeed(float modifier) {
+        Preconditions.checkArgument(modifier>=0);
+        if(modifier==0) {
+            pause();
+            return;
+        }
+
+        playBackSpeed.set(1/modifier);
+    }
+
     private boolean isPaused() {
         synchronized (pauseLock) {
             return this.paused;
@@ -213,7 +232,7 @@ public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
             MinecraftFrame<T> nextFrame = frameIterator.next();
 
             if(nextFrame.getTime()>0) {
-                Thread.sleep(nextFrame.getTime());
+                Thread.sleep(getTime(nextFrame));
             }
             //if it has been cancelled do not render the next frame
             if(cancelled || !this.running)

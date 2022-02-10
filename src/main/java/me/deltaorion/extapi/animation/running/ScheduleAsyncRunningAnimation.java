@@ -1,5 +1,7 @@
 package me.deltaorion.extapi.animation.running;
 
+import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.AtomicDouble;
 import me.deltaorion.extapi.animation.AnimationException;
 import me.deltaorion.extapi.animation.AnimationRenderer;
 import me.deltaorion.extapi.animation.MinecraftAnimation;
@@ -29,6 +31,7 @@ public class ScheduleAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation
     @GuardedBy("this") private volatile boolean paused = false;
     @NotNull private final Object runningLock = new Object();
     @GuardedBy("this") private boolean executing = false;
+    private final AtomicDouble playBackSpeed;
     private final long taskID;
 
     public ScheduleAsyncRunningAnimation(@NotNull MinecraftAnimation<T, S> animation, @NotNull ApiPlugin plugin, @NotNull AnimationRenderer<T, S> renderer, long taskID) {
@@ -38,6 +41,7 @@ public class ScheduleAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation
         this.renderer = renderer;
         this.running = false;
         this.taskID = taskID;
+        this.playBackSpeed = new AtomicDouble(1);
     }
 
     @Override
@@ -113,6 +117,17 @@ public class ScheduleAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation
                 return;
         }
         forcePlay();
+    }
+
+    @Override
+    public void setPlaySpeed(float modifier) {
+        Preconditions.checkArgument(modifier>=0);
+        if(modifier==0) {
+            pause();
+            return;
+        }
+
+        playBackSpeed.set(1/modifier);
     }
 
     private void forcePlay() {
@@ -207,7 +222,11 @@ public class ScheduleAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation
                 frameIterator,
                 this,
                 plugin
-        ),frame.getTime(),TimeUnit.MILLISECONDS));
+        ),getTime(frame),TimeUnit.MILLISECONDS));
+    }
+
+    private int getTime(@NotNull MinecraftFrame<?> frame) {
+        return (int) (frame.getTime()*playBackSpeed.get());
     }
 
     private static class AnimationRunnable<T,S> implements Runnable {
@@ -293,7 +312,7 @@ public class ScheduleAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation
                     frameIterator,
                     runningAnimation,
                     plugin
-            ), frame.getTime(), TimeUnit.MILLISECONDS));
+            ), runningAnimation.getTime(frame), TimeUnit.MILLISECONDS));
 
         }
 

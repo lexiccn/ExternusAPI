@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.test.command;
 
+import me.deltaorion.extapi.APIPermissions;
 import me.deltaorion.extapi.animation.MinecraftAnimation;
 import me.deltaorion.extapi.animation.MinecraftFrame;
 import me.deltaorion.extapi.animation.RunningAnimation;
@@ -23,7 +24,7 @@ public class AnimationTest extends FunctionalCommand {
     private final MinecraftAnimation<String,Sender> animation2;
 
     public AnimationTest(ApiPlugin plugin) {
-        super(NO_PERMISSION);
+        super(APIPermissions.COMMAND);
         animation = new MinecraftAnimation<>(
                 plugin,
                 AnimationFactories.SYNC_BUKKIT(),
@@ -53,6 +54,7 @@ public class AnimationTest extends FunctionalCommand {
             for(RunningAnimation<?> animation : animation.getCurrentlyRunning()) {
                 animation.pause();
             }
+            animation2.pauseAll();
             return;
         }
 
@@ -60,9 +62,21 @@ public class AnimationTest extends FunctionalCommand {
             for(RunningAnimation<?> animation : animation.getCurrentlyRunning()) {
                 animation.play();
             }
+            animation2.playAll();
             return;
         }
 
+        if(command.getArgOrBlank(0).asString().equalsIgnoreCase("speed")) {
+            for(RunningAnimation<?> animation : animation.getCurrentlyRunning()) {
+                animation.setPlaySpeed(command.getArgOrBlank(1).asFloatOrDefault(1.0f));
+            }
+
+            for(RunningAnimation<?> animation : animation2.getCurrentlyRunning()) {
+                animation.setPlaySpeed(command.getArgOrBlank(1).asFloatOrDefault(1.0f));
+            }
+            return;
+        }
+        /*
         animation.clearFrames();
         animation.addFrame(new MinecraftFrame<>(new PolarVector(length,0),1000));
         final double max = 2*Math.PI;
@@ -73,7 +87,7 @@ public class AnimationTest extends FunctionalCommand {
         animation.addFrame(new MinecraftFrame<>(new PolarVector(length,max),time));
         animation.start(player.getLocation().clone());
 
-        /*
+        */
         String str = command.getArgOrDefault(0,"Hello World").asString();
         animation2.clearFrames();
         for(int i=0;i<str.length();i++) {
@@ -87,6 +101,5 @@ public class AnimationTest extends FunctionalCommand {
         }
         animation2.start(command.getSender());
 
-         */
     }
 }

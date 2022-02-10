@@ -42,6 +42,7 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
     private boolean cancelled = false;
     private final long taskId;
     private int timeElapsed = 0;
+    private float playBackSpeed;
 
     public SyncBukkitRunningAnimation(@NotNull MinecraftAnimation<T, S> animation, @NotNull EPlugin plugin, @NotNull AnimationRenderer<T, S> renderer, long taskId) {
         this.animation = animation;
@@ -49,6 +50,7 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
         this.plugin = plugin;
         this.renderer = renderer;
         this.taskId = taskId;
+        playBackSpeed = 1;
     }
 
     @Override
@@ -82,6 +84,15 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
     }
 
     @Override
+    public void setPlaySpeed(float modifier) {
+        if(modifier==0) {
+            pause();
+            return;
+        }
+        playBackSpeed = 1/modifier;
+    }
+
+    @Override
     public void run() {
         if(Thread.currentThread().isInterrupted())
             return;
@@ -110,9 +121,9 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
             currentFrame = frameIterator.next();
         }
         //the smallest unit of time is a tick or 50ms. Thus all control should be done using ticks
-        long convertedTime = toTicks(currentFrame.getTime());
+        long convertedTime = toTicks(getTime(currentFrame));
         //check if it is time to render a frame
-        if(timeElapsed==convertedTime) {
+        if(timeElapsed>=convertedTime) {
             do {
                 //before rendering frames check if the animation has been cancelled
                 if(!this.running || this.cancelled) {
@@ -135,7 +146,7 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
                     return;
                 }
                 currentFrame = frameIterator.next();
-            } while (toTicks(currentFrame.getTime())==0);
+            } while (toTicks(getTime(currentFrame))==0);
         } else {
             //otherwise tell the animation that time has elapsed.
             //Time cannot elapse if the animation is paused
@@ -143,6 +154,10 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
                 timeElapsed++;
             }
         }
+    }
+
+    private long getTime(MinecraftFrame<T> currentFrame) {
+        return (long) (currentFrame.getTime()*playBackSpeed);
     }
 
 

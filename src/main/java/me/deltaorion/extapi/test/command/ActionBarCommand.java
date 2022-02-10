@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.test.command;
 
+import me.deltaorion.extapi.APIPermissions;
 import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.command.FunctionalCommand;
 import me.deltaorion.extapi.command.sent.SentCommand;
@@ -23,7 +24,7 @@ public class ActionBarCommand extends FunctionalCommand {
     private final BukkitPlugin plugin;
 
     public ActionBarCommand(BukkitPlugin plugin) {
-        super(NO_PERMISSION);
+        super(APIPermissions.COMMAND);
         this.plugin = plugin;
         registerArgument("tps",new TPSCommand(plugin));
     }

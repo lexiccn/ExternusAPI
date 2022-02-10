@@ -42,6 +42,10 @@ public class BukkitApiPlayer {
 
     @NotNull private final UUID uuid;
 
+    @NotNull private final Object scoreboardLock = new Object();
+    @NotNull private final Object bossBarLock = new Object();
+    private boolean disconnected = false;
+
     /**
      * @param plugin The plugin which this APi player is hosted on
      * @param player The player to wrap
@@ -56,21 +60,50 @@ public class BukkitApiPlayer {
         this.uuid = player.getUniqueId();
     }
 
-    @NotNull
+    /**
+     * Creates a scoreboard for this player and sets it. The scoreboard is returned and then can be modified
+     * accordingly. The scoreboard will have the maximum amount of lines
+     *
+     * @param name The name of the scoreboard. This is used to identify the scoreboard
+     * @return A new scoreboard
+     */
+    @Nullable
     public EScoreboard setScoreboard(@NotNull String name) {
-        this.scoreboard = factory.get(plugin,player,name);
-        return this.scoreboard;
+        synchronized (scoreboardLock) {
+            if(disconnected)
+                return null;
+            this.scoreboard = factory.get(plugin, player, name);
+            return this.scoreboard;
+        }
     }
 
-    @NotNull
+    /**
+     * Creates a scoreboard for this player and sets it. The scoreboard is returned and then can be modified
+     * accordingly.
+     *
+     * @param name The name of the scoreboard. This is used to identify the scoreboard
+     * @param lines The immutable amount of lines for the scoreboard
+     * @return A new scoreboard
+     */
+    @Nullable
     public EScoreboard setScoreboard(@NotNull String name, int lines) {
-        this.scoreboard = factory.get(plugin,player,name,lines);
-        return this.scoreboard;
+        synchronized (scoreboardLock) {
+            if(disconnected)
+                return null;
+            this.scoreboard = factory.get(plugin, player, name, lines);
+            return this.scoreboard;
+        }
     }
 
+    /**
+     * Removes the current scoreboard that the player has. The player will no longer have that scoreboard
+     * and it will no longer be visible to the player.
+     */
     public void removeScoreboard() {
-        this.scoreboard = null;
-        player.setScoreboard(plugin.getServer().getScoreboardManager().getNewScoreboard());
+        synchronized (scoreboardLock) {
+            this.scoreboard = null;
+            player.setScoreboard(plugin.getServer().getScoreboardManager().getNewScoreboard());
+        }
     }
 
     /**
@@ -138,31 +171,45 @@ public class BukkitApiPlayer {
     }
 
     /**
+     * If the player is disconnected this will not do anything
+     *
      * @param bossBar Sets the bossbar of the player. This does not normally need to be done as creating
      * a new bossbar should automatically do this.
      */
 
     public void setBossBar(@Nullable BossBar bossBar) {
-        if(bossBar!=null)
-            Preconditions.checkArgument(bossBar.getPlayer().equals(this));
+        synchronized (this.bossBarLock) {
+            if(disconnected && bossBar!=null)
+                return;
 
-        if(Objects.equals(bossBar,this.bossBar))
-            return;
+            if (bossBar != null)
+                Preconditions.checkArgument(bossBar.getPlayer().equals(this));
 
-        if(this.bossBar!=null) {
-            this.bossBar.setVisible(false);
+            if (Objects.equals(bossBar, this.bossBar))
+                return;
+
+            if (this.bossBar != null) {
+                this.bossBar.setVisible(false);
+            }
+            this.bossBar = bossBar;
         }
-        this.bossBar = bossBar;
     }
 
     /**
-     * Removes all display items. This must ensure that there are no references kept to this BukkitApiPlayer by any objects it is
-     * hosting.
+     * 'Disconnects' the player. This should be called once the player is no longer online. Once called
+     *    - all display items will be removed
+     *    - no new display items can be added.
+     *    - Any display item can still be removed however.
      */
-    public void clearAll() {
+    public void disconnect() {
+        synchronized (bossBarLock) {
+            synchronized (scoreboardLock) {
+                this.disconnected = true;
+            }
+        }
         setBossBar(null);
-        actionBarManager.clear();
         removeScoreboard();
+        actionBarManager.shutdown();
     }
 
     @Override

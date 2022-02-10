@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.test.command;
 
+import me.deltaorion.extapi.APIPermissions;
 import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.command.FunctionalCommand;
 import me.deltaorion.extapi.command.sent.SentCommand;
@@ -10,13 +11,14 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class BossBarTest extends FunctionalCommand {
 
     private final BukkitPlugin plugin;
 
     public BossBarTest(BukkitPlugin plugin) {
-        super(NO_PERMISSION);
+        super(APIPermissions.COMMAND);
         this.plugin = plugin;
         registerArgument("message",command -> {
             Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());

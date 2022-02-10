@@ -73,19 +73,16 @@ public class SimpleBukkitPlayerManager implements Listener, BukkitPlayerManager 
 
     @Override
     public void removeCached(@NotNull Player player) {
-        BukkitApiPlayer p = playerCache.get(player);
+        BukkitApiPlayer p = playerCache.remove(player);
         //when removing ensure to clear all display items to make sure this is garbage collected.
         if(p!=null)
-            p.clearAll();
-
-        //remove the player
-        playerCache.remove(player);
+            p.disconnect();
     }
 
     public void shutdown() {
         //reload hook
         for(BukkitApiPlayer player : getPlayers()) {
-            player.clearAll();
+            player.disconnect();
         }
     }
 

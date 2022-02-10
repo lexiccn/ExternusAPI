@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.test.command.item;
 
+import me.deltaorion.extapi.APIPermissions;
 import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.command.FunctionalCommand;
 import me.deltaorion.extapi.command.sent.SentCommand;
@@ -20,12 +21,12 @@ import org.bukkit.potion.PotionType;
 
 import java.util.Locale;
 
-public class ItemTest extends FunctionalCommand {
+public class ItemTestCommand extends FunctionalCommand {
 
     private final BukkitPlugin plugin;
 
-    public ItemTest(BukkitPlugin plugin) {
-        super(NO_PERMISSION, NO_USAGE);
+    public ItemTestCommand(BukkitPlugin plugin) {
+        super(APIPermissions.COMMAND, NO_USAGE);
         this.plugin = plugin;
     }
 

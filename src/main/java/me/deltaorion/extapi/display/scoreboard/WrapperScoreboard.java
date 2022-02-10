@@ -216,9 +216,7 @@ public class WrapperScoreboard implements EScoreboard {
     }
 
     private void setBoard() {
-        Player p = this.player.getPlayer();
-        if(p!=null)
-            p.setScoreboard(scoreboard);
+        this.player.getPlayer().setScoreboard(scoreboard);
     }
 
     private void createTeams() {

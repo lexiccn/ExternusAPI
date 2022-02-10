@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.test.command.item;
 
+import me.deltaorion.extapi.APIPermissions;
 import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.command.FunctionalCommand;
 import me.deltaorion.extapi.command.sent.SentCommand;
@@ -16,7 +17,7 @@ public class CustomItemTestCommand extends FunctionalCommand {
     private final BukkitPlugin plugin;
 
     public CustomItemTestCommand(BukkitPlugin plugin) {
-        super(NO_PERMISSION,NO_USAGE);
+        super(APIPermissions.COMMAND,NO_USAGE);
         this.plugin = plugin;
     }
 

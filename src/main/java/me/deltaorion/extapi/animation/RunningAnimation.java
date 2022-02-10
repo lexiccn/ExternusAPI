@@ -118,4 +118,21 @@ public interface RunningAnimation<S> extends Runnable {
      *   - The animation will resume as soon as possible.
      */
     public void play();
+
+    /**
+     * Changes the rate at which the animation runs.
+     *
+     * The animation will play at n* the speed. That is each frame will play in t/n where t is the amount of time the frame
+     * would normally play in and n is the modifier.
+     *
+     * For example if set to 0.5 the animation will play at half speed because each frame will take t/0.5 = 2t to play.
+     *
+     * If set to 0 then the animation will pause as according to {@link #pause()}
+     *
+     * This is set to 1 at default.
+     *
+     * @param modifier The new speed at which to play the animation at
+     * @throws IllegalArgumentException if the modifier is less than 0.
+     */
+    public void setPlaySpeed(float modifier);
 }

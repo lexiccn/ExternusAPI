@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.test.command;
 
+import me.deltaorion.extapi.APIPermissions;
 import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.command.FunctionalCommand;
 import me.deltaorion.extapi.command.sent.SentCommand;
@@ -15,7 +16,7 @@ public class ShouldBeRunAsyncCommand extends FunctionalCommand {
     @GuardedBy("this") private final Set<UUID> running;
 
     public ShouldBeRunAsyncCommand() {
-        super("ExtApi.Test.Command",NO_USAGE);
+        super(APIPermissions.COMMAND,NO_USAGE);
         this.running = new HashSet<>();
     }
 

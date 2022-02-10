@@ -40,7 +40,6 @@ public class PTest implements MinecraftTest {
             assert entry.getKey() == entry.getValue().getPlayer();
         }
 
-        assertNotNull(players.getPlayer(new ArrayList<>(playerList.keySet()).get(0).getUniqueId()));
         assertNull(players.getPlayer(UUID.randomUUID()));
 
         for(Player player : playerList.keySet()) {

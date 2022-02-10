@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.test.command;
 
+import me.deltaorion.extapi.APIPermissions;
 import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.command.FunctionalCommand;
 import me.deltaorion.extapi.command.sent.SentCommand;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class FakeWitherTest extends FunctionalCommand {
     public FakeWitherTest(BukkitPlugin plugin) {
-        super(NO_PERMISSION);
+        super(APIPermissions.COMMAND);
         this.plugin = plugin;
 
         registerArguments();

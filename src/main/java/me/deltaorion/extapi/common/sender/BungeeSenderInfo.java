@@ -74,7 +74,7 @@ public class BungeeSenderInfo implements SenderInfo {
 
     @Override
     public boolean isOP() {
-        return false;
+        return isConsole();
     }
 
     public CommandSender getSender() {
