@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.common.depend;
 
+import com.google.common.base.MoreObjects;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,7 +66,7 @@ public class SimpleDependencyManager implements DependencyManager {
 
     @Override
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("Registry",dependencies).toString();
     }
 }

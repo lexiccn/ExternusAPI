@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.common.server;
 
+import com.google.common.base.MoreObjects;
 import me.deltaorion.extapi.common.sender.BungeeSenderInfo;
 import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.common.sender.SimpleSender;
@@ -107,7 +108,7 @@ public class BungeeServer implements EServer {
 
     @Override
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("name",proxyServer.getName())
                 .add("minecraft version",minecraftVersion)
                 .add("server version",proxyServer.getVersion()).toString();

@@ -96,7 +96,7 @@ public class ItemTest implements MinecraftTest {
         }
 
         //ensure skull doesnt lose properties
-        ItemStack skull = new ItemBuilder(EMaterial.MOB_HEAD)
+        ItemStack skull = new ItemBuilder(EMaterial.PLAYER_HEAD)
                 .setAmount(3)
                 .setAmount(5)
                 .setUnstackable()
@@ -114,7 +114,7 @@ public class ItemTest implements MinecraftTest {
         assertTrue(skullBuilder.isUnstackable());
         assertTrue(skullBuilder.hasTag("Gamer"));
 
-        ItemStack unbreakable = new ItemBuilder(EMaterial.NETHER_BRICK_ITEM)
+        ItemStack unbreakable = new ItemBuilder(EMaterial.NETHER_BRICK)
                 .setUnbreakable(true)
                 .setUnstackable()
                 .allFlags()
@@ -162,7 +162,7 @@ public class ItemTest implements MinecraftTest {
 
         assertEquals(PotionEffectType.DAMAGE_RESISTANCE,((PotionMeta) potionClear.getItemMeta()).getCustomEffects().get(0).getType());
 
-        ItemStack hiddenEnchant = new ItemBuilder(EMaterial.SPAWN_WITCH_EGG)
+        ItemStack hiddenEnchant = new ItemBuilder(EMaterial.WITCH_SPAWN_EGG)
                 .addHiddenEnchant().build();
 
         assertTrue(hiddenEnchant.getItemMeta().getEnchants().containsKey(Enchantment.DAMAGE_ARTHROPODS));
@@ -180,13 +180,13 @@ public class ItemTest implements MinecraftTest {
         assertTrue(hiddenEnchant.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS));
         assertEquals(4,hiddenEnchant.getItemMeta().getEnchantLevel(Enchantment.DAMAGE_ARTHROPODS));
 
-        ItemStack skullNothing = new ItemBuilder(EMaterial.SPAWN_WITCH_EGG)
+        ItemStack skullNothing = new ItemBuilder(EMaterial.WITCH_SPAWN_EGG)
                 .skull( skullBuilder2 -> {})
                 .build();
 
         assertEquals(SkullType.PLAYER.ordinal(),skullNothing.getDurability());
 
-        ItemStack potionNothing = new ItemBuilder(EMaterial.NETHER_WART_ITEM)
+        ItemStack potionNothing = new ItemBuilder(EMaterial.WITCH_SPAWN_EGG)
                 .potion(potionBuilder -> {})
                 .build();
 

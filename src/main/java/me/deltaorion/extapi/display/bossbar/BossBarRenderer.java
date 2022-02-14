@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.display.bossbar;
 
+import me.deltaorion.extapi.protocol.WrapperPlayServerBoss;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,4 +37,33 @@ public interface BossBarRenderer {
      * Performs any necessary updating to the shown BossBar.
      */
     public void update();
+
+    /**
+     * Sets the color of the BossBar. This should update the color on the users screen.
+     *
+     * @param color The new bossbar color
+     */
+    public void setColor(@NotNull BarColor color);
+
+    /**
+     * Sets the style of the BossBar. This should update the style on the users screen.
+     *
+     * @param style The new bossbar style
+     */
+    public void setStyle(@NotNull WrapperPlayServerBoss.BarStyle style);
+
+    /**
+     * @param createFog whether the bossbar should create fog
+     */
+    void setCreateFog(boolean createFog);
+
+    /**
+     * @param darkenSky whether the bossbar should darken sky
+     */
+    void setDarkenSky(boolean darkenSky);
+
+    /**
+     * @param playMusic whether to play music or not
+     */
+    void setPlayMusic(boolean playMusic);
 }

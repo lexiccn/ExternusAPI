@@ -3,6 +3,7 @@ package me.deltaorion.extapi.display.bukkit;
 import me.deltaorion.extapi.display.actionbar.ActionBarFactories;
 import me.deltaorion.extapi.display.actionbar.ActionBarFactory;
 import me.deltaorion.extapi.display.actionbar.renderer.PacketActionBarRenderer;
+import me.deltaorion.extapi.display.bossbar.BossBarRendererFactory;
 import me.deltaorion.extapi.display.scoreboard.ScoreboardFactory;
 import org.jetbrains.annotations.NotNull;
 

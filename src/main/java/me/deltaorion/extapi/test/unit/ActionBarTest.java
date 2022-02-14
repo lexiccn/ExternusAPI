@@ -7,6 +7,7 @@ import me.deltaorion.extapi.display.actionbar.renderer.TestRenderer;
 import me.deltaorion.extapi.display.actionbar.running.ScheduleRunningActionBar;
 import me.deltaorion.extapi.display.bukkit.APIPlayerSettings;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
+import me.deltaorion.extapi.display.bukkit.EApiPlayer;
 import me.deltaorion.extapi.locale.message.Message;
 import me.deltaorion.extapi.test.unit.bukkit.TestPlayer;
 import me.deltaorion.extapi.test.unit.generic.McTest;
@@ -53,7 +54,7 @@ public class ActionBarTest implements MinecraftTest {
         CountDownLatch renderLatch = new CountDownLatch(1);
         AtomicReference<ScheduleRunningActionBar> actionBarRunning = new AtomicReference<>();
         Player tPlayer = new TestPlayer("Gamer");
-        BukkitApiPlayer player = new BukkitApiPlayer(plugin, tPlayer, new APIPlayerSettings().setActionBarFactory(new ActionBarFactory() {
+        BukkitApiPlayer player = new EApiPlayer(plugin, tPlayer, new APIPlayerSettings().setActionBarFactory(new ActionBarFactory() {
             @NotNull
             @Override
             public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager) {
@@ -113,7 +114,7 @@ public class ActionBarTest implements MinecraftTest {
         CountDownLatch renderLatch = new CountDownLatch(1);
         AtomicReference<ScheduleRunningActionBar> actionBarRunning = new AtomicReference<>();
         Player tPlayer = new TestPlayer("Gamer");
-        BukkitApiPlayer player = new BukkitApiPlayer(plugin, tPlayer, new APIPlayerSettings().setActionBarFactory(new ActionBarFactory() {
+        BukkitApiPlayer player = new EApiPlayer(plugin, tPlayer, new APIPlayerSettings().setActionBarFactory(new ActionBarFactory() {
             @NotNull
             @Override
             public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager) {
@@ -162,7 +163,7 @@ public class ActionBarTest implements MinecraftTest {
 
 
     public void failTest() {
-        BukkitApiPlayer player = new BukkitApiPlayer(plugin, new TestPlayer("Gamer"), new APIPlayerSettings().setActionBarFactory(new ActionBarFactory() {
+        BukkitApiPlayer player = new EApiPlayer(plugin, new TestPlayer("Gamer"), new APIPlayerSettings().setActionBarFactory(new ActionBarFactory() {
             @NotNull
             @Override
             public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager) {

@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.animation.running;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AtomicDouble;
 import me.deltaorion.extapi.animation.*;
@@ -181,7 +182,7 @@ public class SleepAsyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
 
     @Override
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("Task",taskID)
                 .add("Running",running)
                 .add("Cancelled",cancelled)

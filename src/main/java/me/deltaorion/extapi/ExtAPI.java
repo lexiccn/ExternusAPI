@@ -28,6 +28,7 @@ public final class ExtAPI extends BukkitPlugin {
         registerTests();
         tester.runTests();
 
+
     }
 
     private void registerCommands() {
@@ -43,6 +44,7 @@ public final class ExtAPI extends BukkitPlugin {
         registerCommand(new FakeWitherTest(this),"withertest");
         registerCommand(new BossBarTest(this),"bossbartest");
         registerCommand(new LocaleCommand(),"localetest");
+        registerCommand(new EMaterialCommand(this),"materialtest");
     }
 
     private void registerOldCommands() {
@@ -59,7 +61,7 @@ public final class ExtAPI extends BukkitPlugin {
         tester.addTest(new LocaleTest(this));
         tester.addTest(new me.deltaorion.extapi.test.unit.ItemTest(this));
         tester.addTest(new CustomItemTest(this));
-        tester.addTest(new EMaterialTest());
+        tester.addTest(new EMaterialTest(this));
         tester.addTest(new PTest(this));
         tester.addTest(new ScoreboardingTest(this));
         tester.addTest(new ActionBarTest(this));

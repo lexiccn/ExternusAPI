@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.common.depend;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import org.apache.commons.lang.Validate;
@@ -144,7 +145,7 @@ public class Dependency {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("name",name)
                 .add("required",required)
                 .add("active",active).toString();

@@ -112,7 +112,13 @@ public class ActionBarCommand extends FunctionalCommand {
                     if(!Objects.equals(actionBar.getName(),"TPSBar"))
                         return;
 
-                    apiPlayer.getActionBarManager().setArgs(plugin.getServer().spigot().getTPS()[0]);
+                    double tps;
+                    try {
+                        tps = plugin.getServer().spigot().getTPS()[0];
+                    } catch(NoSuchMethodError e) {
+                        tps = Math.random();
+                    }
+                    apiPlayer.getActionBarManager().setArgs(tps);
                 }
             },0,500, TimeUnit.MILLISECONDS);
 

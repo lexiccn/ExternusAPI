@@ -32,7 +32,7 @@ public class SimpleBukkitPlayerManager implements Listener, BukkitPlayerManager 
 
     @NotNull @Override
     public BukkitApiPlayer getPlayer(@NotNull final Player player) {
-        return playerCache.computeIfAbsent(player,p -> factory.get(plugin,player));
+        return new WrappedApiPlayer(playerCache.computeIfAbsent(player,p -> factory.get(plugin,player)));
     }
 
     @Nullable @Override
@@ -63,6 +63,8 @@ public class SimpleBukkitPlayerManager implements Listener, BukkitPlayerManager 
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onMove(PlayerMoveEvent event) {
+        if(plugin.getEServer().getServerVersion().getMajor()>8)
+            return;
         BukkitApiPlayer player = this.playerCache.get(event.getPlayer());
         if(player==null)
             return;

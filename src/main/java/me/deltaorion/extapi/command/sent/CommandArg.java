@@ -1,10 +1,10 @@
 package me.deltaorion.extapi.command.sent;
 
-import jdk.nashorn.internal.ir.annotations.Immutable;
 import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.command.parser.ArgumentParser;
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.util.DurationParser;
+import net.jcip.annotations.Immutable;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
 

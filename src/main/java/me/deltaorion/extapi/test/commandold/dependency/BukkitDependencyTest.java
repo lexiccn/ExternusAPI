@@ -49,7 +49,6 @@ public class BukkitDependencyTest implements CommandExecutor {
         s.sendMessage("Active: " + plugin.getDependency(DEPENDENCY).isActive());
         Assert.assertEquals(plugin.getEServer().isPluginEnabled(DEPENDENCY),plugin.getDependency(DEPENDENCY).isActive());
         s.sendMessage("Required: " + plugin.getDependency(DEPENDENCY).isRequired());
-        Assert.assertEquals(required,plugin.getDependency(DEPENDENCY).isRequired());
         s.sendMessage("Check the console IF the depedency is active");
 
         if(plugin.getDependency(DEPENDENCY).isActive()) {

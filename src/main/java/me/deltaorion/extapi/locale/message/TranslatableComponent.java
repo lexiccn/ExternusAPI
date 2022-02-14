@@ -1,7 +1,7 @@
 package me.deltaorion.extapi.locale.message;
 
-import jdk.nashorn.internal.ir.annotations.Immutable;
 import me.deltaorion.extapi.locale.translator.Translator;
+import net.jcip.annotations.Immutable;
 
 import java.util.Locale;
 

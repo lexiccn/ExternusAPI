@@ -1,9 +1,8 @@
 package me.deltaorion.extapi.display.scoreboard;
 
 import me.deltaorion.extapi.display.TiedDisplayItem;
-import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
+import me.deltaorion.extapi.display.bukkit.EApiPlayer;
 import me.deltaorion.extapi.locale.message.Message;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -182,11 +181,4 @@ public interface EScoreboard extends TiedDisplayItem {
      */
     @NotNull
     public String getName();
-
-    /**
-     *
-     * @return the player who this scoreboard is displayed to
-     */
-    @NotNull
-    public BukkitApiPlayer getPlayer();
 }

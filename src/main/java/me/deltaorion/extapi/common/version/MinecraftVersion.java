@@ -1,7 +1,7 @@
 package me.deltaorion.extapi.common.version;
 
 import com.google.common.base.Preconditions;
-import jdk.nashorn.internal.ir.annotations.Immutable;
+import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,8 @@ import java.util.Comparator;
  * To obtain a minecraft version from a string use the {@link VersionFactory} class. This class is simply a data structure.
  */
 
-@Immutable @NotThreadSafe
+@Immutable
+@NotThreadSafe
 public class MinecraftVersion implements Comparable<MinecraftVersion> {
 
     private final int major;

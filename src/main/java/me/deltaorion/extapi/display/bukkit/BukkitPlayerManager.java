@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 /**
- * The Bukkit Player manager should store a cache of {@link BukkitApiPlayer}. API Players can be creatred with
+ * The Bukkit Player manager should store a cache of {@link EApiPlayer}. API Players can be creatred with
  * {@link #getPlayer(Player)}. This class should link a player to their respective bukkit api player. Note this does
  * not link UUID to the bukkit api player because the API Player only represents a player who is online. If the underlying
  * player goes offline, then the API Player instance is useless and should be removed.
@@ -51,7 +51,7 @@ public interface BukkitPlayerManager extends Iterable<BukkitApiPlayer> {
     void removeCached(@NotNull Player player);
 
     /**
-     * Changes the factory. The ApiPlayerFactory is used to generate new {@link BukkitApiPlayer} everytime {@link #getPlayer(Player)} makes
+     * Changes the factory. The ApiPlayerFactory is used to generate new {@link EApiPlayer} everytime {@link #getPlayer(Player)} makes
      * a player. Changing this will allow you to generate custom API Players.
      *
      * @param factory The new factory to set

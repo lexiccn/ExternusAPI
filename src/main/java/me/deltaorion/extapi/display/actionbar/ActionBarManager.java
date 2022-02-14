@@ -1,7 +1,9 @@
 package me.deltaorion.extapi.display.actionbar;
 
+import com.google.common.base.MoreObjects;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
+import me.deltaorion.extapi.display.bukkit.EApiPlayer;
 import net.jcip.annotations.GuardedBy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +13,7 @@ import java.util.Objects;
 import java.util.Queue;
 
 /**
- * The ActionBarManager is a helper class for a {@link BukkitApiPlayer} used to manage the sending, removal and queueing of action bars.
+ * The ActionBarManager is a helper class for a {@link EApiPlayer} used to manage the sending, removal and queueing of action bars.
  * A player can only display one action bar at any given time. This class keeps track of an ensures that this is held true and that the reference
  * to said RunningActionBar is not lost.
  *
@@ -183,7 +185,7 @@ public class ActionBarManager {
 
     @Override
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("Player",player)
                 .add("Rendered",rendered)
                 .toString();

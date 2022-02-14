@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.item.position;
 
+import com.google.common.base.MoreObjects;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +44,7 @@ public class GenericInventoryItem implements InventoryItem {
 
     @Override
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("ItemStack",itemStack)
                 .add("Slot",slot)
                 .toString();

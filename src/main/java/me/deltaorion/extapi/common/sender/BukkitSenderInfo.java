@@ -1,4 +1,5 @@
 package me.deltaorion.extapi.common.sender;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.locale.translator.Translator;
@@ -93,7 +94,7 @@ public class BukkitSenderInfo implements SenderInfo {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("uuid",getUniqueId())
                 .add("name",getName())
                 .add("console",isConsole())

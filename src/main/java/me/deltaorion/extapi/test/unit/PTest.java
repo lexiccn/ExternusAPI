@@ -27,7 +27,6 @@ public class PTest implements MinecraftTest {
     @McTest
     public void testCache() {
         BukkitPlayerManager players = plugin.getBukkitPlayerManager();
-        System.out.println(players.getPlayers());
         assertEquals(0,players.getPlayers().size());
         assertFalse(players.hasPlayer(new TestPlayer("Gamer")));
         Map<Player,BukkitApiPlayer> playerList = new HashMap<>();

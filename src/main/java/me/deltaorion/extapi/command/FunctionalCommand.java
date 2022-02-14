@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.command;
 
+import com.google.common.base.MoreObjects;
 import me.deltaorion.extapi.command.sent.MessageErrors;
 import me.deltaorion.extapi.command.sent.SentCommand;
 import me.deltaorion.extapi.command.tabcompletion.CompletionSupplier;
@@ -251,7 +252,7 @@ public abstract class FunctionalCommand implements  Command {
     }
 
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("permission",permission)
                 .add("usage",usage)
                 .add("description",description)

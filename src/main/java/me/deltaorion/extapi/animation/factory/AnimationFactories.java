@@ -12,6 +12,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class AnimationFactories {
 
+    private AnimationFactories() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Creates an animation factory that returns a {@link ScheduleAsyncRunningAnimation}. This animation works by using the server scheduler
      * to control the timing of animations by scheduling the next task after the frames have been rendered.

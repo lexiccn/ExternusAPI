@@ -1,161 +1,63 @@
 package me.deltaorion.extapi.display.bossbar;
 
-import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.display.TiedDisplayItem;
-import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import me.deltaorion.extapi.locale.message.Message;
-import org.apache.commons.lang.Validate;
-import org.bukkit.entity.Player;
+import me.deltaorion.extapi.protocol.WrapperPlayServerBoss;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
+import java.util.Collection;
 
 /**
- * A BossBar is a display item that is rendered at the top of the players screen. 
- *   - A player can only have one bossbar rendered at any given time
- *   - A bossbar can have a progress between 0 and 1 {@link #setProgress(float)}
+ * A BossBar is a display item that is rendered at the top of the players screen.
+ *   - A player can only have one BossBar rendered at any given time. Although it is technically possible to have
+ *     more this is largely undesirable.
+ *   - A BossBar can have a progress between 0 and 1 {@link #setProgress(float)}
  *   - Displays a single translatable message to the player it is tied to {@link #setMessage(String)}
  *   - Can be made visible or invisible at any time with {@link #setVisible(boolean)}
  *
- *   A bossbar is tied to the player it is given to. Once given to a player this instance cannot be given to another
+ *   A BossBar is tied to the player it is given to. Once given to a player this instance cannot be given to another
  *   player.
  */
-public class BossBar implements TiedDisplayItem {
-
-    @NotNull private final BukkitPlugin plugin;
-
-    @NotNull private final String name;
-    @NotNull private Message message;
-    @NotNull private String asDisplayed;
-    private boolean visible;
-
-    @NotNull private final BukkitApiPlayer player;
-    private float progress;
-
-    private final float DEFAULT_PROGRESS = 1;
-    private final boolean DEFAULT_VISIBILITY = true;
-
-    @NotNull private final BossBarRenderer renderer;
-
-    /**
-     * @param plugin The plugin the bossbar is hosted on
-     * @param player The player who to give this to
-     * @param name The name of the bossbar. This is used to identify the bossbar and is not the message rendered to the users screen.
-     */
-    public BossBar(@NotNull BukkitPlugin plugin, @NotNull Player player, @NotNull String name) {
-        this(plugin,player,name,Message.valueOf(""));
-    }
-
-    /**
-     *
-     * @param plugin The plugin the bossbar is hosted on
-     * @param player The player who to give this to
-     * @param name The name of the bossbar. This is used to identify the bossbar and is not the message rendered to the users screen.
-     * @param message The initial message to render to the bossbar.
-     */
-    public BossBar(@NotNull BukkitPlugin plugin, @NotNull Player player, @NotNull String name, @NotNull Message message) {
-        this.plugin = Objects.requireNonNull(plugin);
-        this.player = plugin.getBukkitPlayerManager().getPlayer(player);
-        this.name = Objects.requireNonNull(name);
-        this.message = Objects.requireNonNull(message);
-        BossBarRendererFactory factory = Objects.requireNonNull(BossBarRendererFactory.fromVersion(plugin.getEServer().getServerVersion()));
-        this.asDisplayed = message.toString(this.player.getLocale());
-        this.renderer = factory.get(plugin,this.player);
-        this.player.setBossBar(this);
-
-        setVisible(DEFAULT_VISIBILITY);
-        setProgress(DEFAULT_PROGRESS);
-        setMessage(message);
-    }
+public interface BossBar extends TiedDisplayItem {
 
     /**
      * @return the name of the bossbar.
      */
     @NotNull
-    public String getName() {
-        return name;
-    }
+    public String getName();
 
     /**
      * @return The message that should be rendered to the user's screen.
      */
     @NotNull
-    public Message getMessage() {
-        return this.message;
-    }
+    public Message getMessage();
 
-    public void setMessage(@NotNull Message message, Object... args) {
-        this.message = message;
-        this.asDisplayed = message.toString(player.getLocale(),args);
-        try {
-            renderer.setMessage(asDisplayed);
-        } catch (Throwable e) {
-            handle(e);
-        }
-    }
-
-    private void handle(Throwable e) {
-        plugin.getPluginLogger().severe("An error occurred when rendering the BossBar", e);
-    }
+    public void setMessage(@NotNull Message message, Object... args) ;
 
     /**
      * Sets the message rendered to the users screen. If the bossbar is running this will update what the user see's
      *
      * @param message The new message to be rendered
      */
-    public void setMessage(@NotNull String message) {
-        setMessage(Message.valueOf(message));
-    }
+    public void setMessage(@NotNull String message);
 
     /**
      * Sets the message arguments to be rendered to the users screen. If the bossbar is running this will change what the user see's
      *
      * @param args The new {@link Message} arguments
      */
-    public void setArgs(Object... args) {
-        setMessage(getMessage(),args);
-    }
+    public void setArgs(Object... args);
 
     /**
-     * @return What the user see's on the rendered bossbar message.
+     * @return What the user see's on the rendered BossBar message.
      */
     @NotNull
-    public String getDisplayed() {
-        return asDisplayed;
-    }
+    public String getDisplayed();
 
     /**
-     * @return Whether the bossbar is visible to the user.
+     * @return The progress of the BossBar ranging from 0 to 1.
      */
-    @Override
-    public boolean isVisible() {
-        return visible;
-    }
-
-    /**
-     * Toggles whether the display item should be visible to the user.
-     *    - If visible the user will see the display item
-     *    - If invisible the user will still have the display item but will simply not be able to see it.
-     *
-     *  To actually remove the display item use the appropriate remove method.
-     *
-     * @param visible Whether the display item is visible or not to the user.
-     */
-    @Override
-    public void setVisible(boolean visible) {
-        if(this.visible==visible)
-            return;
-        this.visible = visible;
-        try {
-            renderer.setVisible(visible);
-        } catch (Throwable e) {
-            handle(e);
-        }
-    }
-
-    public float getProgress() {
-        return progress;
-    }
+    public float getProgress();
 
     /**
      * Sets the 'progress' of the BossBar. This determines the percentage that the bossbar is colored in.
@@ -165,55 +67,73 @@ public class BossBar implements TiedDisplayItem {
      * @param progress The bossbar progress
      * @throws IllegalArgumentException if the progress is not between 0 and 1
      */
-    public void setProgress(float progress) {
-        Validate.isTrue(progress >= 0 && progress<=1);
-        if(progress==this.progress)
-            return;
-        this.progress = progress;
-        try {
-            renderer.setProgress(progress);
-        } catch (Throwable e) {
-            handle(e);
-        }
+    public void setProgress(float progress);
 
-    }
+    /**
+     * Sets the color of the BossBar. This will default as {@link BarColor#PINK}
+     *
+     * If the version is 1.8 or less this method may throw an exception
+     *
+     * @param color the new color for the BossBar
+     * @throws me.deltaorion.extapi.common.exception.UnsupportedVersionException if the version is 1.8 or less
+     */
+    public void setColor(@NotNull BarColor color);
 
-    @NotNull @Override
-    public BukkitApiPlayer getPlayer() {
-        return player;
-    }
+    /**
+     * @return The current color of the BossBar.
+     */
+    @NotNull
+    public BarColor getColor();
+
+    /**
+     * Sets the style of the BossBar. This will default as {@link me.deltaorion.extapi.protocol.WrapperPlayServerBoss.BarStyle#PROGRESS}
+     *
+     * If the version is 1.8 or less this method may throw an exception
+     *
+     * @param style the new style for the BossBar
+     * @throws me.deltaorion.extapi.common.exception.UnsupportedVersionException if the version is 1.8 or less
+     */
+    public void setStyle(@NotNull WrapperPlayServerBoss.BarStyle style);
+
+    /**
+     * @return The current bar style
+     */
+    @NotNull
+    public WrapperPlayServerBoss.BarStyle getStyle();
+
+    /**
+     * Sets the BossBar flags. These are special properties for the BossBar. If the BossBar already has that flag this
+     * will do nothing.
+     *
+     * @param flags The flags to set
+     * @throws me.deltaorion.extapi.common.exception.UnsupportedVersionException if the version is 1.8 or less
+     */
+    public void addFlags(@NotNull BarFlag... flags);
+
+    /**
+     * Removes the BossBar flags. These are special properties for the BossBar. If the BossBar does not already have the flag
+     * then this will do nothing.
+     *
+     * @param flags The flags to set
+     * @throws me.deltaorion.extapi.common.exception.UnsupportedVersionException if the version is 1.8 or less
+     */
+    public void removeFlags(@NotNull BarFlag... flags);
+
+    /**
+     *
+     * @return the flags that the BossBar currently has
+     */
+    @NotNull
+    public Collection<BarFlag> getFlags();
 
     /**
      * Does any neccesary updates to the renderer if required. Whether this does anything depends on the renderer implementation.
      *
      * This should not be used to push changes to the user. For example if you use {@link #setMessage(Message, Object...)} that should
      * automatically update the message shown on their screen without any further intervention.
+     *
+     * This will not be called in any version greater than 1.8 as any post 1.9 BossBar's should be packet or wrapper based.
      */
-    public void update() {
-        try {
-            renderer.update();
-        } catch (Throwable e) {
-            handle(e);
-        }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if(!(o instanceof BossBar))
-            return false;
-
-        BossBar bossBar = (BossBar) o;
-        return bossBar.player.equals(this.player) && bossBar.visible==this.visible && bossBar.progress == this.progress && bossBar.message.equals(this.message);
-    }
-
-    @Override
-    public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
-                .add("Message",message)
-                .add("Rendered",asDisplayed)
-                .add("Visible",visible)
-                .add("Progress",progress)
-                .toString();
-    }
+    public void update();
 
 }

@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.item.custom;
 
+import com.google.common.base.MoreObjects;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.item.position.InventoryItem;
 import net.jcip.annotations.Immutable;
@@ -81,7 +82,7 @@ public class CustomItemEvent<T extends Event> {
 
     @Override
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("Item",this.item)
                 .add("Event",this.event)
                 .add("Entity",this.entity)

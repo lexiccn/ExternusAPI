@@ -1,8 +1,9 @@
 package me.deltaorion.extapi.animation;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import jdk.nashorn.internal.ir.annotations.Immutable;
+import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
@@ -72,7 +73,7 @@ public class MinecraftFrame<T> {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("Time",time)
                 .add("Object",object)
                 .toString();

@@ -34,7 +34,13 @@ public class ScoreboardAnimation implements AnimationRenderer<String, Player> {
 
         if(player.getScoreboard().getName().equalsIgnoreCase(this.scoreboardName)) {
             player.getScoreboard().setTitle(frame.getObject());
-            player.getScoreboard().setLineArgs("TPS",plugin.getServer().spigot().getTPS()[0]);
+            double tps;
+            try {
+                tps = plugin.getServer().spigot().getTPS()[0];
+            } catch(NoSuchMethodError e) {
+                tps = Math.random();
+            }
+            player.getScoreboard().setLineArgs("TPS",tps);
         }
     }
 

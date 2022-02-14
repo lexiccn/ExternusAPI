@@ -1,10 +1,11 @@
 package me.deltaorion.extapi.display.scoreboard;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
-import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
+import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
+import me.deltaorion.extapi.display.bukkit.EApiPlayer;
 import me.deltaorion.extapi.locale.message.Message;
-import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -56,7 +57,7 @@ public class WrapperScoreboard implements EScoreboard {
 
     /**
      * Creates a new scoreboard. The scoreboard will be tied to the player. Doing this will replace whatever scoreboard the player has
-     * with this new scoreboard. You can retrieve the scoreboard using {@link BukkitApiPlayer#getScoreboard()}
+     * with this new scoreboard. You can retrieve the scoreboard using {@link EApiPlayer#getScoreboard()}
      *
      * @param name The name of the scoreboard
      * @param plugin The plugin which this scoreboard is hosted on
@@ -331,7 +332,7 @@ public class WrapperScoreboard implements EScoreboard {
 
     @NotNull
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("name",name)
                 .add("title",title).toString();
     }

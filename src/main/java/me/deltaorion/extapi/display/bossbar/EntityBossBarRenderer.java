@@ -1,9 +1,11 @@
 package me.deltaorion.extapi.display.bossbar;
 
 import me.deltaorion.extapi.common.exception.MissingDependencyException;
+import me.deltaorion.extapi.common.exception.UnsupportedVersionException;
 import me.deltaorion.extapi.common.plugin.BukkitAPIDepends;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
+import me.deltaorion.extapi.protocol.WrapperPlayServerBoss;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -57,5 +59,34 @@ public class EntityBossBarRenderer implements BossBarRenderer {
             return;
 
         wither.teleport(makeLocation());
+    }
+
+    @Override
+    public void setColor(@NotNull BarColor color) {
+        handleUnsupported("Set Color");
+    }
+
+    @Override
+    public void setStyle(@NotNull WrapperPlayServerBoss.BarStyle style) {
+        handleUnsupported("Set Style");
+    }
+
+    @Override
+    public void setCreateFog(boolean createFog) {
+        handleUnsupported("Create Fog");
+    }
+
+    @Override
+    public void setDarkenSky(boolean darkenSky) {
+        handleUnsupported("Darken Sky");
+    }
+
+    @Override
+    public void setPlayMusic(boolean playMusic) {
+        handleUnsupported("Play Music");
+    }
+
+    private void handleUnsupported(String action) {
+        throw new UnsupportedVersionException("Cannot perform the action '"+action+"' as a Entity BossBar Renderer is being used!");
     }
 }

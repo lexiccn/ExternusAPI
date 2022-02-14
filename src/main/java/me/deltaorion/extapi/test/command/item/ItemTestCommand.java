@@ -85,7 +85,7 @@ public class ItemTestCommand extends FunctionalCommand {
                             .addEffect(new PotionEffect(PotionEffectType.SPEED,100,10));
                 }).build();
 
-        ItemStack skull = new ItemBuilder(EMaterial.MOB_HEAD)
+        ItemStack skull = new ItemBuilder(EMaterial.CREEPER_HEAD)
                 .setAmount(3)
                 .setAmount(5)
                 .setUnstackable()
@@ -94,11 +94,11 @@ public class ItemTestCommand extends FunctionalCommand {
                     skullBuilder.setType(SkullType.CREEPER);
                 }).build();
 
-        ItemStack skullNothing = new ItemBuilder(EMaterial.SPAWN_WITCH_EGG)
+        ItemStack skullNothing = new ItemBuilder(EMaterial.WITCH_SPAWN_EGG)
                 .skull( skullBuilder -> {})
                 .build();
 
-        ItemStack skull2 = new ItemBuilder(EMaterial.MOB_HEAD)
+        ItemStack skull2 = new ItemBuilder(EMaterial.PLAYER_HEAD)
                 .skull(skullBuilder -> {
                     skullBuilder.setTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjhkNDA4ODQyZTc2YTVhNDU0ZGMxYzdlOWFjNWMxYThhYzNmNGFkMzRkNjk3M2I1Mjc1NDkxZGZmOGM1YzI1MSJ9fX0=");
                 }).build();
@@ -120,11 +120,11 @@ public class ItemTestCommand extends FunctionalCommand {
                             .addEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE,100,1));
                 }).build();
 
-        ItemStack potionNothing = new ItemBuilder(EMaterial.NETHER_WART_ITEM)
+        ItemStack potionNothing = new ItemBuilder(EMaterial.NETHER_WART)
                 .potion(potionBuilder -> {})
                 .build();
 
-        ItemStack hiddenEnchant = new ItemBuilder(EMaterial.SPAWN_WITCH_EGG)
+        ItemStack hiddenEnchant = new ItemBuilder(EMaterial.WITCH_SPAWN_EGG)
                 .addHiddenEnchant().build();
 
         ItemStack stripTest = new ItemBuilder(EMaterial.RED_WOOL)
@@ -146,7 +146,7 @@ public class ItemTestCommand extends FunctionalCommand {
                 .removeDisplayName()
                 .build();
 
-        ItemStack NBTTest = new ItemBuilder(EMaterial.SUGAR_CANE_ITEM)
+        ItemStack NBTTest = new ItemBuilder(EMaterial.SUGAR_CANE)
                 .addTag("Gamer", "This should remain after restart!")
                 .addTag("This","This should also remain")
                 .build();

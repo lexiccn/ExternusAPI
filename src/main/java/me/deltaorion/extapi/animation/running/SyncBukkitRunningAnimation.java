@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.animation.running;
 
+import com.google.common.base.MoreObjects;
 import me.deltaorion.extapi.animation.AnimationException;
 import me.deltaorion.extapi.animation.AnimationRenderer;
 import me.deltaorion.extapi.animation.MinecraftAnimation;
@@ -196,7 +197,7 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
 
     @Override
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("Task",taskId)
                 .add("Running",running)
                 .toString();

@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.display.actionbar.running;
 
+import com.google.common.base.MoreObjects;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.common.scheduler.SchedulerTask;
 import me.deltaorion.extapi.display.actionbar.ActionBar;
@@ -23,7 +24,6 @@ public class ScheduleRunningActionBar implements RunningActionBar {
 
     @NotNull
     private final ActionBar actionBar;
-    @GuardedBy("this") private Object[] args;
 
     @NotNull private final BukkitPlugin plugin;
     @NotNull private final BukkitApiPlayer player;
@@ -38,15 +38,17 @@ public class ScheduleRunningActionBar implements RunningActionBar {
     @GuardedBy("this") @Nullable private SchedulerTask runningTask;
     @NotNull private final CountDownLatch finishLatch;
 
+    @NotNull private String toRender;
+
     private final long INTERVAL = Duration.of(2, ChronoUnit.SECONDS).toMillis();
     private final long PERFECT = Duration.of(3,ChronoUnit.SECONDS).toMillis();
-    @NotNull private final Message BLANK = Message.valueOf("");
+    @NotNull private final String BLANK = "";
 
     public ScheduleRunningActionBar(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager, @NotNull ActionBarRenderer renderer) {
         this.actionBar = Objects.requireNonNull(actionBar);
         this.plugin = Objects.requireNonNull(plugin);
         this.player = Objects.requireNonNull(player);
-        this.args = args;
+        this.toRender = getToRender(args);
         this.manager = Objects.requireNonNull(manager);
         this.renderer = Objects.requireNonNull(renderer);
         this.finishLatch = new CountDownLatch(1);
@@ -179,12 +181,16 @@ public class ScheduleRunningActionBar implements RunningActionBar {
     }
 
     private void render() {
-        renderText(actionBar.getMessage(),args);
+        renderText(toRender);
     }
 
-    private void renderText(Message message, Object... args) {
+    @NotNull
+    private String getToRender(Object... args) {
+        return actionBar.getMessage().toString(player.getLocale(),args);
+    }
+
+    private void renderText(@NotNull String toRender) {
         try {
-            String toRender = message.toString(player.getLocale(),args);
             renderer.render(player,toRender);
         } catch (Throwable e) {
             if(!dodgyRenderer.get()) {
@@ -206,7 +212,7 @@ public class ScheduleRunningActionBar implements RunningActionBar {
             if(this.cancelled || !this.isRunning())
                 return;
 
-            this.args = args;
+            this.toRender = getToRender(args);
         }
         render();
     }
@@ -219,11 +225,11 @@ public class ScheduleRunningActionBar implements RunningActionBar {
 
     @Override
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("Action-Bar",actionBar)
                 .add("Running",isRunning())
                 .add("Cancelled",cancelled)
-                .add("as-displayed", actionBar.getMessage().toString(player.getLocale(),args))
+                .add("as-displayed", toRender)
                 .toString();
     }
 }

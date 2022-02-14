@@ -63,8 +63,8 @@ public class VersionFactory {
 
         private final int VERSION_POSITION = 0;
         private final int SNAP_POSITION = 1;
-        private final int MINOR_POSITION = 1;
-        private final int MAJOR_POSITION = 2;
+        private final int MINOR_POSITION = 2;
+        private final int MAJOR_POSITION = 1;
 
         private final String ERR_MSG = "Invalid Version String. String should be in the format 1.(major).(minor)-(snapshot)";
 

@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.item.custom;
 
+import com.google.common.base.MoreObjects;
 import me.deltaorion.extapi.common.exception.MissingDependencyException;
 import me.deltaorion.extapi.common.plugin.BukkitAPIDepends;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
@@ -175,7 +176,7 @@ public class CustomItemManager {
 
     @Override
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("Registry",itemRegistry)
                 .toString();
     }

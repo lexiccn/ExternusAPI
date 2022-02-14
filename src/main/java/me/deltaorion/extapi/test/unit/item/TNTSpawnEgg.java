@@ -18,7 +18,7 @@ import java.util.Objects;
 public class TNTSpawnEgg extends CustomItem {
 
     public TNTSpawnEgg() {
-        super("TNT_SPAWN_EGG", new ItemBuilder(EMaterial.SPAWN_MOOSHROOM_EGG)
+        super("TNT_SPAWN_EGG", new ItemBuilder(EMaterial.MOOSHROOM_SPAWN_EGG)
                                         .setDisplayName(ChatColor.WHITE + "TNT Spawn Egg")
                                         .hideAll()
                                         .build());

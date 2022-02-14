@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.item.position;
 
+import com.google.common.base.MoreObjects;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +59,7 @@ public class LivingEntityItem implements InventoryItem {
 
     @Override
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("Entity",entity)
                 .add("Slot",this.type)
                 .add("ItemStack",this.itemStack)

@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.animation;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import net.jcip.annotations.GuardedBy;
@@ -281,7 +282,7 @@ public class MinecraftAnimation<T,S> {
     }
 
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("Animation Count",animationCount.get())
                 .add("Currently Running",runningAnimations.size())
                 .add("Renderer",renderer)

@@ -1,11 +1,11 @@
 package me.deltaorion.extapi.command.sent;
 
-import jdk.nashorn.internal.ir.annotations.Immutable;
+import com.google.common.base.MoreObjects;
 import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.sender.Sender;
-import org.bukkit.inventory.ItemStack;
+import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -237,7 +237,7 @@ public class SentCommand implements Iterable<CommandArg> {
 
     @Override
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("Sender",sender)
                 .add("Label",label)
                 .add("Args",args)

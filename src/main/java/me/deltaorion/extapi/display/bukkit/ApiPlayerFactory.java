@@ -11,7 +11,7 @@ public interface ApiPlayerFactory {
     static ApiPlayerFactory DEFAULT = new ApiPlayerFactory() {
         @Override
         public BukkitApiPlayer get(@NotNull BukkitPlugin plugin, @NotNull Player player) {
-            return new BukkitApiPlayer(plugin,player,new APIPlayerSettings());
+            return new EApiPlayer(plugin,player,new APIPlayerSettings());
         }
     };
 }

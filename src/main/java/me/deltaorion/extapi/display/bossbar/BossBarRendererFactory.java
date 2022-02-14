@@ -18,7 +18,16 @@ public interface BossBarRendererFactory {
         };
     }
 
-    static BossBarRendererFactory fromVersion(MinecraftVersion version) {
-        return WITHER_ENTITY();
+    static BossBarRendererFactory FROM_VERSION(@NotNull MinecraftVersion version) {
+        return new BossBarRendererFactory() {
+            @Override
+            public BossBarRenderer get(@NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player) {
+                if(version.getMajor()==8) {
+                    return new EntityBossBarRenderer(plugin, player);
+                } else {
+                    return new PacketBossBarRenderer(plugin,player.getPlayer());
+                }
+            }
+        };
     }
 }

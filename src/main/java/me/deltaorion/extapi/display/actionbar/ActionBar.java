@@ -1,9 +1,10 @@
 package me.deltaorion.extapi.display.actionbar;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import jdk.nashorn.internal.ir.annotations.Immutable;
-import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
+import me.deltaorion.extapi.display.bukkit.EApiPlayer;
 import me.deltaorion.extapi.locale.message.Message;
+import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +13,7 @@ import java.time.Duration;
 /**
  * An Action Bar is a display item which shows a line of text at the bottom of the players screen just on top of where item names
  * are normally displayed. This class represents the contents of an action bar that can be sent to a user. To actually send one use
- * {@link BukkitApiPlayer#getActionBarManager()}.
+ * {@link EApiPlayer#getActionBarManager()}.
  *
  * Action bars have
  *   - a optional name that can identify the action bar
@@ -88,7 +89,7 @@ public class ActionBar {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("Message",message)
                 .add("Duration (ms)",getTime()).toString();
     }

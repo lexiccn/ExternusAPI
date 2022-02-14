@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.item.custom;
 
+import com.google.common.base.MoreObjects;
 import de.tr7zw.nbtapi.NBTCompound;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.common.server.EServer;
@@ -72,7 +73,11 @@ public class CustomItem implements Listener {
         if(itemStack==null)
             return true;
 
-        return EMaterial.rawGasLiquid(itemStack.getType());
+        EMaterial material = EMaterial.matchMaterial(itemStack);
+        if(material==null)
+            return false;
+
+        return material.noNBT();
     }
 
     /**
@@ -359,7 +364,7 @@ public class CustomItem implements Listener {
 
     @Override
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("name",name)
                 .add("default stack",defaultStack)
                 .add("default lore",defaultLore)

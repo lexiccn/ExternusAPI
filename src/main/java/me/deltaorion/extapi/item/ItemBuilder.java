@@ -1,9 +1,11 @@
 package me.deltaorion.extapi.item;
 
+import com.google.common.base.MoreObjects;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTItem;
+import me.deltaorion.extapi.common.exception.UnsupportedVersionException;
 import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.item.custom.CustomItem;
 import me.deltaorion.extapi.locale.message.Message;
@@ -43,8 +45,17 @@ public class ItemBuilder {
         this.itemStack = Objects.requireNonNull(itemStack);
     }
 
+    /**
+     * Creates an Itembuilder with the given universal EMaterial.
+     *
+     * @param material The material to use
+     * @throws UnsupportedVersionException if the material is not available for this version.
+     */
     public ItemBuilder(@NotNull EMaterial material) {
         Objects.requireNonNull(material);
+        Material bukkitMaterial = material.getBukkitMaterial();
+        if(bukkitMaterial==null)
+            throw new UnsupportedVersionException(material);
         this.itemStack = new ItemStack(material.getBukkitMaterial(),1,material.getItemData());
     }
 
@@ -62,7 +73,17 @@ public class ItemBuilder {
         this(item, EServer.DEFAULT_LOCALE);
     }
 
+    /**
+     * Sets the type using the Ematerial Enum
+     *
+     * @param type The ematerial to set.
+     * @return This builder
+     * @throws UnsupportedVersionException if the type does not exist for this version
+     */
     public ItemBuilder setType(@NotNull EMaterial type) {
+        Material bukkitMaterial = type.getBukkitMaterial();
+        if(bukkitMaterial==null)
+            throw new UnsupportedVersionException(type);
         this.itemStack.setType(type.getBukkitMaterial());
         this.itemStack.setDurability(type.getItemData());
         return this;
@@ -321,7 +342,7 @@ public class ItemBuilder {
 
     @Override
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("ItemStack",itemStack)
                 .toString();
     }
@@ -341,7 +362,7 @@ public class ItemBuilder {
      * Returns a built itemstack. If an itemstack of some kind was passed into this, then you will not get a cloned
      * itemstack, just the original. For a clone use {@link ItemStack#clone()}
      *
-     * @return
+     * @return the itemstack
      */
     public ItemStack build() {
         return this.itemStack;
@@ -448,19 +469,34 @@ public class ItemBuilder {
         @Nullable private Plugin plugin;
         @Nullable private UUID playerUUID;
         @Nullable private String url;
-        private SkullType type;
         private boolean isTexture;
-        private final Material SKULL_MAT = EMaterial.MOB_HEAD.getBukkitMaterial();
+        private EMaterial skullMat;
+        private final static EMaterial DEFAULT_SKULL_MAT = EMaterial.PLAYER_HEAD;
 
         public SkullBuilder() {
             isTexture = false;
             url = null;
             playerUUID = null;
-            type = SkullType.PLAYER;
+            skullMat = DEFAULT_SKULL_MAT;
         }
 
         public SkullBuilder setType(SkullType type) {
-            this.type = type;
+            switch (type) {
+                case WITHER:
+                    skullMat = EMaterial.WITHER_SKELETON_SKULL;
+                    break;
+                case ZOMBIE:
+                    skullMat = EMaterial.ZOMBIE_HEAD;
+                    break;
+                case CREEPER:
+                    skullMat = EMaterial.CREEPER_HEAD;
+                    break;
+                case SKELETON:
+                    skullMat = EMaterial.SKELETON_SKULL;
+                    break;
+                default:
+                    skullMat = EMaterial.PLAYER_HEAD;
+            }
             return this;
         }
 
@@ -483,18 +519,15 @@ public class ItemBuilder {
             } else if(!isTexture && playerUUID!=null) {
                 applyUUID(builder);
             } else {
-                builder.setType(SKULL_MAT);
-                builder.setDurability(type.ordinal());
+                builder.setType(skullMat);
             }
         }
 
         private void applyUUID(ItemBuilder builder) {
 
-            ItemStack skull = new ItemStack(SKULL_MAT,1, (short) type.ordinal());
+            ItemStack skull = new ItemBuilder(DEFAULT_SKULL_MAT).build();
             //preserve meta
             skull.setItemMeta(builder.itemStack.getItemMeta());
-            skull.setType(SKULL_MAT);
-            skull.setDurability((short) type.ordinal());
 
             SkullMeta meta = (SkullMeta) skull.getItemMeta();
             meta.setOwner(Objects.requireNonNull(plugin).getServer().getOfflinePlayer(playerUUID).getName());
@@ -502,11 +535,9 @@ public class ItemBuilder {
         }
 
         private void applyTexture(ItemBuilder builder) {
-            ItemStack head = new ItemStack(SKULL_MAT,1, (short) type.ordinal());
+            ItemStack head = new ItemBuilder(DEFAULT_SKULL_MAT).build();
             //preserve item meta
             head.setItemMeta(builder.itemStack.getItemMeta());
-            head.setType(SKULL_MAT);
-            head.setDurability((short) type.ordinal());
 
             //do relevant transform
             SkullMeta headMeta = (SkullMeta) head.getItemMeta();
@@ -522,8 +553,7 @@ public class ItemBuilder {
             }
             //steal the item meta and set here
             builder.itemStack.setItemMeta(headMeta);
-            builder.setType(SKULL_MAT);
-            builder.setDurability(type.ordinal());
+            builder.setType(DEFAULT_SKULL_MAT);
         }
     }
 

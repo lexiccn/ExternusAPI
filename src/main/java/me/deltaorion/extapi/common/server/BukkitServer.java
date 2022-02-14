@@ -1,4 +1,5 @@
 package me.deltaorion.extapi.common.server;
+import com.google.common.base.MoreObjects;
 import me.deltaorion.extapi.common.sender.BukkitSenderInfo;
 import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.common.sender.SimpleSender;
@@ -110,7 +111,7 @@ public class BukkitServer implements EServer {
 
     @Override
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("name",server.getServerName())
                 .add("minecraft version",minecraftVersion)
                 .add("server version",server.getVersion()).toString();

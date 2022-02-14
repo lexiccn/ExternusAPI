@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.command.parser;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.gson.reflect.TypeToken;
 import net.jcip.annotations.ThreadSafe;
@@ -54,7 +55,7 @@ public class SimpleParserRegistry implements ParserRegistry {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("Registry Map",registry).toString();
     }
 }

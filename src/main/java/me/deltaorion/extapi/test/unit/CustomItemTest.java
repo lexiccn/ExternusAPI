@@ -1,6 +1,7 @@
 package me.deltaorion.extapi.test.unit;
 
 import de.tr7zw.nbtapi.NBTCompound;
+import me.deltaorion.extapi.common.plugin.BukkitAPIDepends;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.item.ItemBuilder;
 import me.deltaorion.extapi.item.custom.CustomItem;
@@ -36,6 +37,8 @@ public class CustomItemTest implements MinecraftTest {
 
     @McTest
     public void customItemTest() {
+        if(!plugin.getDependency(BukkitAPIDepends.NBTAPI.getName()).isActive())
+            return;
         CustomItem item = new BowSword(plugin);
         CustomItem enchant = new ParryEnchant();
         ItemStack generated = item.newCustomItem();
@@ -77,6 +80,8 @@ public class CustomItemTest implements MinecraftTest {
 
     @McTest
     public void registerFailTest() {
+        if(!plugin.getDependency(BukkitAPIDepends.NBTAPI.getName()).isActive())
+            return;
         plugin.getLogger().info("The following error messages are as a result of tests");
         plugin.getCustomItemManager().registerItem(new FailItem());
         plugin.getCustomItemManager().registerItem(new FailItem2());
@@ -98,6 +103,8 @@ public class CustomItemTest implements MinecraftTest {
 
     @McTest
     public void registerTest() {
+        if(!plugin.getDependency(BukkitAPIDepends.NBTAPI.getName()).isActive())
+            return;
         List<String> helper = new ArrayList<>();
         TestItem item = new TestItem(helper);
         plugin.getCustomItemManager().registerItem(item);
@@ -113,7 +120,7 @@ public class CustomItemTest implements MinecraftTest {
 
         plugin.getCustomItemManager().registerIfAbsent(item);
 
-        Player player = new TestPlayer("Jerry");
+        TestPlayer player = new TestPlayer("Jerry");
         plugin.getServer().getPluginManager().callEvent(new TestEvent(player,"Gamer"));
         assertEquals(0,helper.size());
 

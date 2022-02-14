@@ -18,6 +18,7 @@ import me.deltaorion.extapi.common.sender.SimpleSender;
 import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.common.thread.ErrorReportingThreadPool;
 import me.deltaorion.extapi.display.bukkit.WrappedPlayerManager;
+import me.deltaorion.extapi.item.EMaterial;
 import me.deltaorion.extapi.item.custom.CustomItemManager;
 import me.deltaorion.extapi.locale.translator.PluginTranslator;
 import org.bukkit.command.CommandExecutor;
@@ -45,6 +46,8 @@ public class BukkitPlugin extends JavaPlugin implements ApiPlugin {
     @NotNull private final ExecutorService commandService;
     @Nullable private SimpleBukkitPlayerManager bukkitPlayerManager;
 
+    private final String MATERIAL_LOCATION = "material.properties";
+
     public BukkitPlugin() {
         super();
         this.plugin = new SharedApiPlugin(new BukkitPluginWrapper(this));
@@ -54,6 +57,19 @@ public class BukkitPlugin extends JavaPlugin implements ApiPlugin {
                 new SynchronousQueue<>());
 
         registerDefaultParsers();
+        initialiseEMaterial();
+    }
+
+    private void initialiseEMaterial() {
+        try {
+            EMaterial.initialise(getEServer().getServerVersion(),
+                    Objects.requireNonNull(
+                            getClassLoader().getResourceAsStream(MATERIAL_LOCATION),
+                    "Could not find material data stream at '" + MATERIAL_LOCATION + "'")
+            );
+        } catch (Throwable e) {
+            getPluginLogger().severe("An error occurred while initialising EMaterial. Are you reloading the server?",e);
+        }
     }
 
     private void registerDefaultDepends() {
@@ -77,6 +93,20 @@ public class BukkitPlugin extends JavaPlugin implements ApiPlugin {
         registerDefaultDepends();
         this.itemManager = new CustomItemManager(this);
         this.bukkitPlayerManager = new SimpleBukkitPlayerManager(this);
+        initialiseEMaterialNBT();
+    }
+
+    private void initialiseEMaterialNBT() {
+        try {
+            if (plugin.getDependency(BukkitAPIDepends.NBTAPI.getName()).isActive()) {
+                plugin.getPluginLogger().info("Initialising EMaterial NBT support");
+                EMaterial.initialiseNBT();
+            } else {
+                EMaterial.assertNoNBTAPI();
+            }
+        } catch (Throwable e) {
+            plugin.getPluginLogger().severe("An error occurred when initialising EMaterial NBT check",e);
+        }
     }
 
     @Override

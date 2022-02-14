@@ -18,6 +18,10 @@ import java.util.Objects;
 
 public class EventPredicates {
 
+    private EventPredicates() {
+        throw new UnsupportedOperationException();
+    }
+
     public static EventPredicate getPredicate(@NotNull EventCondition condition) {
         Objects.requireNonNull(condition);
         switch (condition) {

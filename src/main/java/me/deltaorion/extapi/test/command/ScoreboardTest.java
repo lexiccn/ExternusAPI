@@ -113,6 +113,12 @@ public class ScoreboardTest extends FunctionalCommand {
         scoreboard.setTitle(ChatColor.WHITE + "" + ChatColor.BOLD + title);
         scoreboard.setLine(ChatColor.GRAY + "Test Server", 0);
         scoreboard.setLine(ChatColor.WHITE + "abcdefghijklmnopqrstuvwxyz32", 1);
-        scoreboard.setLine(Message.valueOf(ChatColor.GOLD + "TPS: " + ChatColor.WHITE + "%s"), 2, "TPS", plugin.getServer().spigot().getTPS()[0]);
+        double tps;
+        try {
+            tps = plugin.getServer().spigot().getTPS()[0];
+        } catch(NoSuchMethodError e) {
+            tps = Math.random();
+        }
+        scoreboard.setLine(Message.valueOf(ChatColor.GOLD + "TPS: " + ChatColor.WHITE + "%s"), 2, "TPS", tps);
     }
 }

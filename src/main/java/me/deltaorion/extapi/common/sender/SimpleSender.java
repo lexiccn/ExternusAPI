@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.common.sender;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.locale.message.Message;
@@ -98,7 +99,7 @@ public class SimpleSender implements Sender {
     }
 
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("Wrapper",senderInfo).toString();
     }
 
