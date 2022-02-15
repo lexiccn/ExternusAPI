@@ -194,6 +194,15 @@ public class ItemBuilder {
         });
     }
 
+    public ItemBuilder addFlags(@NotNull Iterable<ItemFlag> flags) {
+        Objects.requireNonNull(flags);
+        return transformMeta(itemMeta -> {
+            for(ItemFlag flag : flags) {
+                itemMeta.addItemFlags(flag);
+            }
+        });
+    }
+
     public ItemBuilder removeFlags(@NotNull ItemFlag... flags) {
         Objects.requireNonNull(flags);
         return transformMeta(itemMeta -> {
@@ -451,6 +460,7 @@ public class ItemBuilder {
             Potion potion = new Potion(color);
             potion.setSplash(splash);
             ItemStack potionStack = potion.toItemStack(1);
+
             builder.setType(potionStack.getType());
             builder.setDurability(potionStack.getDurability());
             builder.transformMeta(itemMeta -> {
