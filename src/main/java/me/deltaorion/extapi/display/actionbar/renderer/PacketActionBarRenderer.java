@@ -7,6 +7,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import me.deltaorion.extapi.display.actionbar.ActionBarRenderer;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
+import me.deltaorion.extapi.protocol.WrapperPlayServerChat;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,8 +25,7 @@ public class PacketActionBarRenderer implements ActionBarRenderer {
 
         //send it, rethrow the exception to cancel the running action bar
         Player p = player.getPlayer();
-        if(p==null)
-            return;
+
 
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(p, packet);

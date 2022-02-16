@@ -3,13 +3,11 @@ package me.deltaorion.extapi.test.unit;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import me.deltaorion.extapi.display.bukkit.BukkitPlayerManager;
-import me.deltaorion.extapi.display.bukkit.SimpleBukkitPlayerManager;
 import me.deltaorion.extapi.test.unit.bukkit.TestPlayer;
 import me.deltaorion.extapi.test.unit.generic.McTest;
 import me.deltaorion.extapi.test.unit.generic.MinecraftTest;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -28,10 +26,15 @@ public class PTest implements MinecraftTest {
     public void testCache() {
         BukkitPlayerManager players = plugin.getBukkitPlayerManager();
         assertEquals(0,players.getPlayers().size());
-        assertFalse(players.hasPlayer(new TestPlayer("Gamer")));
+        try {
+            assertFalse(players.hasPlayer(new TestPlayer("Gamer").asPlayer()));
+        } catch (IllegalArgumentException e) {
+            plugin.getPluginLogger().warn("Cannot complete '"+getName()+"' as the Player class is malformed in this version. '"+e.getMessage()+"'");
+            return;
+        }
         Map<Player,BukkitApiPlayer> playerList = new HashMap<>();
         for(int i=0;i<100;i++) {
-            Player player = new TestPlayer("Jimmy");
+            Player player = new TestPlayer("Jimmy").asPlayer();
             playerList.put(player,players.getPlayer(player));
         }
         for(Map.Entry<Player,BukkitApiPlayer> entry : playerList.entrySet()) {

@@ -14,24 +14,21 @@ public class HumanEntityItem implements InventoryItem {
 
     private final HumanEntity entity;
     private final int position;
-    @Nullable private ItemStack itemStack;
 
-    public HumanEntityItem(HumanEntity entity, int position, @Nullable ItemStack itemStack) {
+    public HumanEntityItem(HumanEntity entity, int position) {
         this.position = position;
-        this.itemStack = itemStack;
         this.entity = entity;
     }
 
     @Override
     public void setItem(@Nullable ItemStack itemStack) {
         this.entity.getInventory().setItem(position,itemStack);
-        this.itemStack = itemStack;
     }
 
     @Nullable
     @Override
     public ItemStack getItemStack() {
-        return itemStack;
+        return entity.getInventory().getItem(position);
     }
 
     @Override
@@ -44,17 +41,10 @@ public class HumanEntityItem implements InventoryItem {
         if(this.position == entity.getInventory().getHeldItemSlot())
             return SlotType.MAIN_HAND;
 
-        if(this.position==36)
-            return SlotType.BOOTS;
-
-        if(this.position==37)
-            return SlotType.LEGGINGS;
-
-        if(this.position==38)
-            return SlotType.CHESTPLATE;
-
-        if(this.position==39)
-            return SlotType.HELMET;
+        for(SlotType slotType : SlotType.values()) {
+            if(slotType.getBukkitSlot()==this.position)
+                return slotType;
+        }
 
         return SlotType.OTHER;
     }
@@ -64,7 +54,7 @@ public class HumanEntityItem implements InventoryItem {
         return MoreObjects.toStringHelper(this)
                 .add("Entity",entity)
                 .add("Position",position)
-                .add("ItemStack",itemStack)
+                .add("ItemStack",getItemStack())
                 .toString();
     }
 
@@ -75,7 +65,7 @@ public class HumanEntityItem implements InventoryItem {
 
         HumanEntityItem entityItem = (HumanEntityItem) o;
 
-        return this.position == entityItem.position && Objects.equals(entityItem.itemStack,this.itemStack)
+        return this.position == entityItem.position
                 && this.entity.equals(entityItem.entity);
     }
 }

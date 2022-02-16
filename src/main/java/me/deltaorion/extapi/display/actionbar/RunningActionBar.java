@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.display.actionbar;
 
+import me.deltaorion.extapi.display.DisplayLine;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CountDownLatch;
@@ -20,7 +21,7 @@ import java.util.concurrent.CountDownLatch;
  * Implementations
  *   - {@link me.deltaorion.extapi.display.actionbar.running.ScheduleRunningActionBar}
  */
-public interface RunningActionBar {
+public interface RunningActionBar extends DisplayLine {
 
     /**
      * Starts a running action bar. This should do nothing if this has been cancelled or if the action bar is already running.
@@ -48,15 +49,6 @@ public interface RunningActionBar {
      */
     @NotNull
     public ActionBar getActionBar();
-
-    /**
-     * Change the message arguments that are being displayed
-     *   - should not alter the message
-     *   - should push the change immediately so that it can be viewed by the user
-     *
-     * @param args The new message arguments to be displayed
-     */
-    public void setArgs(Object... args);
 
     /**
      * Counts down when the action bar has finished. This is mostly a testing utility.

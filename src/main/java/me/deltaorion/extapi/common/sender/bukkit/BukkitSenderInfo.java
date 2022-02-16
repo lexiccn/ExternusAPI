@@ -1,8 +1,7 @@
-package me.deltaorion.extapi.common.sender;
+package me.deltaorion.extapi.common.sender.bukkit;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
+import me.deltaorion.extapi.common.sender.SenderInfo;
 import me.deltaorion.extapi.common.server.EServer;
-import me.deltaorion.extapi.locale.translator.Translator;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
@@ -14,10 +13,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Locale;
 import java.util.UUID;
 
-public class BukkitSenderInfo implements SenderInfo {
-    private final CommandSender sender;
-    private final Server server;
-    private final EServer eServer;
+public abstract class BukkitSenderInfo implements SenderInfo {
+    protected final CommandSender sender;
+    protected final Server server;
+    protected final EServer eServer;
 
     public BukkitSenderInfo(@NotNull EServer eServer, @NotNull Server server, @NotNull CommandSender sender) {
 
@@ -31,11 +30,13 @@ public class BukkitSenderInfo implements SenderInfo {
     }
 
 
+    @NotNull
     @Override
     public String getName() {
         return sender.getName();
     }
 
+    @NotNull
     @Override
     public UUID getUniqueId() {
         if(isConsole()) {
@@ -53,6 +54,7 @@ public class BukkitSenderInfo implements SenderInfo {
         }
     }
 
+    @NotNull
     @Override
     public EServer getEServer() {
         return eServer;
@@ -63,15 +65,9 @@ public class BukkitSenderInfo implements SenderInfo {
         server.dispatchCommand(sender,commandLine);
     }
 
+    @NotNull
     @Override
-    public Locale getLocale() {
-        if(sender instanceof Player) {
-            Player player = (Player) sender;
-            return Translator.parseLocale(player.spigot().getLocale());
-        } else {
-            return EServer.DEFAULT_LOCALE;
-        }
-    }
+    public abstract Locale getLocale();
 
     @Override
     public boolean hasPermission(String permission) {

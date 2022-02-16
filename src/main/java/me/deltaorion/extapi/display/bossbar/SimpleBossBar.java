@@ -2,6 +2,8 @@ package me.deltaorion.extapi.display.bossbar;
 
 import com.google.common.base.MoreObjects;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
+import me.deltaorion.extapi.display.DisplayLine;
+import me.deltaorion.extapi.display.SimpleDisplayLine;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import me.deltaorion.extapi.locale.message.Message;
 import me.deltaorion.extapi.protocol.WrapperPlayServerBoss;
@@ -25,13 +27,12 @@ public class SimpleBossBar implements BossBar {
 
     @NotNull private final BukkitPlugin plugin;
 
+    @NotNull private DisplayLine displayLine;
     @NotNull private final String name;
-    @NotNull private Message message;
-    @NotNull private String asDisplayed;
     private boolean visible;
 
     @NotNull private BarColor color;
-    @NotNull private WrapperPlayServerBoss.BarStyle style;
+    @NotNull private BarStyle style;
     @NotNull private final Set<BarFlag> flags;
 
     @NotNull private final BukkitApiPlayer player;
@@ -62,13 +63,13 @@ public class SimpleBossBar implements BossBar {
         this.plugin = Objects.requireNonNull(plugin);
         this.player = plugin.getBukkitPlayerManager().getPlayer(player);
         this.name = Objects.requireNonNull(name);
-        this.message = Objects.requireNonNull(message);
-        this.asDisplayed = message.toString(this.player.getLocale());
         this.renderer = factory.get(plugin,this.player);
+
+        displayLine = new SimpleDisplayLine(this.player,message);
 
         this.flags = new HashSet<>();
         this.color = BarColor.PINK;
-        this.style = WrapperPlayServerBoss.BarStyle.PROGRESS;
+        this.style = BarStyle.PROGRESS;
 
         setVisible(DEFAULT_VISIBILITY);
         setProgress(DEFAULT_PROGRESS);
@@ -90,15 +91,14 @@ public class SimpleBossBar implements BossBar {
     @Override
     @NotNull
     public Message getMessage() {
-        return this.message;
+        return displayLine.getMessage();
     }
 
     @Override
     public void setMessage(@NotNull Message message, Object... args) {
-        this.message = message;
-        this.asDisplayed = message.toString(player.getLocale(),args);
+        displayLine = new SimpleDisplayLine(this.player,message,args);
         try {
-            renderer.setMessage(asDisplayed);
+            renderer.setMessage(displayLine.getAsDisplayed());
         } catch (Throwable e) {
             handle(e);
         }
@@ -133,8 +133,8 @@ public class SimpleBossBar implements BossBar {
      */
     @Override
     @NotNull
-    public String getDisplayed() {
-        return asDisplayed;
+    public String getAsDisplayed() {
+        return displayLine.getAsDisplayed();
     }
 
     /**
@@ -208,7 +208,7 @@ public class SimpleBossBar implements BossBar {
     }
 
     @Override
-    public void setStyle(@NotNull WrapperPlayServerBoss.BarStyle style) {
+    public void setStyle(@NotNull BarStyle style) {
         Objects.requireNonNull(style);
         if(this.style.equals(style))
             return;
@@ -217,7 +217,7 @@ public class SimpleBossBar implements BossBar {
     }
 
     @NotNull @Override
-    public WrapperPlayServerBoss.BarStyle getStyle() {
+    public BarStyle getStyle() {
         return this.style;
     }
 
@@ -288,14 +288,14 @@ public class SimpleBossBar implements BossBar {
             return false;
 
         SimpleBossBar bossBar = (SimpleBossBar) o;
-        return bossBar.player.equals(this.player) && bossBar.visible==this.visible && bossBar.progress == this.progress && bossBar.message.equals(this.message);
+        return bossBar.player.equals(this.player) && bossBar.visible==this.visible && bossBar.progress == this.progress && displayLine.equals(bossBar.displayLine);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("Message",message)
-                .add("Rendered",asDisplayed)
+                .add("Message",displayLine.getMessage())
+                .add("Rendered",displayLine.getAsDisplayed())
                 .add("Visible",visible)
                 .add("Progress",progress)
                 .toString();

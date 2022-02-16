@@ -36,6 +36,9 @@ public class EMaterialTest implements MinecraftTest {
         testVersion();
         testVersion2();
         testNBT();
+        testMatching();
+        testMatching2();
+        testMatching3();
     }
 
     public void basicTest() {
@@ -93,6 +96,40 @@ public class EMaterialTest implements MinecraftTest {
         assertEquals("NBT Values marked as noNBT received nbt tags anyway - "+noNBTButPassed,0,noNBTButPassed.size());
         assertEquals("NBT Values not marked as noNBT failed - "+notNoNBTButFailed,0,notNoNBTButFailed.size());
 
+    }
+
+    public void testMatching() {
+        int duraDependent = 0;
+        for(EMaterial material : EMaterial.valuesThisVersion()) {
+            ItemStack itemStack = new ItemBuilder(material).build();
+            EMaterial match = EMaterial.matchMaterial(itemStack);
+            checkMatch(match,material);
+            if(material.isDurabilityDependent()) {
+                duraDependent++;
+            } else {
+                itemStack.setDurability((short) 32);
+                match = EMaterial.matchMaterial(itemStack);
+                checkMatch(match,material);
+            }
+        }
+        assertNotSame(EMaterial.values().length,duraDependent);
+    }
+
+    private void checkMatch(EMaterial match, EMaterial material) {
+        assertTrue("Expected '"+material+"' but received '"+match+"'",material.equals(match) ||
+                material.getDuplicates().contains(match));
+    }
+
+    public void testMatching2() {
+        for(EMaterial material : EMaterial.values()) {
+            assertEquals(material,EMaterial.matchMaterial(material.name()));
+        }
+    }
+
+    public void testMatching3() {
+        for(EMaterial material : EMaterial.values()) {
+            assertEquals(material,EMaterial.matchMaterial(material.getId()));
+        }
     }
 
     public void testExist() {

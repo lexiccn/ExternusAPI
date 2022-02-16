@@ -1,10 +1,14 @@
 package me.deltaorion.extapi.display.scoreboard;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
+import me.deltaorion.extapi.display.DisplayLine;
+import me.deltaorion.extapi.display.SimpleDisplayLine;
+import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import me.deltaorion.extapi.locale.message.Message;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * Represents a line on a scoreboard. A line has
@@ -12,23 +16,23 @@ import org.jetbrains.annotations.Nullable;
  *   - an optional unique name that can be used to identify a line.
  *   - a message that should be displayed.
  */
-public class ScoreboardLine {
-    @NotNull private final Message message;
+public class ScoreboardLine implements DisplayLine {
+    @NotNull private final DisplayLine display;
     @Nullable private final String name;
     private final int line;
-    private volatile String asDisplayed;
 
     /**
      *
-     * @param message The message to display on scorebords line
+     * @param message The message to display on scoreboards line
      * @param name An optional name for the scoreboard line
-     * @param line The line numba 
+     * @param line The positional index of this line on the scoreboard, 0 being on top and n being at the bottom
+     * @param player The player who this line will be shown to
+     * @param args Any message arguments to be displayed.
      */
-    public ScoreboardLine(@NotNull Message message, @Nullable String name, int line) {
-        this.message = message;
+    public ScoreboardLine(@NotNull Message message, @Nullable String name, int line, @NotNull BukkitApiPlayer player, Object... args) {
+        this.display = new SimpleDisplayLine(player,message,args);
         this.name = name;
         this.line = line;
-        this.asDisplayed = "";
     }
 
     /**
@@ -36,7 +40,12 @@ public class ScoreboardLine {
      */
     @NotNull
     public Message getMessage() {
-        return message;
+        return display.getMessage();
+    }
+
+    @Override
+    public void setArgs(Object... args) {
+        display.setArgs(args);
     }
 
     @Nullable
@@ -58,17 +67,13 @@ public class ScoreboardLine {
 
     @NotNull
     public String getAsDisplayed() {
-        return asDisplayed;
-    }
-
-    public void setAsDisplayed(@NotNull String asDisplayed) {
-        this.asDisplayed = java.util.Objects.requireNonNull(asDisplayed);
+        return display.getAsDisplayed();
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("message",message)
+                .add("message",getMessage())
                 .add("index",line)
                 .add("name",name).toString();
     }
@@ -80,6 +85,6 @@ public class ScoreboardLine {
 
         ScoreboardLine line = (ScoreboardLine) o;
 
-        return this.message.equals(line.message) && this.line == line.line && java.util.Objects.equals(line.name,this.name);
+        return Objects.equals(this.name,line.name) && this.line == line.line && display.equals(line.display);
     }
 }

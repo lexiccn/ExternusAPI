@@ -15,7 +15,7 @@ public class APIPlayerSettings {
     @NotNull private ScoreboardFactory scoreboardFactory;
 
     public APIPlayerSettings() {
-        this.actionBarFactory = ActionBarFactories.SCHEDULE(new PacketActionBarRenderer());
+        this.actionBarFactory = ActionBarFactories.SCHEDULE_FROM_VERSION();
         this.scoreboardFactory = ScoreboardFactory.WRAPPER;
     }
 

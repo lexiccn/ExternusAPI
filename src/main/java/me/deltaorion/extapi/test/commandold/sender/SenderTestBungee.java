@@ -21,7 +21,7 @@ public class SenderTestBungee extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        Sender s = plugin.wrapSender(sender);
+        Sender s = plugin.getEServer().wrapSender(sender);
         if(!sender.hasPermission(APIPermissions.COMMAND)) {
             sender.sendMessage(MessageErrors.NO_PERMISSION().toString());
             return;

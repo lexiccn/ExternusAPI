@@ -163,6 +163,9 @@ public class CustomItemManager {
 
     @SuppressWarnings("unchecked")
     private <T extends Event> void register(Class<T> eventClass, CustomItem item, ItemEventHandler eh, Method method) throws CustomItemException {
+        if(plugin.getEServer().getServerVersion().getMajor()<eh.condition().getCompatibleVersion()) {
+            return;
+        }
         try {
             CustomItemEventListener.register(plugin, eventClass, item, EventPredicates.getPredicate(eh.condition()), (CIEventWrapper<T>) EventWrappers.get(eventClass,eh.wrapper()), method, eh.playerOnly(),eh.priority(),eh.ignoreCancelled());
         } catch (ClassCastException e) {

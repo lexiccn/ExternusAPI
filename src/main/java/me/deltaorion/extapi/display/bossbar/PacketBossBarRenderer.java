@@ -24,7 +24,7 @@ public class PacketBossBarRenderer implements BossBarRenderer {
     private float progress;
 
     @NotNull private BarColor color;
-    @NotNull private WrapperPlayServerBoss.BarStyle style;
+    @NotNull private BarStyle style;
 
     private boolean createFog;
     private boolean darkenSky;
@@ -36,7 +36,7 @@ public class PacketBossBarRenderer implements BossBarRenderer {
 
         this.uniqueId = UUID.randomUUID();
 
-        style = WrapperPlayServerBoss.BarStyle.PROGRESS;
+        style = BarStyle.PROGRESS;
         color = BarColor.PINK;
         progress = 1f;
         toRender = "";
@@ -124,7 +124,7 @@ public class PacketBossBarRenderer implements BossBarRenderer {
     }
 
     @Override
-    public void setStyle(@NotNull WrapperPlayServerBoss.BarStyle style) {
+    public void setStyle(@NotNull BarStyle style) {
         if(this.style.equals(style))
             return;
 

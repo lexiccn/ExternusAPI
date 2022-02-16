@@ -10,6 +10,7 @@ import me.deltaorion.extapi.locale.message.Message;
 import me.deltaorion.extapi.test.unit.bukkit.TestPlayer;
 import me.deltaorion.extapi.test.unit.generic.McTest;
 import me.deltaorion.extapi.test.unit.generic.MinecraftTest;
+import org.bukkit.entity.Player;
 
 import static org.junit.Assert.*;
 
@@ -23,7 +24,14 @@ public class ScoreboardingTest implements MinecraftTest {
 
     @McTest
     public void testScoreboard() {
-        TestPlayer player = new TestPlayer("gamer");
+        TestPlayer tPlayer = new TestPlayer("gamer");
+        Player player = null;
+        try {
+            player = tPlayer.asPlayer();
+        } catch (IllegalArgumentException e) {
+            plugin.getPluginLogger().warn("Cannot complete '"+getName()+"' as the Player class is malformed in this version. '"+e.getMessage()+"'");
+            return;
+        }
         BukkitApiPlayer p = new EApiPlayer(plugin,player,new APIPlayerSettings());
         EScoreboard scoreboard = p.setScoreboard("gamer",10);
         assertEquals(10,scoreboard.getSize());

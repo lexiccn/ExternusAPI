@@ -22,7 +22,7 @@ public class BungeeDependencyTest extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        Sender s = plugin.wrapSender(sender);
+        Sender s = plugin.getEServer().wrapSender(sender);
         if(!s.hasPermission(APIPermissions.COMMAND)) {
             s.sendMessage(MessageErrors.NO_PERMISSION());
             return;

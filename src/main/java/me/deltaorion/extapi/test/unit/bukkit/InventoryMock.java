@@ -10,36 +10,36 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class InventoryMock implements Inventory
+public class InventoryMock implements Iterable<ItemStack>
 {
     private final ItemStack[] items;
-    private final InventoryHolder holder;
     private final InventoryType type;
 
-    public InventoryMock(@Nullable InventoryHolder holder, int size, @NotNull InventoryType type)
+    public InventoryMock(int size, @NotNull InventoryType type)
     {
         Validate.isTrue(9 <= size && size <= 54 && size % 9 == 0,
                 "Size for custom inventory must be a multiple of 9 between 9 and 54 slots (got " + size + ")");
         Validate.notNull(type, "The InventoryType must not be null!");
 
-        this.holder = holder;
         this.type = type;
 
         items = new ItemStack[size];
     }
 
-    public InventoryMock(@Nullable InventoryHolder holder, @NotNull InventoryType type)
+    public InventoryMock(@NotNull InventoryType type)
     {
         Validate.notNull(type, "The InventoryType must not be null!");
-
-        this.holder = holder;
         this.type = type;
 
         int size = type.getDefaultSize();
@@ -50,6 +50,47 @@ public class InventoryMock implements Inventory
         items = new ItemStack[size];
     }
 
+    public Inventory asInventory() {
+        return (Inventory) Proxy.newProxyInstance(Inventory.class.getClassLoader(),
+                new Class[]{Inventory.class},
+                new InvocationHandler() {
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                        String methodName = method.getName();
+                        if(methodName.equals("assertTrueForAll")) {
+                        }  else if(methodName.equals("getSize")) {
+                            return getSize();
+                        } else if(methodName.equals("getItem")) {
+                            return getItem((Integer) args[0]);
+                        } else if(methodName.equals("setItem")) {
+                            setItem((Integer)args[0],(ItemStack)args[1]);
+                            return null;
+                        } else if(methodName.equals("addItem")) {
+                            addItem((ItemStack) args[0]);
+                            return null;
+                        } else if(methodName.equals("iterator")) {
+                            return iterator();
+                        } else if(methodName.equals("forEach")) {
+                            forEach((Consumer<? super ItemStack>) args[0]);
+                            return null;
+                        } else if(methodName.equals("getName")) {
+                            return getName();
+                        } else if(methodName.equals("getType")) {
+                            return getType();
+                        } else if(methodName.equals("equals")) {
+                            return InventoryMock.this.equals(args[0]);
+                        } else if(methodName.equals("hashCode")) {
+                            return InventoryMock.this.hashCode();
+                        } else if(methodName.equals("toString")) {
+                            return InventoryMock.this.toString();
+                        } else if(methodName.equals("clear")) {
+                            clear();
+                            return null;
+                        }
+                        throw new UnsupportedOperationException("Unsupported Method - "+methodName);
+                    }
+                });
+    }
     /**
      * Asserts that a certain condition is true for all items, even {@code nulls}, in this inventory.
      *
@@ -133,19 +174,19 @@ public class InventoryMock implements Inventory
         return amount;
     }
 
-    @Override
+    
     public int getSize()
     {
         return items.length;
     }
 
-    @Override
+    
     public ItemStack getItem(int index)
     {
         return items[index];
     }
 
-    @Override
+    
     public void setItem(int index, ItemStack item)
     {
         items[index] = item == null ? null : item.clone();
@@ -158,7 +199,8 @@ public class InventoryMock implements Inventory
      * @return The remaining stack that couldn't be added. If it's empty it just returns {@code null}.
      */
     @Nullable
-    public ItemStack addItem(@NotNull ItemStack item)
+    public ItemStack
+    addItem(@NotNull ItemStack item)
     {
         item = item.clone();
         for (int i = 0; i < items.length; i++)
@@ -187,7 +229,7 @@ public class InventoryMock implements Inventory
         return item;
     }
 
-    @Override
+    
     public HashMap<Integer, ItemStack> addItem(ItemStack... items) throws IllegalArgumentException
     {
         HashMap<Integer, ItemStack> notSaved = new HashMap<>();
@@ -203,13 +245,13 @@ public class InventoryMock implements Inventory
         return notSaved;
     }
 
-    @Override
+    
     public ItemStack[] getContents()
     {
         return items;
     }
 
-    @Override
+    
     public void setContents(ItemStack[] items)
     {
         for (int i = 0; i < getSize(); i++)
@@ -225,50 +267,49 @@ public class InventoryMock implements Inventory
         }
     }
 
-    @Override
+    
     public boolean contains(int materialId) {
         return false;
     }
 
-    @Override
-    public InventoryHolder getHolder()
-    {
-        return holder;
+    
+    public InventoryHolder getHolder() {
+        return null;
     }
 
-    @Override
+    
     public ListIterator<ItemStack> iterator()
     {
         List<ItemStack> list = Arrays.asList(items).stream().filter(Objects::nonNull).collect(Collectors.toList());
         return list.listIterator();
     }
 
-    @Override
+    
     public InventoryType getType()
     {
         return type;
     }
 
-    @Override
+    
     public int getMaxStackSize()
     {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException();
     }
 
-    @Override
+    
     public void setMaxStackSize(int size)
     {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException();
     }
 
-    @Override
+    
     public String getName() {
         return null;
     }
 
-    @Override
+    
     public HashMap<Integer, ItemStack> removeItem(ItemStack... items) throws IllegalArgumentException
     {
         // TODO Auto-generated method stub
@@ -276,7 +317,7 @@ public class InventoryMock implements Inventory
     }
 
 
-    @Override
+    
     public boolean contains(Material material) throws IllegalArgumentException
     {
         if (material == null)
@@ -293,18 +334,18 @@ public class InventoryMock implements Inventory
         return false;
     }
 
-    @Override
+    
     public boolean contains(ItemStack item)
     {
         return contains(Objects.requireNonNull(item).getType());
     }
 
-    @Override
+    
     public boolean contains(int materialId, int amount) {
         return false;
     }
 
-    @Override
+    
     public boolean contains(Material material, int amount) throws IllegalArgumentException
     {
         if (material == null)
@@ -314,57 +355,56 @@ public class InventoryMock implements Inventory
         return amount < 1 || getNumberOfItems(new ItemStack(material)) == amount;
     }
 
-    @Override
+    
     public boolean contains(ItemStack item, int amount)
     {
         return getNumberOfItems(item) == amount;
     }
 
-    @Override
+    
     public boolean containsAtLeast(ItemStack item, int amount)
     {
         return getNumberOfItems(item) >= amount;
     }
 
-    @Override
+    
     public HashMap<Integer, ? extends ItemStack> all(int materialId) {
         return null;
     }
 
-    @Override
-    public HashMap<Integer, ? extends ItemStack> all(Material material) throws IllegalArgumentException
-    {
+    
+    public HashMap<Integer, ? extends ItemStack> all(Material material) throws IllegalArgumentException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException();
     }
 
-    @Override
+    
     public HashMap<Integer, ? extends ItemStack> all(ItemStack item)
     {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException();
     }
 
-    @Override
+    
     public int first(int materialId) {
         return 0;
     }
 
-    @Override
+    
     public int first(Material material) throws IllegalArgumentException
     {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException();
     }
 
-    @Override
+    
     public int first(ItemStack item)
     {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException();
     }
 
-    @Override
+    
     public int firstEmpty()
     {
         for (int i = 0; i < getSize(); i++)
@@ -378,62 +418,55 @@ public class InventoryMock implements Inventory
         return -1;
     }
 
-    @Override
+    
     public void remove(int materialId) {
 
     }
 
-    @Override
+    
     public void remove(Material material) throws IllegalArgumentException
     {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException();
     }
 
-    @Override
+    
     public void remove(ItemStack item)
     {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException();
     }
 
-    @Override
+    
     public void clear(int index)
     {
         items[index] = null;
     }
 
-    @Override
+    
     public void clear()
     {
         Arrays.fill(items, null);
     }
 
-    @Override
+    
     public List<HumanEntity> getViewers()
     {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException();
     }
 
-    @Override
+    
     public String getTitle() {
         return null;
     }
 
-    @Override
+    
     public ListIterator<ItemStack> iterator(int index)
     {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException();
     }
 
-    @NotNull
-    public Inventory getSnapshot()
-    {
-        Inventory inventory = new InventoryMock(holder, getSize(), type);
-        inventory.setContents(getContents());
-        return inventory;
-    }
 
 }

@@ -1,22 +1,24 @@
 package me.deltaorion.extapi.common.server;
 import com.google.common.base.MoreObjects;
-import me.deltaorion.extapi.common.sender.BukkitSenderInfo;
+import me.deltaorion.extapi.common.exception.UnsupportedVersionException;
+import me.deltaorion.extapi.common.sender.bukkit.BukkitSenderInfo;
 import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.common.sender.SimpleSender;
 import me.deltaorion.extapi.common.plugin.BukkitPluginWrapper;
 import me.deltaorion.extapi.common.plugin.EPlugin;
+import me.deltaorion.extapi.common.sender.bukkit.BukkitSenderInfo_12;
+import me.deltaorion.extapi.common.sender.bukkit.BukkitSenderInfo_8_11;
 import me.deltaorion.extapi.common.version.MinecraftVersion;
 import me.deltaorion.extapi.common.version.VersionFactory;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.*;
 
@@ -55,14 +57,14 @@ public class BukkitServer implements EServer {
     public List<Sender> getOnlineSenders() {
         List<Sender> senders = new ArrayList<>();
         for(Player player : server.getOnlinePlayers()) {
-            senders.add(new SimpleSender(new BukkitSenderInfo(this,server,player)));
+            senders.add(wrapSender(player));
         }
         return Collections.unmodifiableList(senders);
     }
 
     @Override
     public Sender getConsoleSender() {
-        return new SimpleSender(new BukkitSenderInfo(this,server, server.getConsoleSender()));
+        return wrapSender(server.getConsoleSender());
     }
 
     @Override
@@ -115,5 +117,25 @@ public class BukkitServer implements EServer {
                 .add("name",server.getServerName())
                 .add("minecraft version",minecraftVersion)
                 .add("server version",server.getVersion()).toString();
+    }
+
+    @NotNull
+    @Override
+    public Sender wrapSender(@NotNull Object commandSender) {
+        if(!(commandSender instanceof CommandSender))
+            throw new IllegalArgumentException("Must wrap a bukkit command sender");
+
+        CommandSender sender = (CommandSender) commandSender;
+        return new SimpleSender(getSenderInfo(sender));
+    }
+
+    @NotNull
+    private BukkitSenderInfo getSenderInfo(@NotNull CommandSender sender) {
+        if(minecraftVersion.getMajor()>=8 && minecraftVersion.getMajor()<=11) {
+            return new BukkitSenderInfo_8_11(this,server,sender);
+        } else if(minecraftVersion.getMajor()>=12) {
+            return new BukkitSenderInfo_12(this,server,sender);
+        }
+        throw new UnsupportedVersionException("Cannot find a suitable Bukkit Sender wrapper for this version!");
     }
 }

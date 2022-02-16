@@ -24,7 +24,7 @@ public class BukkitDependencyTest implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        Sender s = plugin.wrapSender(sender);
+        Sender s = plugin.getEServer().wrapSender(sender);
         if(!s.hasPermission(APIPermissions.COMMAND)) {
             s.sendMessage(MessageErrors.NO_PERMISSION());
             return true;

@@ -26,6 +26,11 @@ public class TestBungee extends BungeePlugin {
         tester.runTests();
     }
 
+    @Override
+    public void onPluginDisable() {
+        tester.shutdown();
+    }
+
     private void registerCommands() {
         registerCommand(new MessageCommand(this),"msg","whisper","tell");
         registerCommand(new TestCommand(),"testcommand");

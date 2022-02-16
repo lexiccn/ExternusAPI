@@ -121,6 +121,14 @@ public class WrapperScoreboard implements EScoreboard {
 
     public void setLine(@NotNull Message content, int line, @Nullable String lineName, Object... args) {
         lineValid(line);
+        checkDuplicateLine(lineName,line);
+        ScoreboardLine l = new ScoreboardLine(Objects.requireNonNull(content),lineName,line,Objects.requireNonNull(player),args);
+        scoreboardLines.put(line,l);
+        //if should update
+        updateLine(l);
+    }
+
+    private void checkDuplicateLine(String lineName, int line) {
         if(lineName!=null) {
             ScoreboardLine l = getLineByName(lineName);
             if(l!=null) {
@@ -128,21 +136,14 @@ public class WrapperScoreboard implements EScoreboard {
                     throw new IllegalArgumentException("Two lines cannot have the same line name. The line name '"+lineName+"' already exists!");
             }
         }
-        ScoreboardLine l = new ScoreboardLine(Objects.requireNonNull(content),lineName,line);
-        scoreboardLines.put(line,l);
-        //if should update
-        updateLine(l,args);
     }
 
     public void setLineArgs(int line, Object... args) {
         lineValid(line);
         if(this.scoreboardLines.containsKey(line)) {
             ScoreboardLine sLine = this.scoreboardLines.get(line);
-            if(this.player==null) {
-                sLine.getMessage().setDefaults(line);
-            } else {
-                updateLine(sLine,args);
-            }
+            sLine.setArgs(args);
+            updateLine(sLine);
         }
     }
 
@@ -152,7 +153,8 @@ public class WrapperScoreboard implements EScoreboard {
         if(sLine==null)
             return;
 
-        updateLine(sLine, args);
+        sLine.setArgs(args);
+        updateLine(sLine);
     }
 
     @Override
@@ -166,9 +168,9 @@ public class WrapperScoreboard implements EScoreboard {
         this.setTitle(Message.valueOf(title));
     }
 
-    private void updateLine(ScoreboardLine line, Object... args) {
+    private void updateLine(ScoreboardLine line) {
         Objects.requireNonNull(player);
-        updateLine(line,line.getMessage().toString(player.getLocale(),args));
+        updateLine(line,line.getAsDisplayed());
     }
 
     private void updateLine(ScoreboardLine line, String content) {
@@ -180,8 +182,6 @@ public class WrapperScoreboard implements EScoreboard {
 
         team.setPrefix(split[0]);
         team.setSuffix(split[1]);
-
-        line.setAsDisplayed(split[0] + split[1]);
     }
 
     private String[] split(String line) {

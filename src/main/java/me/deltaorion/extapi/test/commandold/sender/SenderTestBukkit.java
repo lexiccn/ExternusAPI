@@ -25,7 +25,7 @@ public class SenderTestBukkit implements CommandExecutor {
             sender.sendMessage(MessageErrors.NO_PERMISSION().toString());
             return true;
         }
-        Sender s = plugin.wrapSender(sender);
+        Sender s = plugin.getEServer().wrapSender(sender);
         s.sendMessage("Name: " + s.getName());
         if(sender instanceof Player) {
             Assert.assertEquals(s.getName(),sender.getName());

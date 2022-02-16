@@ -8,6 +8,9 @@ import de.tr7zw.nbtapi.NBTItem;
 import me.deltaorion.extapi.common.exception.UnsupportedVersionException;
 import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.item.custom.CustomItem;
+import me.deltaorion.extapi.item.potion.PotionBuilder;
+import me.deltaorion.extapi.item.potion.PotionBuilderFactory;
+import me.deltaorion.extapi.item.potion.PotionBuilder_8;
 import me.deltaorion.extapi.locale.message.Message;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
@@ -20,6 +23,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
@@ -74,6 +78,20 @@ public class ItemBuilder {
     }
 
     /**
+     * Creates an ItemBuilder from a BASE Potion. This will create it from a potion that you could expect to see from the
+     * creative menu.
+     *
+     * @param type The type of potion
+     * @param potionForm what form the potion takes
+     * @param upgraded Whether the potion is level I or II
+     * @param extended Whether the potion's duration is extended
+     * @throws UnsupportedVersionException If this version is not supported
+     */
+    public ItemBuilder(@NotNull PotionType type, PotionBuilder.Type potionForm, boolean upgraded, boolean extended) {
+        this(PotionBuilderFactory.BY_VERSION.fromBase(type,potionForm,upgraded,extended));
+    }
+
+    /**
      * Sets the type using the Ematerial Enum
      *
      * @param type The ematerial to set.
@@ -92,6 +110,12 @@ public class ItemBuilder {
     public ItemBuilder setType(@NotNull Material type) {
         this.itemStack.setType(type);
         return this;
+    }
+
+    @NotNull
+    public EMaterial getType() {
+        return Objects.requireNonNull(EMaterial.matchMaterial(itemStack),
+                "Could not match material. Did EMaterial initialise correctly?");
     }
 
     /**
@@ -271,7 +295,11 @@ public class ItemBuilder {
 
     public ItemBuilder setUnbreakable(boolean unbreakable) {
         return transformMeta(itemMeta -> {
-            itemMeta.spigot().setUnbreakable(unbreakable);
+            if(EMaterial.getVersion()==null ||EMaterial.getVersion().getMajor()<12) {
+                itemMeta.spigot().setUnbreakable(unbreakable);
+            } else {
+                itemMeta.setUnbreakable(unbreakable);
+            }
         });
     }
 
@@ -296,9 +324,8 @@ public class ItemBuilder {
 
     public ItemBuilder potion(@NotNull Consumer<PotionBuilder> consumer) {
         Objects.requireNonNull(consumer);
-        PotionBuilder builder = new PotionBuilder();
+        PotionBuilder builder = PotionBuilderFactory.BY_VERSION.get(this);
         consumer.accept(builder);
-        builder.build(this);
         return this;
     }
 
@@ -421,58 +448,6 @@ public class ItemBuilder {
 
     private boolean isValidStack() {
         return !itemStack.getType().equals(Material.AIR);
-    }
-
-    public static class PotionBuilder {
-
-        @NotNull
-        private PotionType color = PotionType.WATER;
-        private boolean splash = false;
-        private boolean clear = false;
-        @NotNull private final Set<PotionEffect> effects;
-
-        public PotionBuilder() {
-            this.effects = new HashSet<>();
-        }
-
-        public PotionBuilder setSplash(boolean splash) {
-            this.splash = splash;
-            return this;
-        }
-
-        public PotionBuilder setColor(@NotNull PotionType color) {
-            this.color = Objects.requireNonNull(color);
-            return this;
-        }
-
-        public PotionBuilder addEffect(@NotNull PotionEffect effect) {
-            this.effects.add(effect);
-            return this;
-        }
-
-        public PotionBuilder clearEffects() {
-            this.effects.clear();
-            this.clear = true;
-            return this;
-        }
-
-        private void build(ItemBuilder builder) {
-            Potion potion = new Potion(color);
-            potion.setSplash(splash);
-            ItemStack potionStack = potion.toItemStack(1);
-
-            builder.setType(potionStack.getType());
-            builder.setDurability(potionStack.getDurability());
-            builder.transformMeta(itemMeta -> {
-                PotionMeta meta = (PotionMeta) itemMeta;
-                if(clear) {
-                    meta.clearCustomEffects();
-                }
-                for(PotionEffect effect : effects) {
-                    meta.addCustomEffect(effect,true);
-                }
-            });
-        }
     }
 
     public static class SkullBuilder {

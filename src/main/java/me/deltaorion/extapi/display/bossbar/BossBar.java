@@ -1,5 +1,6 @@
 package me.deltaorion.extapi.display.bossbar;
 
+import me.deltaorion.extapi.display.DisplayLine;
 import me.deltaorion.extapi.display.TiedDisplayItem;
 import me.deltaorion.extapi.locale.message.Message;
 import me.deltaorion.extapi.protocol.WrapperPlayServerBoss;
@@ -18,7 +19,7 @@ import java.util.Collection;
  *   A BossBar is tied to the player it is given to. Once given to a player this instance cannot be given to another
  *   player.
  */
-public interface BossBar extends TiedDisplayItem {
+public interface BossBar extends TiedDisplayItem, DisplayLine {
 
     /**
      * @return the name of the bossbar.
@@ -27,11 +28,11 @@ public interface BossBar extends TiedDisplayItem {
     public String getName();
 
     /**
-     * @return The message that should be rendered to the user's screen.
+     * Sets the message rendered to the users screen. If the bossbar is running this will update what the user see's
+     *
+     * @param message The new message to be rendered
+     * @param args Any message args to be displayed
      */
-    @NotNull
-    public Message getMessage();
-
     public void setMessage(@NotNull Message message, Object... args) ;
 
     /**
@@ -40,19 +41,6 @@ public interface BossBar extends TiedDisplayItem {
      * @param message The new message to be rendered
      */
     public void setMessage(@NotNull String message);
-
-    /**
-     * Sets the message arguments to be rendered to the users screen. If the bossbar is running this will change what the user see's
-     *
-     * @param args The new {@link Message} arguments
-     */
-    public void setArgs(Object... args);
-
-    /**
-     * @return What the user see's on the rendered BossBar message.
-     */
-    @NotNull
-    public String getDisplayed();
 
     /**
      * @return The progress of the BossBar ranging from 0 to 1.
@@ -93,13 +81,13 @@ public interface BossBar extends TiedDisplayItem {
      * @param style the new style for the BossBar
      * @throws me.deltaorion.extapi.common.exception.UnsupportedVersionException if the version is 1.8 or less
      */
-    public void setStyle(@NotNull WrapperPlayServerBoss.BarStyle style);
+    public void setStyle(@NotNull BarStyle style);
 
     /**
      * @return The current bar style
      */
     @NotNull
-    public WrapperPlayServerBoss.BarStyle getStyle();
+    public BarStyle getStyle();
 
     /**
      * Sets the BossBar flags. These are special properties for the BossBar. If the BossBar already has that flag this

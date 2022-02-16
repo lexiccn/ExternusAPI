@@ -3,6 +3,8 @@ package me.deltaorion.extapi.display.actionbar.running;
 import com.google.common.base.MoreObjects;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.common.scheduler.SchedulerTask;
+import me.deltaorion.extapi.display.DisplayLine;
+import me.deltaorion.extapi.display.SimpleDisplayLine;
 import me.deltaorion.extapi.display.actionbar.ActionBar;
 import me.deltaorion.extapi.display.actionbar.ActionBarManager;
 import me.deltaorion.extapi.display.actionbar.ActionBarRenderer;
@@ -32,13 +34,13 @@ public class ScheduleRunningActionBar implements RunningActionBar {
 
     @NotNull private final AtomicBoolean dodgyRenderer = new AtomicBoolean(false);
 
+    @NotNull private final DisplayLine displayLine;
+
     private long timeCounter;
 
     @GuardedBy("this") private volatile boolean cancelled = false;
     @GuardedBy("this") @Nullable private SchedulerTask runningTask;
     @NotNull private final CountDownLatch finishLatch;
-
-    @NotNull private String toRender;
 
     private final long INTERVAL = Duration.of(2, ChronoUnit.SECONDS).toMillis();
     private final long PERFECT = Duration.of(3,ChronoUnit.SECONDS).toMillis();
@@ -48,9 +50,9 @@ public class ScheduleRunningActionBar implements RunningActionBar {
         this.actionBar = Objects.requireNonNull(actionBar);
         this.plugin = Objects.requireNonNull(plugin);
         this.player = Objects.requireNonNull(player);
-        this.toRender = getToRender(args);
         this.manager = Objects.requireNonNull(manager);
         this.renderer = Objects.requireNonNull(renderer);
+        this.displayLine = new SimpleDisplayLine(player,actionBar.getMessage(),args);
         this.finishLatch = new CountDownLatch(1);
     }
 
@@ -181,12 +183,7 @@ public class ScheduleRunningActionBar implements RunningActionBar {
     }
 
     private void render() {
-        renderText(toRender);
-    }
-
-    @NotNull
-    private String getToRender(Object... args) {
-        return actionBar.getMessage().toString(player.getLocale(),args);
+        renderText(displayLine.getAsDisplayed());
     }
 
     private void renderText(@NotNull String toRender) {
@@ -206,14 +203,25 @@ public class ScheduleRunningActionBar implements RunningActionBar {
         return actionBar;
     }
 
+    @NotNull
+    @Override
+    public String getAsDisplayed() {
+        return displayLine.getAsDisplayed();
+    }
+
+    @NotNull
+    @Override
+    public Message getMessage() {
+        return displayLine.getMessage();
+    }
+
     @Override
     public void setArgs(Object... args) {
         synchronized (this) {
-            if(this.cancelled || !this.isRunning())
+            if (this.cancelled || !this.isRunning())
                 return;
-
-            this.toRender = getToRender(args);
         }
+        displayLine.setArgs(args);
         render();
     }
 
@@ -229,7 +237,7 @@ public class ScheduleRunningActionBar implements RunningActionBar {
                 .add("Action-Bar",actionBar)
                 .add("Running",isRunning())
                 .add("Cancelled",cancelled)
-                .add("as-displayed", toRender)
+                .add("as-displayed", displayLine.getAsDisplayed())
                 .toString();
     }
 }

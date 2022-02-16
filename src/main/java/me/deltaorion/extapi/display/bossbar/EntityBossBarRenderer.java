@@ -67,7 +67,7 @@ public class EntityBossBarRenderer implements BossBarRenderer {
     }
 
     @Override
-    public void setStyle(@NotNull WrapperPlayServerBoss.BarStyle style) {
+    public void setStyle(@NotNull BarStyle style) {
         handleUnsupported("Set Style");
     }
 

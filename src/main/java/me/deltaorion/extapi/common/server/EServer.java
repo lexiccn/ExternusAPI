@@ -135,4 +135,15 @@ public interface EServer {
     public String translateColorCodes(@NotNull String textToTranslate);
 
     public String getServerName();
+
+    /**
+     * Wraps a command sender, player or variant into a plugin command sender.
+     *
+     * @param commandSender The command sender object, this could be a commandsender, player, the console etc
+     * @return a sender
+     * @throws IllegalArgumentException if the sender is not a valid command sender type
+     */
+
+    @NotNull
+    public Sender wrapSender(@NotNull Object commandSender);
 }

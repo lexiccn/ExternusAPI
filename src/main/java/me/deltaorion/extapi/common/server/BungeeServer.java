@@ -9,6 +9,7 @@ import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.version.MinecraftVersion;
 import me.deltaorion.extapi.common.version.VersionFactory;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -52,14 +53,14 @@ public class BungeeServer implements EServer {
     public List<Sender> getOnlineSenders() {
         List<Sender> players = new ArrayList<>();
         for(ProxiedPlayer player : proxyServer.getPlayers()) {
-            players.add(new SimpleSender(new BungeeSenderInfo(player,proxyServer,this)));
+            players.add(wrapSender(player));
         }
         return Collections.unmodifiableList(players);
     }
 
     @Override
     public Sender getConsoleSender() {
-        return new SimpleSender(new BungeeSenderInfo(proxyServer.getConsole(),proxyServer,this));
+        return wrapSender(proxyServer.getConsole());
     }
 
     @Override
@@ -112,5 +113,13 @@ public class BungeeServer implements EServer {
                 .add("name",proxyServer.getName())
                 .add("minecraft version",minecraftVersion)
                 .add("server version",proxyServer.getVersion()).toString();
+    }
+
+    @NotNull @Override
+    public Sender wrapSender(@NotNull Object commandSender) {
+        if(!(commandSender instanceof CommandSender))
+            throw new IllegalArgumentException("Command Sender must be a net.md5 command sender");
+
+        return new SimpleSender(new BungeeSenderInfo((CommandSender) commandSender,proxyServer,this));
     }
 }

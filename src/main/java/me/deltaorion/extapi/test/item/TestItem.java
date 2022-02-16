@@ -1,4 +1,4 @@
-package me.deltaorion.extapi.test.unit.item;
+package me.deltaorion.extapi.test.item;
 
 import com.google.common.collect.ImmutableList;
 import me.deltaorion.extapi.item.custom.CustomItem;
@@ -60,7 +60,6 @@ public class TestItem extends CustomItem {
         if(event.getEvent().getMessage().equals("armor")) {
             return;
         }
-
         helper.add(event.getEvent().getMessage());
     }
 
@@ -76,7 +75,6 @@ public class TestItem extends CustomItem {
         if(event.getEvent().getMessage().equals("armor")) {
             return;
         }
-
         helper.add(event.getEvent().getMessage());
     }
 

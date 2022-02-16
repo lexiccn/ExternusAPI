@@ -149,7 +149,7 @@ public class CustomItemEventListener<T extends Event> {
             consumer.onEvent(customItem,itemEvent);
         } catch (EventException e) {
             if(itemEvent.getEntity() instanceof Player) {
-                plugin.wrapSender(itemEvent.getEntity()).sendMessage(MessageErrors.INTERNAL_ERROR_ITEM().toString(customItem.getName()));
+                plugin.getEServer().wrapSender(itemEvent.getEntity()).sendMessage(MessageErrors.INTERNAL_ERROR_ITEM().toString(customItem.getName()));
             }
             plugin.getPluginLogger().severe("An error occurred while trying to execute an event",e);
         }

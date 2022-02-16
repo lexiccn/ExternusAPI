@@ -24,8 +24,10 @@ public interface BossBarRendererFactory {
             public BossBarRenderer get(@NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player) {
                 if(version.getMajor()==8) {
                     return new EntityBossBarRenderer(plugin, player);
-                } else {
+                } else if(version.getMajor()>=9 && version.getMajor()<12) {
                     return new PacketBossBarRenderer(plugin,player.getPlayer());
+                } else {
+                    return new WrapperBossBarRenderer(player.getPlayer(),plugin);
                 }
             }
         };

@@ -50,7 +50,7 @@ public interface BossBarRenderer {
      *
      * @param style The new bossbar style
      */
-    public void setStyle(@NotNull WrapperPlayServerBoss.BarStyle style);
+    public void setStyle(@NotNull BarStyle style);
 
     /**
      * @param createFog whether the bossbar should create fog

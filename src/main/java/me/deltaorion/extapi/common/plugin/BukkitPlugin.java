@@ -10,11 +10,8 @@ import me.deltaorion.extapi.command.implementation.AsyncBukkitCommand;
 import me.deltaorion.extapi.command.implementation.BukkitCommandMap;
 import me.deltaorion.extapi.command.implementation.SyncBukkitCommand;
 import me.deltaorion.extapi.common.depend.Dependency;
-import me.deltaorion.extapi.common.sender.BukkitSenderInfo;
-import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.common.logger.PluginLogger;
 import me.deltaorion.extapi.common.scheduler.SchedulerAdapter;
-import me.deltaorion.extapi.common.sender.SimpleSender;
 import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.common.thread.ErrorReportingThreadPool;
 import me.deltaorion.extapi.display.bukkit.WrappedPlayerManager;
@@ -22,7 +19,6 @@ import me.deltaorion.extapi.item.EMaterial;
 import me.deltaorion.extapi.item.custom.CustomItemManager;
 import me.deltaorion.extapi.locale.translator.PluginTranslator;
 import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -165,15 +161,6 @@ public class BukkitPlugin extends JavaPlugin implements ApiPlugin {
     @Override
     public Set<String> getDependencies() {
         return plugin.getDependencies();
-    }
-
-    @NotNull
-    @Override
-    public Sender wrapSender(@NotNull Object commandSender) {
-        if(!(commandSender instanceof CommandSender))
-            throw new IllegalArgumentException("Must wrap a bukkit command sender");
-
-        return new SimpleSender(new BukkitSenderInfo(plugin.getEServer(),getServer(), (CommandSender) commandSender));
     }
 
     /**

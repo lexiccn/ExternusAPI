@@ -7,6 +7,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 import java.util.UUID;
@@ -23,11 +24,13 @@ public class BungeeSenderInfo implements SenderInfo {
         this.server = server;
     }
 
+    @NotNull
     @Override
     public String getName() {
         return sender.getName();
     }
 
+    @NotNull
     @Override
     public UUID getUniqueId() {
         if(sender instanceof ProxiedPlayer) {
@@ -43,6 +46,7 @@ public class BungeeSenderInfo implements SenderInfo {
         sender.sendMessage(new TextComponent(message));
     }
 
+    @NotNull
     @Override
     public EServer getEServer() {
         return eServer;
@@ -53,6 +57,7 @@ public class BungeeSenderInfo implements SenderInfo {
         server.getPluginManager().dispatchCommand(sender,commandLine);
     }
 
+    @NotNull
     @Override
     public Locale getLocale() {
         if(sender instanceof ProxiedPlayer) {

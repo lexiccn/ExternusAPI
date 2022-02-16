@@ -24,6 +24,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import me.deltaorion.extapi.display.bossbar.BarColor;
+import me.deltaorion.extapi.display.bossbar.BarStyle;
 
 public class WrapperPlayServerBoss extends AbstractPacket {
 
@@ -124,9 +125,5 @@ public class WrapperPlayServerBoss extends AbstractPacket {
 
     public static enum Action {
         ADD, REMOVE, UPDATE_PCT, UPDATE_NAME, UPDATE_STYLE, UPDATE_PROPERTIES;
-    }
-
-    public static enum BarStyle {
-        PROGRESS, NOTCHED_6, NOTCHED_10, NOTCHED_12, NOTCHED_20;
     }
 }

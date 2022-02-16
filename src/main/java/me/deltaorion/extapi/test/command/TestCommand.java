@@ -7,6 +7,7 @@ import me.deltaorion.extapi.command.SingleActionCommand;
 import me.deltaorion.extapi.command.sent.SentCommand;
 import me.deltaorion.extapi.command.tabcompletion.Completers;
 import me.deltaorion.extapi.common.sender.Sender;
+import me.deltaorion.extapi.item.EMaterial;
 import me.deltaorion.extapi.locale.message.Message;
 import org.bukkit.Material;
 
@@ -57,7 +58,7 @@ public class TestCommand extends FunctionalCommand {
         command.getSender().sendMessage("Integer: "+command.getArgOrBlank(0).asIntOrDefault(0));
         command.getSender().sendMessage("Boolean: "+command.getArgOrBlank(1).asBooleanOrDefault(true));
         command.getSender().sendMessage("Float: "+command.getArgOrBlank(2).asDoubleOrDefault(3.1415));
-        command.getSender().sendMessage("Material: "+command.getArgOrBlank(3).asEnumOrDefault(Material.class,Material.COMMAND));
+        command.getSender().sendMessage("Material: "+command.getArgOrBlank(3).asEnumOrDefault(EMaterial.class,EMaterial.COMMAND_BLOCK));
         command.getSender().sendMessage("Duration: "+command.getArgOrBlank(4).asDurationOrDefault(Duration.of(3, ChronoUnit.DAYS)));
     }
 

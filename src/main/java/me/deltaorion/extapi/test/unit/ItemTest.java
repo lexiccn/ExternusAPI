@@ -5,6 +5,7 @@ import me.deltaorion.extapi.common.plugin.ApiPlugin;
 import me.deltaorion.extapi.common.plugin.BukkitAPIDepends;
 import me.deltaorion.extapi.item.EMaterial;
 import me.deltaorion.extapi.item.ItemBuilder;
+import me.deltaorion.extapi.item.potion.PotionBuilder;
 import me.deltaorion.extapi.locale.message.Message;
 import me.deltaorion.extapi.test.unit.generic.McTest;
 import me.deltaorion.extapi.test.unit.generic.MinecraftTest;
@@ -105,9 +106,18 @@ public class ItemTest implements MinecraftTest {
                     skullBuilder.setType(SkullType.CREEPER);
                 }).build();
 
-        assertEquals(Material.SKULL_ITEM,skull.getType());
-        assertEquals(skull.getDurability(),SkullType.CREEPER.ordinal());
-        assertEquals(5,skull.getAmount());
+        ItemStack skullNothing = new ItemBuilder(EMaterial.WITCH_SPAWN_EGG)
+                .skull( skullBuilder2 -> {})
+                .build();
+
+
+
+        if(plugin.getEServer().getServerVersion().getMajor()<=12) {
+            assertEquals(Material.SKULL_ITEM, skull.getType());
+            assertEquals(skull.getDurability(), SkullType.CREEPER.ordinal());
+            assertEquals(5, skull.getAmount());
+            assertEquals(SkullType.PLAYER.ordinal(),skullNothing.getDurability());
+        }
 
         ItemBuilder skullBuilder = new ItemBuilder(skull);
 
@@ -122,7 +132,11 @@ public class ItemTest implements MinecraftTest {
                 .addEnchantment(Enchantment.KNOCKBACK,4)
                 .build();
 
-        assertTrue(unbreakable.getItemMeta().spigot().isUnbreakable());
+        if(EMaterial.getVersion()==null || EMaterial.getVersion().getMajor()<12) {
+            assertTrue(unbreakable.getItemMeta().spigot().isUnbreakable());
+        } else {
+            assertTrue(unbreakable.getItemMeta().isUnbreakable());
+        }
         assertTrue(unbreakable.getItemMeta().getItemFlags().equals(new HashSet<>(Arrays.asList(ItemFlag.values()))));
         assertEquals(4,unbreakable.getEnchantmentLevel(Enchantment.KNOCKBACK));
 
@@ -144,7 +158,7 @@ public class ItemTest implements MinecraftTest {
 
         ItemStack potionClear = new ItemBuilder(EMaterial.POTION)
                 .potion(potionBuilder -> {
-                    potionBuilder.setSplash(true)
+                    potionBuilder.setType(PotionBuilder.Type.SPLASH)
                             .setColor(PotionType.INSTANT_DAMAGE)
                             .addEffect(new PotionEffect(PotionEffectType.BLINDNESS,5,3))
                             .addEffect(new PotionEffect(PotionEffectType.POISON,10,6))
@@ -180,11 +194,6 @@ public class ItemTest implements MinecraftTest {
         assertTrue(hiddenEnchant.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS));
         assertEquals(4,hiddenEnchant.getItemMeta().getEnchantLevel(Enchantment.DAMAGE_ARTHROPODS));
 
-        ItemStack skullNothing = new ItemBuilder(EMaterial.WITCH_SPAWN_EGG)
-                .skull( skullBuilder2 -> {})
-                .build();
-
-        assertEquals(SkullType.PLAYER.ordinal(),skullNothing.getDurability());
 
         ItemStack potionNothing = new ItemBuilder(EMaterial.WITCH_SPAWN_EGG)
                 .potion(potionBuilder -> {})

@@ -9,6 +9,7 @@ import me.deltaorion.extapi.test.commandold.playerparse.PlayerParseCommand;
 import me.deltaorion.extapi.test.commandold.sender.SenderTestBukkit;
 import me.deltaorion.extapi.test.commandold.server.ServerTest;
 import me.deltaorion.extapi.test.unit.*;
+import me.deltaorion.extapi.test.unit.generic.AsyncFailTest;
 import me.deltaorion.extapi.test.unit.generic.McTestTest;
 import me.deltaorion.extapi.test.unit.generic.McTester;
 import me.deltaorion.extapi.test.commandold.version.VersionTest;
@@ -27,8 +28,6 @@ public final class ExtAPI extends BukkitPlugin {
 
         registerTests();
         tester.runTests();
-
-
     }
 
     private void registerCommands() {
@@ -45,6 +44,7 @@ public final class ExtAPI extends BukkitPlugin {
         registerCommand(new BossBarTest(this),"bossbartest");
         registerCommand(new LocaleCommand(),"localetest");
         registerCommand(new EMaterialCommand(this),"materialtest");
+        registerCommand(new SlotNumberTest(this),"slotnumbertest");
     }
 
     private void registerOldCommands() {
@@ -64,11 +64,12 @@ public final class ExtAPI extends BukkitPlugin {
         tester.addTest(new EMaterialTest(this));
         tester.addTest(new PTest(this));
         tester.addTest(new ScoreboardingTest(this));
-        tester.addTest(new ActionBarTest(this));
+        tester.addAsyncTest(new ActionBarTest(this));
+        tester.addAsyncTest(new AsyncFailTest());
     }
 
     @Override
     public void onPluginDisable() {
-        // Plugin shutdown logic
+        tester.shutdown();
     }
 }

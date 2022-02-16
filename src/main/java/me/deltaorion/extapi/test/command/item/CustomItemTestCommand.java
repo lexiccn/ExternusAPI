@@ -7,7 +7,7 @@ import me.deltaorion.extapi.command.sent.SentCommand;
 import me.deltaorion.extapi.common.plugin.BukkitAPIDepends;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.item.custom.CustomItem;
-import me.deltaorion.extapi.test.unit.item.*;
+import me.deltaorion.extapi.test.item.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;

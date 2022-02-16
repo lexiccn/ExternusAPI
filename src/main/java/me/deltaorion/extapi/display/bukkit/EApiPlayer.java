@@ -3,6 +3,7 @@ package me.deltaorion.extapi.display.bukkit;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
+import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.display.actionbar.ActionBar;
 import me.deltaorion.extapi.display.actionbar.ActionBarManager;
@@ -43,6 +44,7 @@ public class EApiPlayer implements BukkitApiPlayer {
     @NotNull private final ActionBarManager actionBarManager;
     @NotNull private final ScoreboardFactory factory;
     @Nullable private BossBar bossBar;
+    @NotNull private final Sender sender;
 
     @NotNull private final UUID uuid;
 
@@ -62,6 +64,7 @@ public class EApiPlayer implements BukkitApiPlayer {
         this.actionBarManager = new ActionBarManager(plugin,this, settings.getActionBarFactory());
         this.factory = settings.getScoreboardFactory();
         this.uuid = player.getUniqueId();
+        this.sender = plugin.getEServer().wrapSender(player);
     }
 
     /**
@@ -156,12 +159,7 @@ public class EApiPlayer implements BukkitApiPlayer {
     @Override
     @NotNull
     public Locale getLocale() {
-        Player player = getPlayer();
-        Locale locale = Translator.parseLocale(player.spigot().getLocale());
-        if(locale==null)
-            return EServer.DEFAULT_LOCALE;
-
-        return locale;
+        return sender.getLocale();
     }
 
 

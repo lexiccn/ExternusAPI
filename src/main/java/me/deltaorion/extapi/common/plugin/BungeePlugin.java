@@ -160,13 +160,4 @@ public class BungeePlugin extends Plugin implements ApiPlugin {
         this.plugin.clearParsers(clazz);
     }
 
-    @NotNull
-    @Override
-    public Sender wrapSender(@NotNull Object commandSender) {
-        if(!(commandSender instanceof CommandSender))
-            throw new IllegalArgumentException("Command Sender must be a net.md5 command sender");
-
-        return new SimpleSender(new BungeeSenderInfo((CommandSender) commandSender,getProxy(),getEServer()));
-    }
-
 }

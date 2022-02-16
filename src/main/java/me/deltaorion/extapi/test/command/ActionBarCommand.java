@@ -9,6 +9,7 @@ import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.common.scheduler.SchedulerTask;
 import me.deltaorion.extapi.display.actionbar.ActionBar;
 import me.deltaorion.extapi.display.actionbar.RejectionPolicy;
+import me.deltaorion.extapi.display.bossbar.BossBar;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import me.deltaorion.extapi.locale.message.Message;
 import org.bukkit.entity.Player;
@@ -27,6 +28,15 @@ public class ActionBarCommand extends FunctionalCommand {
         super(APIPermissions.COMMAND);
         this.plugin = plugin;
         registerArgument("tps",new TPSCommand(plugin));
+        registerArgument("translatable",command -> {
+            Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
+            BukkitApiPlayer p =plugin.getBukkitPlayerManager().getPlayer(player);
+            p.getActionBarManager().send(new ActionBar(
+                    Message.valueOfTranslatable("hello-arg"),
+                    Duration.of(3,ChronoUnit.SECONDS)));
+
+            p.getActionBarManager().setArgs(player.getName());
+        });
     }
 
     @Override
@@ -114,7 +124,7 @@ public class ActionBarCommand extends FunctionalCommand {
 
                     double tps;
                     try {
-                        tps = plugin.getServer().spigot().getTPS()[0];
+                        tps = plugin.getServer().getTPS()[0];
                     } catch(NoSuchMethodError e) {
                         tps = Math.random();
                     }

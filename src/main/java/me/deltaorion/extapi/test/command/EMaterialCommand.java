@@ -22,6 +22,16 @@ public class EMaterialCommand extends FunctionalCommand {
         super(APIPermissions.COMMAND);
         this.plugin = plugin;
         registerCompleters();
+        registerArgument("match",command -> {
+            if(command.getSender().isConsole())
+                return;
+
+            Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
+            EMaterial material = EMaterial.matchMaterial(player.getItemInHand());
+            command.getSender().sendMessage(material);
+            command.getSender().sendMessage("dura dependent: " + material.isDurabilityDependent());
+            command.getSender().sendMessage("duplicates: "+material.getDuplicates());
+        });
     }
 
     private void registerCompleters() {

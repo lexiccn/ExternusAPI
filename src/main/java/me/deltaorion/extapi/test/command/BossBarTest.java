@@ -7,8 +7,10 @@ import me.deltaorion.extapi.command.sent.SentCommand;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.display.bossbar.BarColor;
 import me.deltaorion.extapi.display.bossbar.BarFlag;
+import me.deltaorion.extapi.display.bossbar.BarStyle;
 import me.deltaorion.extapi.display.bossbar.BossBar;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
+import me.deltaorion.extapi.locale.message.Message;
 import me.deltaorion.extapi.protocol.WrapperPlayServerBoss;
 import org.bukkit.entity.Player;
 
@@ -28,6 +30,15 @@ public class BossBarTest extends FunctionalCommand {
                 return;
 
             bossBar.setMessage(command.getArgOrDefault(0,"Gamer").asString());
+        });
+
+        registerArgument("translatable",command -> {
+            Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
+            BossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
+            if(bossBar==null)
+                return;
+
+            bossBar.setMessage(Message.valueOfTranslatable("hello-arg"),player.getName());
         });
 
         registerArgument("visible",command -> {
@@ -76,7 +87,7 @@ public class BossBarTest extends FunctionalCommand {
             BossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
             if(bossBar==null)
                 return;
-            WrapperPlayServerBoss.BarStyle color = command.getArgOrBlank(0).asEnumOrDefault(WrapperPlayServerBoss.BarStyle.class, WrapperPlayServerBoss.BarStyle.PROGRESS);
+            BarStyle color = command.getArgOrBlank(0).asEnumOrDefault(BarStyle.class, BarStyle.PROGRESS);
             bossBar.setStyle(color);
         });
 

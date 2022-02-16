@@ -3,6 +3,7 @@ package me.deltaorion.extapi.item.position;
 import com.google.common.base.MoreObjects;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,6 +39,10 @@ public class LivingEntityItem implements InventoryItem {
                 return;
             case CHESTPLATE:
                 entity.getEquipment().setChestplate(itemStack);
+                return;
+            case OFF_HAND:
+                entity.getEquipment().setItemInOffHand(itemStack);
+                return;
         }
     }
 

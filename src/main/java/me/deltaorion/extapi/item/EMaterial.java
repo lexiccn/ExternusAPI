@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1146,7 +1147,8 @@ public enum EMaterial {
     ATTACHED_MELON_STEM(30882, -1, 13),
     PUMPKIN_STEM(19021, 104, 8),
     MELON_STEM(8247, 105, 8),
-    WATER_CAULDRON(32008, 118, 8),
+    WATER_CAULDRON(32008, -1, 17),
+    CAULDRON(26531,380,8),
     LAVA_CAULDRON(4514, -1, 17),
     POWDER_SNOW_CAULDRON(31571, -1, 17),
     END_PORTAL(16782, 119, 8),
@@ -1295,10 +1297,13 @@ public enum EMaterial {
     private Material matched;
     private short durability;
 
+    private boolean durabilityDependent = false;
+    private Set<EMaterial> duplicates = new HashSet<>();
+
     public boolean noNBT = true;
 
     EMaterial(int id, int legacyId, int release) {
-        this(id,legacyId,release,-1);
+        this(id,legacyId,release,NOT_FOUND);
     }
 
     EMaterial(int id, int legacyID,int release, int deprecation) {
@@ -1330,6 +1335,10 @@ public enum EMaterial {
         return durability;
     }
 
+    public Set<EMaterial> getDuplicates() {
+        return Collections.unmodifiableSet(duplicates);
+    }
+
     public boolean isCompatible() {
         if(!isInitialised)
             handleNonInitialised();
@@ -1350,7 +1359,7 @@ public enum EMaterial {
     public boolean isCompatible(MinecraftVersion version) {
         if(deprecated!=null) {
             //greater than deprecation date.
-            if(version.compareTo(deprecated)>0)
+            if(version.getMajor()>deprecated.getMajor())
                 return false;
         }
 
@@ -1371,6 +1380,10 @@ public enum EMaterial {
 
     public boolean noNBT() {
         return noNBT;
+    }
+
+    public boolean isDurabilityDependent() {
+        return durabilityDependent;
     }
 
     //* -------- Static Separator ----------- *//
@@ -1396,8 +1409,8 @@ public enum EMaterial {
             if(isInitialised)
                 return;
 
-            doInitialise(version,stream);
             EMaterial.version = version;
+            doInitialise(version,stream);
             isInitialised = true;
         }
     }
@@ -1446,13 +1459,21 @@ public enum EMaterial {
     }
 
     @Nullable
-    public static EMaterial matchMaterial(@NotNull Material material, short durability) {
+    public static EMaterial matchMaterial(@Nullable Material material, short durability) {
+        if(!isInitialised())
+            handleNonInitialised();
+
+        if(material==null)
+            return EMaterial.AIR;
+
         Objects.requireNonNull(material);
         for(EMaterial mat : values()) {
             if(Objects.equals(mat.matched,material)) {
-                if(mat.durability==durability) {
+                if(!mat.durabilityDependent)
                     return mat;
-                }
+
+                if(mat.durability == durability)
+                    return mat;
             }
         }
         return null;
@@ -1486,6 +1507,17 @@ public enum EMaterial {
         return Collections.unmodifiableSet(materials);
     }
 
+    @NotNull
+    public static Collection<EMaterial> matchByBukkitMaterial(@NotNull Material material) {
+        Set<EMaterial> matches = new HashSet<>();
+        for(EMaterial mat : values()) {
+            if (Objects.equals(mat.matched,material)) {
+                matches.add(mat);
+            }
+        }
+        return Collections.unmodifiableSet(matches);
+    }
+
     private static int getClosestMajor(int major) {
         int closestVersion = NOT_FOUND;
         for(int version : versionMap.keySet()) {
@@ -1510,6 +1542,58 @@ public enum EMaterial {
         getData(stream);
         matchMaterials(version);
         versionMap();
+        findDuraDependent();
+        findDuplicates();
+    }
+
+    private static void findDuplicates() {
+        for(EMaterial materialA : EMaterial.values()) {
+            if(materialA.matched==null)
+                continue;
+
+            for(EMaterial materialB : EMaterial.values()) {
+                if(materialB.matched==null)
+                    continue;
+
+                if(materialA.equals(materialB))
+                    continue;
+
+                if(materialA.matched.equals(materialB.matched) &&
+                    materialA.durability == materialB.durability) {
+                    materialA.duplicates.add(materialB);
+                    materialB.duplicates.add(materialA);
+                }
+            }
+        }
+    }
+
+
+    private static void findDuraDependent() {
+        getDuraDependentByDuplicates();
+        getDuraDependentBySpawnEggs();
+    }
+
+    private static void getDuraDependentBySpawnEggs() {
+        if(version.getMajor()>=13) {
+            for(EMaterial material : values()) {
+                if(material.matched!=null) {
+                    ItemStack itemStack = new ItemStack(material.matched);
+                    if (itemStack.getItemMeta() instanceof SpawnEggMeta)
+                        material.durabilityDependent = true;
+                }
+            }
+        }
+    }
+
+    private static void getDuraDependentByDuplicates() {
+        for(Material material : Material.values()) {
+            Collection<EMaterial> matches = matchByBukkitMaterial(material);
+            if(matches.size()>1) {
+                for(EMaterial mat : matches) {
+                    mat.durabilityDependent = true;
+                }
+            }
+        }
     }
 
     private static void getData(@NotNull InputStream stream) {
@@ -1677,6 +1761,11 @@ public enum EMaterial {
             }
             nbtInitialised = true;
         }
+    }
+
+    @Nullable
+    public static MinecraftVersion getVersion() {
+        return version;
     }
 
     @Immutable

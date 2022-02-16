@@ -26,14 +26,14 @@ public class SyncBukkitCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        SentCommand context = new SentCommand(plugin,plugin.wrapSender(sender),args,label,this.command.getUsage());
+        SentCommand context = new SentCommand(plugin,plugin.getEServer().wrapSender(sender),args,label,this.command.getUsage());
         this.command.onCommand(context);
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        SentCommand context = new SentCommand(plugin,plugin.wrapSender(sender),args,alias,this.command.getUsage());
+        SentCommand context = new SentCommand(plugin,plugin.getEServer().wrapSender(sender),args,alias,this.command.getUsage());
         return this.command.onTabCompletion(context);
     }
 }

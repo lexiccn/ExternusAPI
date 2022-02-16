@@ -24,7 +24,7 @@ public class ServerTest implements CommandExecutor {
             return true;
         }
         EServer eServer = plugin.getEServer();
-        JointTests.serverTest(eServer,plugin,plugin.wrapSender(sender));
+        JointTests.serverTest(eServer,plugin,plugin.getEServer().wrapSender(sender));
         return true;
     }
 }

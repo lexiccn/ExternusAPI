@@ -1,4 +1,4 @@
-package me.deltaorion.extapi.test.unit.item;
+package me.deltaorion.extapi.test.item;
 
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.item.custom.CustomItem;

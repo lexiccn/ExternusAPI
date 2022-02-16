@@ -108,17 +108,18 @@ public class ScoreboardTest extends FunctionalCommand {
     }
 
     private void createScoreboard(BukkitApiPlayer player, String title) {
-        EScoreboard scoreboard = player.setScoreboard(scoreboardName,3);
+        EScoreboard scoreboard = player.setScoreboard(scoreboardName,4);
         assert scoreboard != null;
         scoreboard.setTitle(ChatColor.WHITE + "" + ChatColor.BOLD + title);
         scoreboard.setLine(ChatColor.GRAY + "Test Server", 0);
         scoreboard.setLine(ChatColor.WHITE + "abcdefghijklmnopqrstuvwxyz32", 1);
+        scoreboard.setLine(Message.valueOfTranslatable("hello-arg"),2,null,player.getName());
         double tps;
         try {
-            tps = plugin.getServer().spigot().getTPS()[0];
+            tps = plugin.getServer().getTPS()[0];
         } catch(NoSuchMethodError e) {
             tps = Math.random();
         }
-        scoreboard.setLine(Message.valueOf(ChatColor.GOLD + "TPS: " + ChatColor.WHITE + "%s"), 2, "TPS", tps);
+        scoreboard.setLine(Message.valueOf(ChatColor.GOLD + "TPS: " + ChatColor.WHITE + "%s"), 3, "TPS", tps);
     }
 }

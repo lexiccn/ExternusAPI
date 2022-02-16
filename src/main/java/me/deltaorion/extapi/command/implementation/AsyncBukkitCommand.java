@@ -26,7 +26,7 @@ public class AsyncBukkitCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
-        SentCommand context = new SentCommand(plugin,plugin.wrapSender(sender),args,label,this.command.getUsage());
+        SentCommand context = new SentCommand(plugin,plugin.getEServer().wrapSender(sender),args,label,this.command.getUsage());
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -39,7 +39,7 @@ public class AsyncBukkitCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String alias, String[] args) {
-        SentCommand context = new SentCommand(plugin,plugin.wrapSender(sender),args,alias,this.command.getUsage());
+        SentCommand context = new SentCommand(plugin,plugin.getEServer().wrapSender(sender),args,alias,this.command.getUsage());
         return this.command.onTabCompletion(context);
     }
 }

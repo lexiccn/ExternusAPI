@@ -22,6 +22,6 @@ public class ServerTestBungee extends Command {
             sender.sendMessage(MessageErrors.NO_PERMISSION().toString());
             return;
         }
-        JointTests.serverTest(plugin.getEServer(),plugin,plugin.wrapSender(sender));
+        JointTests.serverTest(plugin.getEServer(),plugin,plugin.getEServer().wrapSender(sender));
     }
 }

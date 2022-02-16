@@ -3,9 +3,11 @@ package me.deltaorion.extapi.test.unit;
 import de.tr7zw.nbtapi.NBTCompound;
 import me.deltaorion.extapi.common.plugin.BukkitAPIDepends;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
+import me.deltaorion.extapi.item.EMaterial;
 import me.deltaorion.extapi.item.ItemBuilder;
 import me.deltaorion.extapi.item.custom.CustomItem;
-import me.deltaorion.extapi.item.custom.CustomItemException;
+import me.deltaorion.extapi.item.inventory.InventoryWrapper;
+import me.deltaorion.extapi.item.inventory.InventoryWrappers;
 import me.deltaorion.extapi.item.position.HumanEntityItem;
 import me.deltaorion.extapi.item.position.InventoryItem;
 import me.deltaorion.extapi.item.position.LivingEntityItem;
@@ -15,11 +17,12 @@ import me.deltaorion.extapi.test.unit.bukkit.TestLivingEntity;
 import me.deltaorion.extapi.test.unit.bukkit.TestPlayer;
 import me.deltaorion.extapi.test.unit.generic.McTest;
 import me.deltaorion.extapi.test.unit.generic.MinecraftTest;
-import me.deltaorion.extapi.test.unit.item.*;
+import me.deltaorion.extapi.test.item.*;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +45,7 @@ public class CustomItemTest implements MinecraftTest {
         CustomItem item = new BowSword(plugin);
         CustomItem enchant = new ParryEnchant();
         ItemStack generated = item.newCustomItem();
-        ItemStack generated2 = item.newCustomItem(new ItemStack(Material.STAINED_CLAY));
+        ItemStack generated2 = item.newCustomItem(new ItemBuilder(EMaterial.WHITE_TERRACOTTA).build());
         ItemStack trickery = new ItemBuilder(Material.DIAMOND_SWORD)
                 .transformNBT(nbtItem -> {
                     NBTCompound compound = nbtItem.getCompound("EXTAPI_CUSTOM_ITEM");
@@ -120,7 +123,14 @@ public class CustomItemTest implements MinecraftTest {
 
         plugin.getCustomItemManager().registerIfAbsent(item);
 
-        TestPlayer player = new TestPlayer("Jerry");
+        TestPlayer jerry = new TestPlayer("Jerry");
+        Player player = null;
+        try {
+            player = jerry.asPlayer();
+        } catch (IllegalArgumentException e) {
+            plugin.getPluginLogger().warn("Cannot complete '"+getName()+"' as the Player class is malformed in this version. '"+e.getMessage()+"'");
+            return;
+        }
         plugin.getServer().getPluginManager().callEvent(new TestEvent(player,"Gamer"));
         assertEquals(0,helper.size());
 
@@ -166,9 +176,12 @@ public class CustomItemTest implements MinecraftTest {
 
     @McTest
     public void inventoryPositionTest() {
-        Player player = new TestPlayer("Jerry");
+        TestPlayer jerry = new TestPlayer("Jerry");
+        Player player = getPlayer();
+        if(player==null)
+            return;
         player.getInventory().setItemInHand(new ItemStack(Material.NAME_TAG));
-        InventoryItem item = new HumanEntityItem(player,player.getInventory().getHeldItemSlot(),player.getItemInHand());
+        InventoryItem item = new HumanEntityItem(player,player.getInventory().getHeldItemSlot());
         assertEquals(SlotType.MAIN_HAND,item.getSlotType());
         assertEquals(player.getInventory().getHeldItemSlot(),item.getRawSlot());
         item.setItem(null);
@@ -177,7 +190,8 @@ public class CustomItemTest implements MinecraftTest {
         assertNull(item.getItemStack());
         item.setItem(new ItemStack(Material.EMERALD));
         assertEquals(Material.EMERALD,item.getItemStack().getType());
-        LivingEntity entity = new TestLivingEntity();
+        TestLivingEntity testEntity = new TestLivingEntity();
+        LivingEntity entity = testEntity.asLivingEntity();
         entity.getEquipment().setLeggings(new ItemStack(Material.DIAMOND_LEGGINGS));
         item = new LivingEntityItem(entity,SlotType.LEGGINGS,entity.getEquipment().getLeggings());
         assertEquals(SlotType.LEGGINGS,item.getSlotType());
@@ -187,9 +201,145 @@ public class CustomItemTest implements MinecraftTest {
         assertTrue(entity.getEquipment().getLeggings() == null || entity.getEquipment().getLeggings().getType().equals(Material.AIR));
         assertNull(item.getItemStack());
         item.setItem(new ItemStack(Material.EMERALD));
-        assertEquals(Material.EMERALD,entity.getEquipment().getLeggings().getType());
-        ;
+        assertEquals(Material.EMERALD,entity.getEquipment().getLeggings().getType());;
+    }
 
+    @McTest
+    public void inventoryWrapperTest() {
+        testLivingEntity();
+        testHumanEntity();
+    }
+
+    private void testLivingEntity() {
+        LivingEntity entity = getLivingEntity();
+        if(entity==null)
+            return;
+        InventoryWrapper wrapper = InventoryWrappers.FROM_VERSION(plugin.getEServer().getServerVersion(),entity);
+        checkArr(0,wrapper.getInventory());
+        checkArr(0,wrapper.getInventory());
+        checkArr(0,wrapper.getInventory());
+        checkAir(wrapper.getMainHand().getItemStack());
+
+        InventoryItem mainHand = wrapper.getMainHand();
+        mainHand.setItem(new ItemBuilder(EMaterial.ACACIA_DOOR).build());
+        checkArr(1,wrapper.getInventory());
+        checkArr(1,wrapper.getHotBar());
+        assertNotNull(wrapper.getMainHand());
+        wrapper.fromSlot(SlotType.CHESTPLATE).setItem(new ItemBuilder(EMaterial.DIAMOND_SWORD).build());
+        checkArr(2,wrapper.getInventory());
+        checkArr(1,wrapper.getArmor());
+
+        entity.getEquipment().clear();
+
+        checkArr(0,wrapper.getInventory());
+        checkArr(0,wrapper.getInventory());
+        checkArr(0,wrapper.getInventory());
+        checkAir(wrapper.getMainHand().getItemStack());
+
+        for(InventoryItem item : wrapper.getArmor()) {
+            item.setItem(new ItemBuilder(EMaterial.ITEM_FRAME).build());
+        }
+        try {
+            wrapper.fromSlot(SlotType.OTHER);
+            fail();
+        } catch (UnsupportedOperationException ignored) {
+
+        }
+        checkArr(4,wrapper.getArmor());
+        checkArr(4,wrapper.getInventory());
+        checkArr(0,wrapper.getHotBar());
+        if(plugin.getEServer().getServerVersion().getMajor()>=SlotType.OFF_HAND.getRelease()) {
+            checkAir(wrapper.getOffHand().getItemStack());
+            entity.getEquipment().setItemInOffHand(new ItemBuilder(EMaterial.ITEM_FRAME).build());
+            assertNotNull(wrapper.getOffHand().getItemStack());
+        }
+    }
+
+    private void checkAir(ItemStack itemStack) {
+        assertTrue(itemStack == null || itemStack.getType().equals(Material.AIR));
+    }
+
+    private void checkArr(int i, InventoryItem[] inventory) {
+        int nonNulls = 0;
+        for(InventoryItem item : inventory) {
+            if(!(item.getItemStack()==null || item.getItemStack().getType().equals(Material.AIR)))
+                nonNulls++;
+        }
+
+        assertEquals(i,nonNulls);
+    }
+
+    private void testHumanEntity() {
+        Player player = getPlayer();
+        if(player==null)
+            return;
+        InventoryWrapper wrapper = InventoryWrappers.FROM_VERSION(plugin.getEServer().getServerVersion(),player);
+        checkArr(0,wrapper.getInventory());
+        checkArr(0,wrapper.getInventory());
+        checkArr(0,wrapper.getInventory());
+        checkAir(wrapper.getMainHand().getItemStack());
+        InventoryItem mainHand = wrapper.getMainHand();
+        mainHand.setItem(new ItemBuilder(EMaterial.ACACIA_DOOR).build());
+        checkArr(1,wrapper.getInventory());
+        checkArr(1,wrapper.getHotBar());
+        assertNotNull(wrapper.getMainHand());
+        wrapper.fromSlot(SlotType.CHESTPLATE).setItem(new ItemBuilder(EMaterial.DIAMOND_SWORD).build());
+        checkArr(2,wrapper.getInventory());
+        checkArr(1,wrapper.getArmor());
+        player.getInventory().addItem(new ItemBuilder(EMaterial.LIGHT_BLUE_WOOL).build());
+        checkArr(3,wrapper.getInventory());
+        checkArr(1,wrapper.getArmor());
+
+        player.getInventory().clear();
+
+        checkArr(0,wrapper.getInventory());
+        checkArr(0,wrapper.getInventory());
+        checkArr(0,wrapper.getInventory());
+        checkAir(wrapper.getMainHand().getItemStack());
+
+        for(InventoryItem item : wrapper.getArmor()) {
+            item.setItem(new ItemBuilder(EMaterial.ITEM_FRAME).build());
+        }
+        try {
+            wrapper.fromSlot(SlotType.OTHER);
+            fail();
+        } catch (UnsupportedOperationException ignored) {
+
+        }
+        checkArr(4,wrapper.getArmor());
+        checkArr(4,wrapper.getInventory());
+        checkArr(0,wrapper.getHotBar());
+        if(plugin.getEServer().getServerVersion().getMajor()>=SlotType.OFF_HAND.getRelease()) {
+            checkAir(wrapper.getOffHand().getItemStack());
+            player.getInventory().setItemInOffHand(new ItemBuilder(EMaterial.ITEM_FRAME).build());
+            assertNotNull(wrapper.getOffHand().getItemStack());
+        }
+    }
+
+    @Nullable
+    private Player getPlayer() {
+        TestPlayer jerry = new TestPlayer("Jerry");
+        Player player = null;
+        try {
+            return jerry.asPlayer();
+        } catch (IllegalArgumentException e) {
+            handle(e);
+            return null;
+        }
+    }
+
+    @Nullable
+    private LivingEntity getLivingEntity() {
+        try {
+            return new TestLivingEntity().asLivingEntity();
+        } catch (IllegalArgumentException e) {
+            handle(e);
+            return null;
+        }
+    }
+
+    private void handle(IllegalArgumentException e) {
+        plugin.getPluginLogger().warn("Cannot complete '"+getName()+"' as the Player class is malformed in this version. '"+e.getMessage()+"'");
     }
 
     @Override

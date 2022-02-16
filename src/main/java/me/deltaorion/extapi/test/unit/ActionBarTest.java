@@ -34,26 +34,19 @@ public class ActionBarTest implements MinecraftTest {
     }
 
     @McTest
-    public void testFunctionalityAndCancellation() {
-        plugin.getScheduler().runTaskAsynchronously(new Runnable() {
-            @Override
-            public void run() {
-                //the whole test needs to be run async otherwise bukkit cant schedule the task. We will see the stack trace anyway
-                try {
-                    runFunctionalityTest();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
     private void runFunctionalityTest() {
         ActionBar actionBar = new ActionBar(Message.valueOf("Gamer"), Duration.of(1, ChronoUnit.DAYS));
         List<String> screen = new ArrayList<>();
         CountDownLatch renderLatch = new CountDownLatch(1);
         AtomicReference<ScheduleRunningActionBar> actionBarRunning = new AtomicReference<>();
-        Player tPlayer = new TestPlayer("Gamer");
+        TestPlayer p = new TestPlayer("Gamer");
+        Player tPlayer = null;
+        try {
+            tPlayer = p.asPlayer();
+        } catch (IllegalArgumentException e) {
+            plugin.getPluginLogger().warn("Cannot complete '"+getName()+"' as the Player class is malformed in this version. '"+e.getMessage()+"'");
+            return;
+        }
         BukkitApiPlayer player = new EApiPlayer(plugin, tPlayer, new APIPlayerSettings().setActionBarFactory(new ActionBarFactory() {
             @NotNull
             @Override
@@ -95,25 +88,19 @@ public class ActionBarTest implements MinecraftTest {
     }
 
     @McTest
-    public void testRejection() {
-        plugin.getScheduler().runTaskAsynchronously(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    runRejection();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
     private void runRejection() {
         ActionBar actionBar = new ActionBar(Message.valueOf("Gamer"), Duration.of(1, ChronoUnit.DAYS));
         List<String> screen = new ArrayList<>();
         CountDownLatch renderLatch = new CountDownLatch(1);
         AtomicReference<ScheduleRunningActionBar> actionBarRunning = new AtomicReference<>();
-        Player tPlayer = new TestPlayer("Gamer");
+        TestPlayer p = new TestPlayer("Gamer");
+        Player tPlayer = null;
+        try {
+            tPlayer = p.asPlayer();
+        } catch (IllegalArgumentException e) {
+            plugin.getPluginLogger().warn("Cannot complete '"+getName()+"' as the Player class is malformed in this version. '"+e.getMessage()+"'");
+            return;
+        }
         BukkitApiPlayer player = new EApiPlayer(plugin, tPlayer, new APIPlayerSettings().setActionBarFactory(new ActionBarFactory() {
             @NotNull
             @Override
@@ -157,13 +144,14 @@ public class ActionBarTest implements MinecraftTest {
         }
 
         plugin.getBukkitPlayerManager().removeCached(tPlayer);
-
-
     }
 
 
     public void failTest() {
-        BukkitApiPlayer player = new EApiPlayer(plugin, new TestPlayer("Gamer"), new APIPlayerSettings().setActionBarFactory(new ActionBarFactory() {
+        TestPlayer p = new TestPlayer("Gamer");
+        Player tPlayer = p.asPlayer();
+
+        BukkitApiPlayer player = new EApiPlayer(plugin, tPlayer, new APIPlayerSettings().setActionBarFactory(new ActionBarFactory() {
             @NotNull
             @Override
             public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager) {

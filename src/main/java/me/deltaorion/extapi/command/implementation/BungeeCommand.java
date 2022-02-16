@@ -25,13 +25,13 @@ public class BungeeCommand extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        SentCommand context = new SentCommand(plugin,plugin.wrapSender(sender),args,name,command.getUsage());
+        SentCommand context = new SentCommand(plugin,plugin.getEServer().wrapSender(sender),args,name,command.getUsage());
         command.onCommand(context);
     }
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        SentCommand context = new SentCommand(plugin,plugin.wrapSender(sender),args,name,command.getUsage());
+        SentCommand context = new SentCommand(plugin,plugin.getEServer().wrapSender(sender),args,name,command.getUsage());
         return command.onTabCompletion(context);
     }
 }

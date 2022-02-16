@@ -1,4 +1,4 @@
-package me.deltaorion.extapi.test.unit.item;
+package me.deltaorion.extapi.test.item;
 
 import me.deltaorion.extapi.item.EMaterial;
 import me.deltaorion.extapi.item.ItemBuilder;
@@ -11,6 +11,7 @@ import me.deltaorion.extapi.item.position.SlotType;
 import me.deltaorion.extapi.item.predicate.EventCondition;
 import me.deltaorion.extapi.item.wrapper.CustomEventWrapper;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -35,6 +36,9 @@ public class SlotTypeTest extends CustomItem {
         item.setItem(null);
         List<SlotType> slotTypes = new ArrayList<>(Arrays.asList(SlotType.values()));
         slotTypes.remove(SlotType.OTHER);
+        if(EMaterial.getVersion() == null ||EMaterial.getVersion().getMajor()<SlotType.OFF_HAND.getRelease()) {
+            slotTypes.remove(SlotType.OFF_HAND);
+        }
         for(int i=0;i<slotTypes.size();i++) {
             SlotType type = slotTypes.get(i);
             if(type.equals(original)) {
@@ -51,6 +55,9 @@ public class SlotTypeTest extends CustomItem {
             return;
 
         InventoryItem i = new LivingEntityItem(event.getEntity(),next,itemStack);
+        if(event.getEntity() instanceof HumanEntity) {
+            event.getEntity().sendMessage("Slot Type: "+next);
+        }
         i.setItem(itemStack);
     }
 
@@ -61,6 +68,6 @@ public class SlotTypeTest extends CustomItem {
     }
 
     private EMaterial randomMaterial() {
-        return EMaterial.values()[random.nextInt(EMaterial.values().length)];
+        return EMaterial.valuesThisVersion().toArray(new EMaterial[0])[random.nextInt(EMaterial.valuesThisVersion().size())];
     }
 }

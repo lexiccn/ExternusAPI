@@ -24,6 +24,10 @@ public class McTestTest implements MinecraftTest {
         fail();
     }
 
+    public void dontRun() {
+        fail("This should not be run at all!");
+    }
+
 
     @Override
     public String getName() {

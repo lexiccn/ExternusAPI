@@ -3,8 +3,12 @@ package me.deltaorion.extapi.display.actionbar;
 import me.deltaorion.extapi.common.exception.MissingDependencyException;
 import me.deltaorion.extapi.common.plugin.BukkitAPIDepends;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
+import me.deltaorion.extapi.common.version.MinecraftVersion;
+import me.deltaorion.extapi.display.actionbar.renderer.PacketActionBarRenderer;
+import me.deltaorion.extapi.display.actionbar.renderer.WrapperActionBarRenderer;
 import me.deltaorion.extapi.display.actionbar.running.ScheduleRunningActionBar;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
+import me.deltaorion.extapi.item.EMaterial;
 import org.jetbrains.annotations.NotNull;
 
 public class ActionBarFactories {
@@ -25,4 +29,21 @@ public class ActionBarFactories {
             }
         };
     }
+
+    @NotNull
+    public static ActionBarFactory SCHEDULE_FROM_VERSION() {
+        return new ActionBarFactory() {
+            @NotNull @Override
+            public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager) {
+                ActionBarRenderer renderer;
+                if(plugin.getEServer().getServerVersion().getMajor()>=12) {
+                    renderer = new WrapperActionBarRenderer();
+                } else {
+                    renderer = new PacketActionBarRenderer();
+                }
+                return new ScheduleRunningActionBar(actionBar,plugin,player,args,manager,renderer);
+            }
+        };
+    }
+
 }

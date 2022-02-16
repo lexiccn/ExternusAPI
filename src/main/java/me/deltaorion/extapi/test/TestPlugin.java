@@ -86,12 +86,6 @@ public class TestPlugin implements ApiPlugin {
 
     @NotNull
     @Override
-    public Sender wrapSender(@NotNull Object commandSender) {
-        return new TestSender(String.valueOf(random.nextInt()), UUID.randomUUID(),random.nextBoolean(),random.nextBoolean(), Locale.ENGLISH);
-    }
-
-    @NotNull
-    @Override
     public Path getDataDirectory() {
         return FileSystems.getDefault().getPath("C:\\Users\\User\\Documents\\abc\\translations");
     }

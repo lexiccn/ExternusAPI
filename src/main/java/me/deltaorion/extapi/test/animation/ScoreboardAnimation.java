@@ -36,7 +36,7 @@ public class ScoreboardAnimation implements AnimationRenderer<String, Player> {
             player.getScoreboard().setTitle(frame.getObject());
             double tps;
             try {
-                tps = plugin.getServer().spigot().getTPS()[0];
+                tps = plugin.getServer().getTPS()[0];
             } catch(NoSuchMethodError e) {
                 tps = Math.random();
             }

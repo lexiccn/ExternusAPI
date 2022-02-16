@@ -4,11 +4,14 @@ import me.deltaorion.extapi.APIPermissions;
 import me.deltaorion.extapi.command.CommandException;
 import me.deltaorion.extapi.command.FunctionalCommand;
 import me.deltaorion.extapi.command.sent.SentCommand;
+import me.deltaorion.extapi.common.exception.UnsupportedVersionException;
 import me.deltaorion.extapi.common.plugin.BukkitAPIDepends;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.item.EMaterial;
 import me.deltaorion.extapi.item.ItemBuilder;
+import me.deltaorion.extapi.item.potion.PotionBuilder;
 import me.deltaorion.extapi.locale.message.Message;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.enchantments.Enchantment;
@@ -74,8 +77,9 @@ public class ItemTestCommand extends FunctionalCommand {
         ItemStack potionSimple = new ItemBuilder(EMaterial.POTION)
                 .potion(potionBuilder -> {
                     potionBuilder.setColor(PotionType.FIRE_RESISTANCE)
-                            .setSplash(true);
-                }).build();
+                            .setType(PotionBuilder.Type.SPLASH);
+                })
+                .setDisplayName("Simple Potion").build();
 
         ItemStack potion = new ItemBuilder(EMaterial.POTION)
                 .addLoreLine("Glass Cannon")
@@ -84,6 +88,35 @@ public class ItemTestCommand extends FunctionalCommand {
                             .addEffect(new PotionEffect(PotionEffectType.POISON,100,5))
                             .addEffect(new PotionEffect(PotionEffectType.SPEED,100,10));
                 }).build();
+
+        try {
+            ItemStack lingering = new ItemBuilder(EMaterial.SUGAR_CANE)
+                    .setDisplayName("Lingering")
+                    .potion(potionBuilder -> {
+                        potionBuilder.setMainEffect(PotionEffectType.SATURATION)
+                                .setType(PotionBuilder.Type.LINGERING)
+                                .setColor(Color.BLACK)
+                                .addEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE,1000,2));
+                    }).build();
+            player.getInventory().addItem(lingering);
+        } catch(UnsupportedVersionException ignored) {
+
+        }
+
+        try {
+            ItemStack lingering = new ItemBuilder(EMaterial.ACACIA_DOOR)
+                    .setDisplayName("Lingering2")
+                    .potion(potionBuilder -> {
+                        potionBuilder.addEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE,100,2));
+                        potionBuilder.addEffect(new PotionEffect(PotionEffectType.JUMP,100,4));
+                        potionBuilder.setColor(PotionType.AWKWARD);
+                        potionBuilder.setMainEffect(PotionEffectType.JUMP);
+                        potionBuilder.setType(PotionBuilder.Type.LINGERING);
+                    }).build();
+            player.getInventory().addItem(lingering);
+        } catch (UnsupportedVersionException | NoSuchFieldError ignored) {
+
+        }
 
         ItemStack skull = new ItemBuilder(EMaterial.CREEPER_HEAD)
                 .setAmount(3)
@@ -105,13 +138,17 @@ public class ItemTestCommand extends FunctionalCommand {
 
         ItemStack potionClear = new ItemBuilder(EMaterial.POTION)
                 .potion(potionBuilder -> {
-                    potionBuilder.setSplash(true)
+                    potionBuilder.setType(PotionBuilder.Type.SPLASH)
                             .setColor(PotionType.INSTANT_DAMAGE)
                             .addEffect(new PotionEffect(PotionEffectType.BLINDNESS,5,3))
                             .addEffect(new PotionEffect(PotionEffectType.POISON,10,6))
                             .clearEffects()
                             .addEffect(new PotionEffect(PotionEffectType.CONFUSION,5,1));
                 }).build();
+
+        ItemStack instantHealing = new ItemBuilder(PotionType.INSTANT_HEAL, PotionBuilder.Type.SPLASH,true,false).build();
+
+        player.getInventory().addItem(instantHealing);
 
 
         potionClear = new ItemBuilder(potionClear)
