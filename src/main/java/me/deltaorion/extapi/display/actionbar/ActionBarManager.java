@@ -5,6 +5,7 @@ import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import me.deltaorion.extapi.display.bukkit.EApiPlayer;
 import net.jcip.annotations.GuardedBy;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,13 +33,15 @@ public class ActionBarManager {
     @NotNull private final BukkitPlugin plugin;
     @NotNull private final BukkitApiPlayer player;
     @NotNull private final ActionBarFactory factory;
+    @NotNull private final Player bukkitPlayer;
 
     private boolean shutdown = false;
 
-    public ActionBarManager(@NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, @NotNull ActionBarFactory factory) {
+    public ActionBarManager(@NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, @NotNull ActionBarFactory factory, @NotNull Player bukkitPlayer) {
         this.plugin = Objects.requireNonNull(plugin);
         this.player = Objects.requireNonNull(player);
         this.factory = Objects.requireNonNull(factory);
+        this.bukkitPlayer = bukkitPlayer;
         this.actionBars = new ArrayDeque<>();
     }
 
@@ -86,7 +89,7 @@ public class ActionBarManager {
 
     //Create and starts a running action bar
     private RunningActionBar render(@NotNull ActionBar actionBar, Object... args) {
-        RunningActionBar rendered = factory.get(actionBar,plugin,player,args,this);
+        RunningActionBar rendered = factory.get(actionBar,plugin,player,args,this,bukkitPlayer);
         rendered.start();
         return rendered;
     }

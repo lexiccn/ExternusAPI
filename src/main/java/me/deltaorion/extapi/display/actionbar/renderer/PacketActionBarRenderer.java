@@ -16,7 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 public class PacketActionBarRenderer implements ActionBarRenderer {
 
     @Override
-    public void render(@NotNull BukkitApiPlayer player, @NotNull String toRender) {
+    public void render(@NotNull Player player, @NotNull String toRender) {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.CHAT);
         //create chat packet with the wrapped UTF-8 Chat component
         packet.getChatComponents().write(0, WrappedChatComponent.fromText(toRender));
@@ -24,11 +24,10 @@ public class PacketActionBarRenderer implements ActionBarRenderer {
         packet.getBytes().write(0, EnumWrappers.ChatType.GAME_INFO.getId());
 
         //send it, rethrow the exception to cancel the running action bar
-        Player p = player.getPlayer();
 
 
         try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(p, packet);
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
         }

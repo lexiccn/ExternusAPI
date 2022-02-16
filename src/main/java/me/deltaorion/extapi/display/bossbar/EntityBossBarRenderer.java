@@ -16,10 +16,10 @@ public class EntityBossBarRenderer implements BossBarRenderer {
     private static final int ENTITY_DISTANCE = 32;
     @NotNull private final FakeWither wither;
 
-    public EntityBossBarRenderer(@NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player) {
+    public EntityBossBarRenderer(@NotNull BukkitPlugin plugin, @NotNull Player player) {
         if(!plugin.getDependency(BukkitAPIDepends.PROTOCOL_LIB.getName()).isActive())
             throw new MissingDependencyException("Cannot make a BossBar as '"+BukkitAPIDepends.PROTOCOL_LIB.getName()+"' is not installed!");
-        this.player = player.getPlayer();
+        this.player = player;
         Location initialLocation = makeLocation();
         this.wither = new FakeWither(this.player,initialLocation);
     }

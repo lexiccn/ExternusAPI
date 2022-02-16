@@ -12,6 +12,7 @@ import me.deltaorion.extapi.display.actionbar.RunningActionBar;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
 import me.deltaorion.extapi.locale.message.Message;
 import net.jcip.annotations.GuardedBy;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +29,7 @@ public class ScheduleRunningActionBar implements RunningActionBar {
     private final ActionBar actionBar;
 
     @NotNull private final BukkitPlugin plugin;
-    @NotNull private final BukkitApiPlayer player;
+    @NotNull private final Player player;
     @NotNull private final ActionBarManager manager;
     @NotNull private final ActionBarRenderer renderer;
 
@@ -46,10 +47,10 @@ public class ScheduleRunningActionBar implements RunningActionBar {
     private final long PERFECT = Duration.of(3,ChronoUnit.SECONDS).toMillis();
     @NotNull private final String BLANK = "";
 
-    public ScheduleRunningActionBar(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager, @NotNull ActionBarRenderer renderer) {
+    public ScheduleRunningActionBar(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager, @NotNull ActionBarRenderer renderer, @NotNull Player bukkitPlayer) {
         this.actionBar = Objects.requireNonNull(actionBar);
         this.plugin = Objects.requireNonNull(plugin);
-        this.player = Objects.requireNonNull(player);
+        this.player = Objects.requireNonNull(bukkitPlayer);
         this.manager = Objects.requireNonNull(manager);
         this.renderer = Objects.requireNonNull(renderer);
         this.displayLine = new SimpleDisplayLine(player,actionBar.getMessage(),args);

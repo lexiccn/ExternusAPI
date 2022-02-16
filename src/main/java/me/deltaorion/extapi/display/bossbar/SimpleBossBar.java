@@ -63,7 +63,7 @@ public class SimpleBossBar implements BossBar {
         this.plugin = Objects.requireNonNull(plugin);
         this.player = plugin.getBukkitPlayerManager().getPlayer(player);
         this.name = Objects.requireNonNull(name);
-        this.renderer = factory.get(plugin,this.player);
+        this.renderer = factory.get(plugin,player);
 
         displayLine = new SimpleDisplayLine(this.player,message);
 

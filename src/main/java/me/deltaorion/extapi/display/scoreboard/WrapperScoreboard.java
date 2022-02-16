@@ -37,6 +37,7 @@ public class WrapperScoreboard implements EScoreboard {
     private final BukkitPlugin plugin;
 
     @NotNull private final BukkitApiPlayer player;
+    @NotNull private final Player bukkitPlayer;
     @NotNull private final Objective objective;
     @NotNull private final Scoreboard scoreboard;
 
@@ -79,6 +80,7 @@ public class WrapperScoreboard implements EScoreboard {
         this.plugin = Objects.requireNonNull(plugin);
 
         this.player = plugin.getBukkitPlayerManager().getPlayer(player);
+        this.bukkitPlayer = player;
         this.scoreboard = Objects.requireNonNull(plugin.getServer().getScoreboardManager().getNewScoreboard());
         this.objective = Objects.requireNonNull(scoreboard.registerNewObjective(name,"dummy"));
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -217,7 +219,7 @@ public class WrapperScoreboard implements EScoreboard {
     }
 
     private void setBoard() {
-        this.player.getPlayer().setScoreboard(scoreboard);
+        this.bukkitPlayer.setScoreboard(scoreboard);
     }
 
     private void createTeams() {
@@ -318,9 +320,9 @@ public class WrapperScoreboard implements EScoreboard {
 
         this.visible = visible;
         if(visible) {
-            player.getPlayer().setScoreboard(scoreboard);
+            bukkitPlayer.setScoreboard(scoreboard);
         } else {
-            player.getPlayer().setScoreboard(plugin.getServer().getScoreboardManager().getNewScoreboard());
+            bukkitPlayer.setScoreboard(plugin.getServer().getScoreboardManager().getNewScoreboard());
         }
     }
 

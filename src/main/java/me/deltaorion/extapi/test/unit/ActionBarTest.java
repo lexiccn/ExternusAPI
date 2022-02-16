@@ -50,8 +50,8 @@ public class ActionBarTest implements MinecraftTest {
         BukkitApiPlayer player = new EApiPlayer(plugin, tPlayer, new APIPlayerSettings().setActionBarFactory(new ActionBarFactory() {
             @NotNull
             @Override
-            public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager) {
-                ScheduleRunningActionBar bar = new ScheduleRunningActionBar(actionBar, plugin, player, args, manager, new TestRenderer(screen, renderLatch));
+            public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager, @NotNull Player bukkitPlayer) {
+                ScheduleRunningActionBar bar = new ScheduleRunningActionBar(actionBar, plugin, player, args, manager, new TestRenderer(screen, renderLatch),bukkitPlayer);
                 actionBarRunning.set(bar);
                 return bar;
             }
@@ -104,8 +104,8 @@ public class ActionBarTest implements MinecraftTest {
         BukkitApiPlayer player = new EApiPlayer(plugin, tPlayer, new APIPlayerSettings().setActionBarFactory(new ActionBarFactory() {
             @NotNull
             @Override
-            public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager) {
-                ScheduleRunningActionBar bar = new ScheduleRunningActionBar(actionBar, plugin, player, args, manager, new TestRenderer(screen, renderLatch));
+            public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager, @NotNull Player bukkitPlayer) {
+                ScheduleRunningActionBar bar = new ScheduleRunningActionBar(actionBar, plugin, player, args, manager, new TestRenderer(screen, renderLatch),bukkitPlayer);
                 actionBarRunning.set(bar);
                 return bar;
             }
@@ -154,8 +154,8 @@ public class ActionBarTest implements MinecraftTest {
         BukkitApiPlayer player = new EApiPlayer(plugin, tPlayer, new APIPlayerSettings().setActionBarFactory(new ActionBarFactory() {
             @NotNull
             @Override
-            public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager) {
-                return new ScheduleRunningActionBar(actionBar, plugin, player, args, manager, new FailRenderer());
+            public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager, @NotNull Player bukkitPlayer) {
+                return new ScheduleRunningActionBar(actionBar, plugin, player, args, manager, new FailRenderer(),bukkitPlayer);
             }
         }));
         player.getActionBarManager().send(new ActionBar("Gamer",Duration.of(1,ChronoUnit.SECONDS)));

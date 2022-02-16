@@ -44,10 +44,12 @@ public @interface ItemEventHandler {
      * Define under what state the item should be in for the custom item for the event to be called
      * <ol>
      * <li>MAIN_HAND The item must be in the players main hand</li>
-     * <li>INVENTORY The item is present anywhere in the players inventory including their armor slots. This does not
+     * <li>INVENTORY The item is present anywhere in the players inventory including their armor slots and off hand. This does not
      * include the players crafting table slots</li>
      * <li>ARMOR The item is present in any of the players armor slots<li/>
-     * <li>HOTBAR The item is present anywhere in the players hotbar including their main hand</li>
+     * <li>HOTBAR The item is present anywhere in the players hotbar including their main hand and off hand</li>
+     * <li>OFF_HAND  The item must be present in the players off hand</li>
+     * <li>ANY_HAND The item may be present in any hand</li>
      * </ol>
      *
      * The event predicate may be ignored with some CustomEventWrappers. This however will be clearly documented under

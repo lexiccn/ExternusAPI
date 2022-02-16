@@ -61,7 +61,7 @@ public class EApiPlayer implements BukkitApiPlayer {
         this.player = player;
         this.plugin = plugin;
         this.scoreboard = null;
-        this.actionBarManager = new ActionBarManager(plugin,this, settings.getActionBarFactory());
+        this.actionBarManager = new ActionBarManager(plugin,this, settings.getActionBarFactory(),player);
         this.factory = settings.getScoreboardFactory();
         this.uuid = player.getUniqueId();
         this.sender = plugin.getEServer().wrapSender(player);
@@ -125,14 +125,6 @@ public class EApiPlayer implements BukkitApiPlayer {
         return this.scoreboard;
     }
 
-    /**
-     * @return The player that this is wrapped around.
-     */
-    @Override
-    @NotNull
-    public Player getPlayer() {
-        return player;
-    }
 
     /**
      * @return The player's unique id. Even if the original reference is lost this will not return null.

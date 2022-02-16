@@ -53,7 +53,7 @@ public interface PotionBuilder {
      *  of mixing the effects. There is nothing that can be done to fix this.
      *
      *  In version 1.8 you can set the color, however you cannot have a particular color without having at least one potion
-     *  effect
+     *  effect. That being said if a custom effect is given, the potion will lose its original effect.
      *
      * @param type The potion type to change the color to
      * @return this potion builder

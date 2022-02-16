@@ -50,12 +50,6 @@ public interface BukkitApiPlayer {
     EScoreboard getScoreboard();
 
     /**
-     * @return The player that this is wrapped around.
-     */
-    @NotNull
-    Player getPlayer();
-
-    /**
      * @return The player's unique id. Even if the original reference is lost this will not return null.
      */
     @NotNull

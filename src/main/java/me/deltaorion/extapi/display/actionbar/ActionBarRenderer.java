@@ -1,6 +1,7 @@
 package me.deltaorion.extapi.display.actionbar;
 
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,5 +21,5 @@ public interface ActionBarRenderer {
      * @param player The player to send to
      * @param render What to render to the screen
      */
-    public void render(@NotNull BukkitApiPlayer player, @NotNull String render);
+    public void render(@NotNull Player player, @NotNull String render);
 }

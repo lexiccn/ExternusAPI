@@ -45,12 +45,6 @@ public class WrappedApiPlayer implements BukkitApiPlayer {
 
     @NotNull
     @Override
-    public Player getPlayer() {
-        return player.getPlayer();
-    }
-
-    @NotNull
-    @Override
     public UUID getUniqueID() {
         return player.getUniqueID();
     }

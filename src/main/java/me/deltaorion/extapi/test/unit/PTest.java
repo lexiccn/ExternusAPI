@@ -39,7 +39,7 @@ public class PTest implements MinecraftTest {
         }
         for(Map.Entry<Player,BukkitApiPlayer> entry : playerList.entrySet()) {
             assert entry.getValue() == players.getPlayer(entry.getKey());
-            assert entry.getKey() == entry.getValue().getPlayer();
+            assert entry.getKey().getUniqueId() == entry.getValue().getUniqueID();
         }
 
         assertNull(players.getPlayer(UUID.randomUUID()));

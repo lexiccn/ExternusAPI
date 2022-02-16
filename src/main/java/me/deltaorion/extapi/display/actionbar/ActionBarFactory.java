@@ -2,6 +2,7 @@ package me.deltaorion.extapi.display.actionbar;
 
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.display.bukkit.BukkitApiPlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,5 +22,5 @@ public interface ActionBarFactory {
      * @throws me.deltaorion.extapi.common.exception.MissingDependencyException if an implementation requires some kind of dependency
      */
     @NotNull
-    public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args,@NotNull ActionBarManager manager);
+    public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager, @NotNull Player bukkitPlayer);
 }
