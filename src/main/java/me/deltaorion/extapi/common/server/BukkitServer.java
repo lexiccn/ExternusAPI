@@ -1,6 +1,7 @@
 package me.deltaorion.extapi.common.server;
 import com.google.common.base.MoreObjects;
 import me.deltaorion.extapi.common.exception.UnsupportedVersionException;
+import me.deltaorion.extapi.common.sender.SenderFactory;
 import me.deltaorion.extapi.common.sender.bukkit.BukkitSenderInfo;
 import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.common.sender.SimpleSender;
@@ -26,12 +27,15 @@ public class BukkitServer implements EServer {
 
     @NotNull private final Server server;
     @NotNull private final MinecraftVersion minecraftVersion;
+    @NotNull private volatile SenderFactory senderFactory;
+
     public final static int MILLIS_PER_TICK = 50;
     public final static TemporalUnit TICK_UNIT = new BukkitTick();
 
     public BukkitServer(@NotNull Server server) {
         this.server = server;
         this.minecraftVersion = Objects.requireNonNull(VersionFactory.parse(server.getBukkitVersion()),String.format("Cannot parse Minecraft Version '%s'",server.getBukkitVersion()));
+        this.senderFactory = getBukkit;
     }
 
     @Override
@@ -122,12 +126,26 @@ public class BukkitServer implements EServer {
     @NotNull
     @Override
     public Sender wrapSender(@NotNull Object commandSender) {
-        if(!(commandSender instanceof CommandSender))
-            throw new IllegalArgumentException("Must wrap a bukkit command sender");
-
-        CommandSender sender = (CommandSender) commandSender;
-        return new SimpleSender(getSenderInfo(sender));
+        return senderFactory.get(commandSender,minecraftVersion);
     }
+
+    @Override
+    public void setSenderFactory(@NotNull SenderFactory factory) {
+        Objects.requireNonNull(factory);
+        this.senderFactory = factory;
+    }
+
+    private final SenderFactory getBukkit = new SenderFactory() {
+        @NotNull
+        @Override
+        public Sender get(@NotNull Object commandSender, @NotNull MinecraftVersion version) {
+            if(!(commandSender instanceof CommandSender))
+                throw new IllegalArgumentException("Must wrap a bukkit command sender");
+
+            CommandSender sender = (CommandSender) commandSender;
+            return new SimpleSender(getSenderInfo(sender));
+        }
+    };
 
     @NotNull
     private BukkitSenderInfo getSenderInfo(@NotNull CommandSender sender) {

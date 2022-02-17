@@ -3,6 +3,7 @@ package me.deltaorion.extapi.common.server;
 import com.google.common.base.MoreObjects;
 import me.deltaorion.extapi.common.sender.BungeeSenderInfo;
 import me.deltaorion.extapi.common.sender.Sender;
+import me.deltaorion.extapi.common.sender.SenderFactory;
 import me.deltaorion.extapi.common.sender.SimpleSender;
 import me.deltaorion.extapi.common.plugin.BungeePluginWrapper;
 import me.deltaorion.extapi.common.plugin.EPlugin;
@@ -23,10 +24,12 @@ public class BungeeServer implements EServer {
 
     @NotNull private final ProxyServer proxyServer;
     @NotNull private final MinecraftVersion minecraftVersion;
+    @NotNull private volatile SenderFactory senderFactory;
 
     public BungeeServer(@NotNull ProxyServer proxyServer) {
         this.proxyServer = proxyServer;
         this.minecraftVersion = Objects.requireNonNull(VersionFactory.parse(proxyServer.getVersion()),String.format("Cannot parse proxy version in format '%s'",proxyServer.getVersion()));
+        this.senderFactory = getBungee;
     }
 
     @Override
@@ -117,9 +120,22 @@ public class BungeeServer implements EServer {
 
     @NotNull @Override
     public Sender wrapSender(@NotNull Object commandSender) {
-        if(!(commandSender instanceof CommandSender))
-            throw new IllegalArgumentException("Command Sender must be a net.md5 command sender");
-
-        return new SimpleSender(new BungeeSenderInfo((CommandSender) commandSender,proxyServer,this));
+        return senderFactory.get(commandSender,minecraftVersion);
     }
+
+    @Override
+    public void setSenderFactory(@NotNull SenderFactory factory) {
+        this.senderFactory = Objects.requireNonNull(factory);
+    }
+
+    private final SenderFactory getBungee = new SenderFactory() {
+        @NotNull
+        @Override
+        public Sender get(@NotNull Object commandSender, @NotNull MinecraftVersion version) {
+            if(!(commandSender instanceof CommandSender))
+                throw new IllegalArgumentException("Command Sender must be a net.md5 command sender");
+
+            return new SimpleSender(new BungeeSenderInfo((CommandSender) commandSender,proxyServer,BungeeServer.this));
+        }
+    };
 }

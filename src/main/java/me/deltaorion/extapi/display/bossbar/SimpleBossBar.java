@@ -48,8 +48,8 @@ public class SimpleBossBar implements BossBar {
      * @param player The player who to give this to
      * @param name The name of the bossbar. This is used to identify the bossbar and is not the message rendered to the users screen.
      */
-    public SimpleBossBar(@NotNull BukkitPlugin plugin, @NotNull Player player, @NotNull String name, @NotNull BossBarRendererFactory factory) {
-        this(plugin,player,name,Message.valueOf(""),factory);
+    public SimpleBossBar(@NotNull BukkitPlugin plugin, @NotNull Player player, @NotNull String name, @NotNull BossBarRenderer renderer) {
+        this(plugin,player,name,Message.valueOf(""),renderer);
     }
 
     /**
@@ -59,11 +59,11 @@ public class SimpleBossBar implements BossBar {
      * @param name The name of the bossbar. This is used to identify the bossbar and is not the message rendered to the users screen.
      * @param message The initial message to render to the bossbar.
      */
-    public SimpleBossBar(@NotNull BukkitPlugin plugin, @NotNull Player player, @NotNull String name, @NotNull Message message, @NotNull BossBarRendererFactory factory) {
+    public SimpleBossBar(@NotNull BukkitPlugin plugin, @NotNull Player player, @NotNull String name, @NotNull Message message, @NotNull BossBarRenderer renderer) {
         this.plugin = Objects.requireNonNull(plugin);
         this.player = plugin.getBukkitPlayerManager().getPlayer(player);
         this.name = Objects.requireNonNull(name);
-        this.renderer = factory.get(plugin,player);
+        this.renderer = renderer;
 
         displayLine = new SimpleDisplayLine(this.player,message);
 

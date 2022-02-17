@@ -13,10 +13,12 @@ public class APIPlayerSettings {
 
     @NotNull private ActionBarFactory actionBarFactory;
     @NotNull private ScoreboardFactory scoreboardFactory;
+    @NotNull private BossBarRendererFactory bossBarRendererFactory;
 
     public APIPlayerSettings() {
         this.actionBarFactory = ActionBarFactories.SCHEDULE_FROM_VERSION();
         this.scoreboardFactory = ScoreboardFactory.WRAPPER;
+        this.bossBarRendererFactory = BossBarRendererFactory.FROM_VERSION();
     }
 
     public APIPlayerSettings setActionBarFactory(@NotNull ActionBarFactory factory) {
@@ -37,5 +39,15 @@ public class APIPlayerSettings {
     @NotNull
     public ScoreboardFactory getScoreboardFactory() {
         return scoreboardFactory;
+    }
+
+    @NotNull
+    public BossBarRendererFactory getBossBarRendererFactory() {
+        return bossBarRendererFactory;
+    }
+
+    public APIPlayerSettings setBossBarRendererFactory(@NotNull BossBarRendererFactory bossBarRendererFactory) {
+        this.bossBarRendererFactory = bossBarRendererFactory;
+        return this;
     }
 }

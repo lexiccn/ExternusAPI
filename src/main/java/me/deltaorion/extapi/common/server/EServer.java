@@ -2,6 +2,7 @@ package me.deltaorion.extapi.common.server;
 
 import me.deltaorion.extapi.common.sender.Sender;
 import me.deltaorion.extapi.common.plugin.EPlugin;
+import me.deltaorion.extapi.common.sender.SenderFactory;
 import me.deltaorion.extapi.common.version.MinecraftVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -146,4 +147,12 @@ public interface EServer {
 
     @NotNull
     public Sender wrapSender(@NotNull Object commandSender);
+
+    /**
+     * Changes the sender factory. This is ued by {@link #wrapSender(Object)} to create a new Sender instance. Changing this gives
+     * control in how senders are made by the API.
+     *
+     * @param factory The new sender factory
+     */
+    public void setSenderFactory(@NotNull SenderFactory factory);
 }

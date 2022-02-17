@@ -3,6 +3,7 @@ package me.deltaorion.extapi.test;
 import com.google.common.collect.ImmutableList;
 import me.deltaorion.extapi.common.plugin.EPlugin;
 import me.deltaorion.extapi.common.sender.Sender;
+import me.deltaorion.extapi.common.sender.SenderFactory;
 import me.deltaorion.extapi.common.sender.TestSender;
 import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.common.version.MinecraftVersion;
@@ -118,5 +119,10 @@ public class TestServer implements EServer {
     @Override
     public Sender wrapSender(@NotNull Object commandSender) {
         return new TestSender(String.valueOf(random.nextInt()), UUID.randomUUID(),random.nextBoolean(),random.nextBoolean(), Locale.ENGLISH);
+    }
+
+    @Override
+    public void setSenderFactory(@NotNull SenderFactory factory) {
+
     }
 }

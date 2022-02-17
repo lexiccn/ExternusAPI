@@ -1,10 +1,8 @@
 package me.deltaorion.extapi.display.bukkit;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import me.deltaorion.extapi.common.plugin.BukkitPlugin;
 import me.deltaorion.extapi.common.sender.Sender;
-import me.deltaorion.extapi.common.server.EServer;
 import me.deltaorion.extapi.display.actionbar.ActionBar;
 import me.deltaorion.extapi.display.actionbar.ActionBarManager;
 import me.deltaorion.extapi.display.actionbar.RejectionPolicy;
@@ -14,7 +12,6 @@ import me.deltaorion.extapi.display.bossbar.SimpleBossBar;
 import me.deltaorion.extapi.display.scoreboard.EScoreboard;
 import me.deltaorion.extapi.display.scoreboard.ScoreboardFactory;
 import me.deltaorion.extapi.locale.message.Message;
-import me.deltaorion.extapi.locale.translator.Translator;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,9 +39,11 @@ public class EApiPlayer implements BukkitApiPlayer {
     @NotNull private final Player player;
     @Nullable private EScoreboard scoreboard;
     @NotNull private final ActionBarManager actionBarManager;
-    @NotNull private final ScoreboardFactory factory;
     @Nullable private BossBar bossBar;
     @NotNull private final Sender sender;
+
+    @NotNull private final ScoreboardFactory scoreboardFactory;
+    @NotNull private final BossBarRendererFactory bossBarFactory;
 
     @NotNull private final UUID uuid;
 
@@ -62,7 +61,8 @@ public class EApiPlayer implements BukkitApiPlayer {
         this.plugin = plugin;
         this.scoreboard = null;
         this.actionBarManager = new ActionBarManager(plugin,this, settings.getActionBarFactory(),player);
-        this.factory = settings.getScoreboardFactory();
+        this.scoreboardFactory = settings.getScoreboardFactory();
+        this.bossBarFactory = settings.getBossBarRendererFactory();
         this.uuid = player.getUniqueId();
         this.sender = plugin.getEServer().wrapSender(player);
     }
@@ -80,7 +80,7 @@ public class EApiPlayer implements BukkitApiPlayer {
         synchronized (scoreboardLock) {
             if(disconnected)
                 return null;
-            this.scoreboard = factory.get(plugin, player, name);
+            this.scoreboard = scoreboardFactory.get(plugin, player, name,plugin.getEServer().getServerVersion());
             return this.scoreboard;
         }
     }
@@ -99,7 +99,7 @@ public class EApiPlayer implements BukkitApiPlayer {
         synchronized (scoreboardLock) {
             if(disconnected)
                 return null;
-            this.scoreboard = factory.get(plugin, player, name, lines);
+            this.scoreboard = scoreboardFactory.get(plugin, player, name, lines, plugin.getEServer().getServerVersion());
             return this.scoreboard;
         }
     }
@@ -177,8 +177,7 @@ public class EApiPlayer implements BukkitApiPlayer {
     public BossBar setBossBar(@NotNull String name) {
         if(disconnected)
             return null;
-        BossBar bossBar = new SimpleBossBar(plugin,player,name,
-                BossBarRendererFactory.FROM_VERSION(plugin.getEServer().getServerVersion()));
+        BossBar bossBar = new SimpleBossBar(plugin,player,name, bossBarFactory.get(plugin,player,plugin.getEServer().getServerVersion()));
         return setBossBar(bossBar);
     }
 
@@ -186,8 +185,7 @@ public class EApiPlayer implements BukkitApiPlayer {
     public BossBar setBossBar(@NotNull String name, @NotNull Message message) {
         if(disconnected)
             return null;
-        BossBar bossBar = new SimpleBossBar(plugin,player,name,message,
-                BossBarRendererFactory.FROM_VERSION(plugin.getEServer().getServerVersion()));
+        BossBar bossBar = new SimpleBossBar(plugin,player,name,message,bossBarFactory.get(plugin,player,plugin.getEServer().getServerVersion()));
         return setBossBar(bossBar);
     }
 
