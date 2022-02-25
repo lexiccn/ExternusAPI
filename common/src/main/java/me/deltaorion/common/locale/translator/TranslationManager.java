@@ -2,7 +2,8 @@ package me.deltaorion.common.locale.translator;
 
 import me.deltaorion.common.config.file.ConfigLoader;
 import me.deltaorion.common.config.file.FileConfigLoader;
-import me.deltaorion.common.config.properties.PropertiesConfigLoader;
+import me.deltaorion.common.config.properties.PropertiesAdapter;
+import me.deltaorion.common.config.properties.PropertiesConfigAdapter;
 import me.deltaorion.common.plugin.server.EServer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +42,7 @@ public class TranslationManager {
 
 
     private void loadDefaultLocale() {
-        ConfigLoader configuration = new PropertiesConfigLoader(classLoader,translationDirectory.resolve(defaultLocaleLocation),defaultLocaleLocation);
+        ConfigLoader configuration = new FileConfigLoader(classLoader,translationDirectory.resolve(defaultLocaleLocation),defaultLocaleLocation, new PropertiesAdapter());
         configuration.getConfig().mergeDefaults();
         configuration.saveConfig();
         addTranslations(DEFAULT_LOCALE,configuration);
@@ -89,7 +90,7 @@ public class TranslationManager {
     }
 
     private ConfigLoader getTranslation(Path path) throws IOException {
-        return new PropertiesConfigLoader(classLoader,path);
+        return new FileConfigLoader(classLoader,path,new PropertiesAdapter());
     }
 
     private Locale getLocale(Path path) {

@@ -1,5 +1,6 @@
 package me.deltaorion.bungee;
 
+import me.deltaorion.bungee.configuration.YamlAdapter;
 import me.deltaorion.bungee.plugin.plugin.BungeePlugin;
 import me.deltaorion.bungee.test.command_old.BungeeDependencyTest;
 import me.deltaorion.bungee.test.command_old.BungeeVersionTest;
@@ -8,6 +9,7 @@ import me.deltaorion.bungee.test.command_old.ServerTestBungee;
 import me.deltaorion.common.test.command.*;
 import me.deltaorion.common.test.generic.McTester;
 import me.deltaorion.common.test.unit.ArgTest;
+import me.deltaorion.common.test.unit.ConfigurationTest;
 import me.deltaorion.common.test.unit.LocaleTest;
 import me.deltaorion.common.test.unit.McTestTest;
 
@@ -51,5 +53,6 @@ public class TestBungee extends BungeePlugin {
         tester.addTest(new McTestTest());
         tester.addTest(new ArgTest(this));
         tester.addTest(new LocaleTest(this));
+        tester.addTest(new ConfigurationTest(new YamlAdapter()));
     }
 }

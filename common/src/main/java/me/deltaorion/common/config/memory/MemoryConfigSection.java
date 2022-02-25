@@ -1,42 +1,78 @@
-package me.deltaorion.common.config.properties;
+package me.deltaorion.common.config.memory;
 
 import com.google.common.base.MoreObjects;
 import me.deltaorion.common.config.ConfigSection;
 import me.deltaorion.common.config.MemoryConfig;
+import me.deltaorion.common.config.adapter.ConfigAdapter;
 import me.deltaorion.common.config.value.ConfigObjectValue;
 import me.deltaorion.common.config.value.ConfigValue;
 import me.deltaorion.common.config.value.MemoryValue;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class PropertiesSection implements ConfigSection {
+public class MemoryConfigSection implements ConfigSection {
 
     //properties cannot be nested, so this is just fine
-    @NotNull protected final Properties properties;
     @NotNull private final MemoryConfig root;
+    @Nullable private final ConfigSection parent;
+    @NotNull private final String path;
+    @NotNull protected final ConfigAdapter adapter;
 
-    private final static String FILE_EXTENSION = ".properties";
-    private final static String UNSUPPORTED_NESTED = FILE_EXTENSION+" files do not support a nested structure which means the requested operation cannot be complete";
-    private final static String UNSUPPORTED_LIST = FILE_EXTENSION + " files do not support list structure";
+    //private final static String FILE_EXTENSION = ".properties";
+    //private final static String UNSUPPORTED_NESTED = FILE_EXTENSION+" files do not support a nested structure which means the requested operation cannot be complete";
+    //private final static String UNSUPPORTED_LIST = FILE_EXTENSION + " files do not support list structure";
 
-    public PropertiesSection(@NotNull Properties properties) {
+    public MemoryConfigSection(@NotNull ConfigAdapter adapter) {
         if(!(this instanceof MemoryConfig))
             throw new IllegalStateException("Cannot create a root section without being a memory config!");
 
+        Objects.requireNonNull(adapter);
         this.root = (MemoryConfig) this;
-        this.properties = properties;
+        this.path = "";
+        this.parent = null;
+        this.adapter = adapter;
+    }
+
+    public MemoryConfigSection(@NotNull ConfigAdapter adapter, @NotNull String path, @NotNull ConfigSection parent, @NotNull MemoryConfig root) {
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(parent);
+        Objects.requireNonNull(root);
+        Objects.requireNonNull(adapter);
+
+        this.root = root;
+        this.parent = parent;
+        this.path = path;
+        this.adapter = adapter;
     }
 
     @Override
     public Set<String> getKeys(boolean deep) {
-        if(root.options().copyDefaults()) {
-            Set<String> keys = new HashSet<>(this.properties.stringPropertyNames());
-            if(root.getDefaults()!=null)
-                keys.addAll(root.getDefaults().getKeys(deep));
-            return Collections.unmodifiableSet(keys);
+        if(!deep) {
+            if(!root.options().copyDefaults())
+                return adapter.getKeys();
+
+            Set<String> keys = new HashSet<>(adapter.getKeys());
+            ConfigSection defaults = getDefaultSection();
+            if(defaults!=null) {
+                keys.addAll(defaults.getKeys(false));
+            }
+            return keys;
+        }
+
+        return Collections.unmodifiableSet(getValues(true).keySet());
+    }
+
+    private ConfigSection getDefaultSection() {
+        ConfigSection defaults = root.getDefaults();
+        if(defaults==null)
+            return null;
+
+        if(parent==null) {
+            return defaults;
         } else {
-            return properties.stringPropertyNames();
+            return defaults.getConfigurationSection(path);
         }
     }
 
@@ -44,20 +80,17 @@ public class PropertiesSection implements ConfigSection {
 
     @Override
     public Map<String, Object> getValues(boolean deep) {
-        Map<String,Object> values = getThisValues();
-        if(root.options().copyDefaults()) {
-            MemoryConfig defaults = root.getDefaults();
-            if(defaults!=null)
-                values.putAll(defaults.getValues(deep));
-        }
-
+        Map<String,Object> values = getValues("",this,new HashMap<>(),deep);
         return Collections.unmodifiableMap(values);
     }
 
-    private Map<String, Object> getThisValues() {
-        Map<String,Object> values = new HashMap<>();
-        for(String property : properties.stringPropertyNames()) {
-            values.put(property,properties.getProperty(property));
+    private Map<String,Object> getValues(String path, ConfigSection section, Map<String,Object> values, boolean deep) {
+        for(String key : section.getKeys(false)) {
+            final String absKey = path+key;
+            values.put(absKey,section.get(key));
+            if(deep && section.isConfigurationSection(key)) {
+                getValues(absKey + String.valueOf(root.options().pathSeparator()),section.getConfigurationSection(key),values,true);
+            }
         }
         return values;
     }
@@ -76,7 +109,7 @@ public class PropertiesSection implements ConfigSection {
             return false;
         }
 
-        MemoryConfig defaults = root.getDefaults();
+        ConfigSection defaults = getDefaultSection();
         if(defaults==null)
             return false;
 
@@ -90,7 +123,7 @@ public class PropertiesSection implements ConfigSection {
 
     @Override
     public String getCurrentPath() {
-        return "";
+        return path;
     }
 
     @Override
@@ -103,14 +136,15 @@ public class PropertiesSection implements ConfigSection {
         return root;
     }
 
+    @Nullable
     @Override
     public ConfigSection getParent() {
-        return null;
+        return parent;
     }
 
     private Object getDefault(String path) {
         Objects.requireNonNull(path);
-        MemoryConfig defaults = root.getDefaults();
+        ConfigSection defaults = getDefaultSection();
         if(defaults==null)
             return null;
 
@@ -133,29 +167,28 @@ public class PropertiesSection implements ConfigSection {
 
     private ConfigValue getValue(String path, Object def) {
         Objects.requireNonNull(path);
-        String value = properties.getProperty(path);
-        return new MemoryValue(new PropertiesValue(value),new ConfigObjectValue(def),root);
+        return new MemoryValue(adapter.getValue(this,root,path),new ConfigObjectValue(path, def),root);
     }
 
     @Override
     public void set(String path, Object value) {
         Objects.requireNonNull(path);
         if(value==null) {
-            properties.remove(path);
+           adapter.remove(path);
         } else {
-            properties.setProperty(path, String.valueOf(value));
+            adapter.set(path,value);
         }
     }
 
     @Override
     public ConfigSection createSection(String path) {
-        throw new UnsupportedOperationException(UNSUPPORTED_NESTED);
+        return adapter.createSection(root,this,path);
     }
 
 
     @Override
-    public ConfigSection createSection(String path, Map<?, ?> map) {
-        throw new UnsupportedOperationException(UNSUPPORTED_NESTED);
+    public ConfigSection createSection(String path, Map<String, Object> map) {
+        return adapter.createSection(root,this,path,map);
     }
 
     @Override
@@ -173,7 +206,6 @@ public class PropertiesSection implements ConfigSection {
         return getValue(path).isString();
     }
 
-    //remembering all properties are strings
     @Override
     public int getInt(String path) {
         return getValue(path).asInt();
@@ -226,7 +258,7 @@ public class PropertiesSection implements ConfigSection {
 
     @Override
     public long getLong(String path, long def) {
-        return getValue(path).asLong();
+        return getValue(path,def).asLong();
     }
 
     @Override
@@ -236,106 +268,101 @@ public class PropertiesSection implements ConfigSection {
 
     @Override
     public List<?> getList(String path) {
-        throw new UnsupportedOperationException(UNSUPPORTED_LIST);
+        return getValue(path).asList();
     }
 
     @Override
     public List<?> getList(String path, List<?> def) {
-        throw new UnsupportedOperationException(UNSUPPORTED_LIST);
+        return getValue(path,def).asList();
     }
 
     @Override
     public boolean isList(String path) {
-        return false;
+        return getValue(path).isList();
     }
 
     @Override
     public List<String> getStringList(String path) {
-        throw new UnsupportedOperationException(UNSUPPORTED_LIST);
+        return getValue(path).asStringList();
     }
 
     @Override
     public List<Integer> getIntegerList(String path) {
-        throw new UnsupportedOperationException(UNSUPPORTED_LIST);
+        return getValue(path).asIntegerList();
     }
 
     @Override
     public List<Boolean> getBooleanList(String path) {
-        throw new UnsupportedOperationException(UNSUPPORTED_LIST);
+        return getValue(path).asBooleanList();
     }
 
     @Override
     public List<Double> getDoubleList(String path) {
-        throw new UnsupportedOperationException(UNSUPPORTED_LIST);
+        return getValue(path).asDoubleList();
     }
 
     @Override
     public List<Float> getFloatList(String path) {
-        throw new UnsupportedOperationException(UNSUPPORTED_LIST);
+        return getValue(path).asFloatList();
     }
 
     @Override
     public List<Long> getLongList(String path) {
-        throw new UnsupportedOperationException(UNSUPPORTED_LIST);
+        return getValue(path).asLongList();
     }
 
     @Override
     public List<Byte> getByteList(String path) {
-        throw new UnsupportedOperationException(UNSUPPORTED_LIST);
+        return getValue(path).asByteList();
     }
 
     @Override
     public List<Character> getCharacterList(String path) {
-        throw new UnsupportedOperationException(UNSUPPORTED_LIST);
+        return getValue(path).asCharacterList();
     }
 
     @Override
     public List<Short> getShortList(String path) {
-        throw new UnsupportedOperationException(UNSUPPORTED_LIST);
+        return getValue(path).asShortList();
     }
 
     @Override
     public List<Map<?, ?>> getMapList(String path) {
-        throw new UnsupportedOperationException(UNSUPPORTED_LIST);
+        return getValue(path).asMapList();
     }
 
     @Override
     public ConfigSection getConfigurationSection(String path) {
-        throw new UnsupportedOperationException(UNSUPPORTED_NESTED);
+        return getValue(path).asConfigSection();
     }
 
     @Override
     public boolean isConfigurationSection(String path) {
-        throw new UnsupportedOperationException(UNSUPPORTED_NESTED);
-    }
-
-    @Override
-    public ConfigSection getDefaultSection() {
-        throw new UnsupportedOperationException(UNSUPPORTED_NESTED);
+        return getValue(path).isConfigSection();
     }
 
     @Override
     public boolean supportsNesting() {
-        return false;
+        return adapter.supportsNesting();
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("properties",properties).toString();
+                .add("path",path)
+                .add("values",getValues(true)).toString();
     }
 
     @Override
     public boolean equals(Object o) {
-        Properties p;
-        if(o instanceof  Properties) {
-            p = (Properties) o;
-        } else if(o instanceof PropertiesSection) {
-            p = ((PropertiesSection) o).properties;
-        } else {
+        if(!(o instanceof ConfigSection))
             return false;
-        }
 
-        return p.equals(properties);
+        ConfigSection section = (ConfigSection) o;
+        if(!section.getCurrentPath().equals(this.getCurrentPath()))
+            return false;
+
+        return section.getValues(true).equals(this.getValues(true));
     }
+
 }

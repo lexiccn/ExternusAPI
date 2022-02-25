@@ -1,6 +1,9 @@
 package me.deltaorion.common.config.file;
 
 import me.deltaorion.common.config.FileConfig;
+import me.deltaorion.common.config.adapter.AdapterFactory;
+import me.deltaorion.common.config.adapter.ConfigAdapter;
+import me.deltaorion.common.config.memory.MemoryFileConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,34 +21,36 @@ import java.util.Objects;
  * A file (if it does not exist) will be created and all of the defaults will be copied to that file.
  */
 
-public abstract class FileConfigLoader implements ConfigLoader {
+public class FileConfigLoader implements ConfigLoader {
 
     @NotNull private final Path configurationPath;
     private FileConfig dataConfig;
     private final File configFile;
     @Nullable private final String defaultPath;
     @Nullable private final ClassLoader classLoader;
+    @NotNull private final AdapterFactory adapter;
 
 
-    public FileConfigLoader(@Nullable ClassLoader classLoader, @NotNull Path configurationPath, @Nullable String defaultPath) {
-
+    public FileConfigLoader(@Nullable ClassLoader classLoader, @NotNull Path configurationPath, @Nullable String defaultPath, @NotNull AdapterFactory adapter) {
         Objects.requireNonNull(configurationPath);
+        Objects.requireNonNull(adapter);
 
         this.configurationPath = configurationPath;
         this.configFile = configurationPath.toFile();
         this.defaultPath = defaultPath;
         this.classLoader = classLoader;
+        this.adapter = adapter;
 
         if(this.defaultPath!=null)
             saveDefaultConfig();
     }
 
-    public FileConfigLoader(@Nullable ClassLoader classLoader, @NotNull Path configurationPath) {
-        this(classLoader,configurationPath,null);
+    public FileConfigLoader(@Nullable ClassLoader classLoader, @NotNull Path configurationPath, AdapterFactory adapter) {
+        this(classLoader,configurationPath,null, adapter);
     }
 
-    public FileConfigLoader(@NotNull Path configurationPath) {
-        this(null,configurationPath);
+    public FileConfigLoader(@NotNull Path configurationPath, AdapterFactory adapter) {
+        this(null,configurationPath, adapter);
     }
 
 
@@ -76,9 +81,13 @@ public abstract class FileConfigLoader implements ConfigLoader {
     }
 
     @NotNull
-    public abstract FileConfig getFromStream(@NotNull InputStream inputStream) throws IOException;
+    public FileConfig getFromStream(@NotNull InputStream inputStream) throws IOException {
+        return MemoryFileConfig.loadConfiguration(adapter,inputStream);
+    }
 
-    public abstract FileConfig getFromFile(@NotNull File file) throws IOException;
+    public FileConfig getFromFile(@NotNull File file) throws IOException {
+        return MemoryFileConfig.loadConfiguration(adapter,file);
+    }
 
     @Override
     public FileConfig getConfig() {

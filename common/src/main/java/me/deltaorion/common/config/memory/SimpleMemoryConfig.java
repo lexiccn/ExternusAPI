@@ -1,30 +1,33 @@
-package me.deltaorion.common.config.properties;
+package me.deltaorion.common.config.memory;
 
 import com.google.common.base.MoreObjects;
 import me.deltaorion.common.config.ConfigOptions;
+import me.deltaorion.common.config.ConfigSection;
 import me.deltaorion.common.config.MemoryConfig;
+import me.deltaorion.common.config.adapter.AdapterFactory;
+import me.deltaorion.common.config.adapter.ConfigAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 
-public class PropertiesMemoryConfig extends PropertiesSection implements MemoryConfig {
+public class SimpleMemoryConfig extends MemoryConfigSection implements MemoryConfig {
 
     @Nullable private MemoryConfig def;
-    @NotNull private final PropertiesOptions options;
+    @NotNull private final MemoryConfigOptions options;
+    @NotNull private final AdapterFactory factory;
 
-    public PropertiesMemoryConfig(@NotNull Properties properties) {
-        super(properties);
-        this.def = null;
-        this.options = new PropertiesOptions(this);
+    public SimpleMemoryConfig(@NotNull AdapterFactory factory) {
+        super(factory.getBlank());
+        this.options = new MemoryConfigOptions(this);
+        this.factory = factory;
     }
 
     @Override
     public void addDefault(String path, Object value) {
         if(def==null) {
-            def=new PropertiesMemoryConfig(new Properties());
+            def=new SimpleMemoryConfig(factory);
         }
         def.set(path,value);
     }
@@ -78,14 +81,20 @@ public class PropertiesMemoryConfig extends PropertiesSection implements MemoryC
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("base",properties)
+                .add("base",adapter)
                 .add("def",def).toString();
     }
 
+    @Override
     public boolean equals(Object o) {
-        if(!(o instanceof PropertiesMemoryConfig))
+        if(!(o instanceof MemoryConfig))
             return false;
 
-        return ((PropertiesMemoryConfig) o).properties.equals(this.properties) && Objects.equals(((PropertiesMemoryConfig) o).def, this.def);
+        MemoryConfig config = (MemoryConfig) o;
+        if(!config.options().equals(this.options()))
+            return false;
+
+        return config.getValues(true).equals(this.getValues(true));
     }
+
 }

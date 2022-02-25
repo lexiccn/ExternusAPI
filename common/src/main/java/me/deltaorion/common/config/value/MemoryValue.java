@@ -1,7 +1,11 @@
 package me.deltaorion.common.config.value;
 
+import me.deltaorion.common.config.ConfigSection;
 import me.deltaorion.common.config.MemoryConfig;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Map;
 
 public class MemoryValue implements ConfigValue {
 
@@ -128,5 +132,125 @@ public class MemoryValue implements ConfigValue {
             return def.isLong();
 
         return false;
+    }
+
+    @Override
+    public boolean isConfigSection() {
+        if(value.isConfigSection())
+            return true;
+
+        if(root.options().copyDefaults()) {
+            return def.isConfigSection();
+        }
+
+        return false;
+    }
+
+    @Override
+    public ConfigSection asConfigSection() {
+        if(value.isConfigSection())
+            return value.asConfigSection();
+
+        return def.asConfigSection();
+    }
+
+    @Override
+    public List<?> asList() {
+        if(value.isList())
+            return value.asList();
+
+        return def.asList();
+    }
+
+    @Override
+    public boolean isList() {
+        if(value.isList())
+            return true;
+
+        if(root.options().copyDefaults()) {
+            return def.isList();
+        }
+
+        return false;
+    }
+
+    @Override
+    public List<String> asStringList() {
+        if(value.isList())
+            return value.asStringList();
+
+        return def.asStringList();
+    }
+
+    @Override
+    public List<Integer> asIntegerList() {
+        if(value.isList())
+            return value.asIntegerList();
+
+        return def.asIntegerList();
+    }
+
+    @Override
+    public List<Boolean> asBooleanList() {
+        if(value.isList())
+            return value.asBooleanList();
+
+        return def.asBooleanList();
+    }
+
+    @Override
+    public List<Double> asDoubleList() {
+        if(value.isList())
+            return value.asDoubleList();
+
+        return def.asDoubleList();
+    }
+
+    @Override
+    public List<Character> asCharacterList() {
+        if(value.isList())
+            return value.asCharacterList();
+
+        return def.asCharacterList();
+    }
+
+    @Override
+    public List<Byte> asByteList() {
+        if(value.isList())
+            return value.asByteList();
+
+        return def.asByteList();
+    }
+
+    @Override
+    public List<Long> asLongList() {
+        if(value.isList())
+            return value.asLongList();
+
+        return def.asLongList();
+    }
+
+    @Override
+    public List<Float> asFloatList() {
+        if(value.isList())
+            return value.asFloatList();
+
+        return def.asFloatList();
+    }
+
+    @Override
+    public List<Short> asShortList() {
+        if(value.isList())
+            return value.asShortList();
+
+        return def.asShortList();
+    }
+
+    @Override
+    public List<Map<?, ?>> asMapList() {
+        if(value.isList())
+            return value.asMapList();
+
+        return def.asMapList();
     }
 }

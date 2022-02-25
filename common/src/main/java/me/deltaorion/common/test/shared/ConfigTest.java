@@ -4,16 +4,29 @@ import me.deltaorion.common.config.ConfigSection;
 import me.deltaorion.common.config.FileConfig;
 import me.deltaorion.common.config.MemoryConfig;
 import me.deltaorion.common.config.value.ConfigValue;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
 public class ConfigTest {
 
-    public void test(FileConfig config, FileConfig defaults) {
+    public void test(@NotNull FileConfig config, @NotNull FileConfig defaults) {
         testBasicSection(config);
         testDefaults(config,defaults);
+        valuesTest(config,defaults);
         if(config.supportsNesting()) {
             nestedTest(config,defaults);
+        }
+    }
+
+    private void valuesTest(FileConfig config, FileConfig defaults) {
+        config.setDefaults(defaults);
+        config.options().copyDefaults(true);
+        Map<String,Object> values = config.getValues(true);
+        for(Map.Entry<String,Object> value : values.entrySet()) {
+            assertEquals(value.getValue(),config.get(value.getKey()));
         }
     }
 
@@ -83,6 +96,7 @@ public class ConfigTest {
 
         assertEquals(config.getInt("a"),3);
         config.addDefault("a",3.14);
+        assertEquals("b",config.getString("a"));
         assertEquals(config.getInt("a"),3);
         assertEquals(config.getInt("a",4),4);
         assertTrue(config.getBoolean("a", true));
@@ -97,8 +111,8 @@ public class ConfigTest {
     }
 
     private void checkPath(ConfigSection section, String path) {
-        assertTrue(section.contains("a"));
-        assertTrue(section.isSet("a"));
+        assertTrue(section.contains(path));
+        assertTrue(section.isSet(path));
         assertTrue(section.getKeys(true).contains(path));
         assertTrue(section.getValues(true).containsKey(path));
     }
@@ -113,19 +127,26 @@ public class ConfigTest {
     }
 
     private void basicNestTest(FileConfig config) {
-        ConfigSection section = config.getConfigurationSection("nest");
-        assertEquals(config.get("nest.f"),section.get("f"));
+        ConfigSection nest = config.getConfigurationSection("nest");
+        assertEquals(config.get("nest.f"),nest.get("f"));
         assertTrue(config.isSet("nest.f"));
-        assertTrue(section.isSet("f"));
+        assertTrue(nest.isSet("f"));
         assertTrue(config.contains("nest.k"));
-        assertTrue(section.contains("k"));
-        assertFalse(section.isSet("k"));
+        assertTrue(nest.contains("k"));
 
-        assertEquals(config.getConfigurationSection("nest.i"),section.getConfigurationSection("i"));
+        assertEquals(config.getConfigurationSection("nest.i"),nest.getConfigurationSection("i"));
         ConfigSection keys = config.getConfigurationSection("nest.i.j");
         assertEquals(4,keys.getKeys(true).size());
         for(String key : keys.getKeys(false)) {
             assertEquals(key,keys.get(key));
         }
+
+        ConfigSection created = config.createSection("nest.n");
+        ConfigSection get = nest.getConfigurationSection("n");
+        created.set("l",3);
+        created.set("m",4);
+        created.set("n",5);
+        assertEquals(created,get);
+        assertEquals(get.get("m"),created.get("m"));
     }
 }

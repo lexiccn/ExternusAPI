@@ -1,7 +1,12 @@
 package me.deltaorion.common.config.properties;
 
+import me.deltaorion.common.config.ConfigSection;
 import me.deltaorion.common.config.value.ConfigValue;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class PropertiesValue implements ConfigValue {
 
@@ -30,7 +35,7 @@ public class PropertiesValue implements ConfigValue {
 
     @Override
     public boolean isObject() {
-        return value !=null;
+        return value != null;
     }
 
     @Nullable @Override
@@ -139,6 +144,75 @@ public class PropertiesValue implements ConfigValue {
         }
     }
 
+    @Override
+    public boolean isConfigSection() {
+        return false;
+    }
+
+    @Override
+    public ConfigSection asConfigSection() {
+        return null;
+    }
+
+    @Override
+    public List<?> asList() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean isList() {
+        return false;
+    }
+
+    @Override
+    public List<String> asStringList() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<Integer> asIntegerList() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<Boolean> asBooleanList() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<Double> asDoubleList() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<Character> asCharacterList() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<Byte> asByteList() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<Long> asLongList() {
+        return null;
+    }
+
+    @Override
+    public List<Float> asFloatList() {
+        return null;
+    }
+
+    @Override
+    public List<Short> asShortList() {
+        return null;
+    }
+
+    @Override
+    public List<Map<?, ?>> asMapList() {
+        return null;
+    }
 
     private boolean parseBoolean() {
         if(value==null)

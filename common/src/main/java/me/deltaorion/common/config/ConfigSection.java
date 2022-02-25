@@ -2,6 +2,7 @@ package me.deltaorion.common.config;
 
 import me.deltaorion.common.config.file.ConfigLoader;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -195,6 +196,7 @@ public interface ConfigSection {
      *
      * @param path Path to create the section at.
      * @return Newly created section
+     * @throws UnsupportedOperationException if the config type does not support nesting
      */
     public ConfigSection createSection(String path);
 
@@ -209,8 +211,9 @@ public interface ConfigSection {
      * @param path Path to create the section at.
      * @param map  The values to used.
      * @return Newly created section
+     * @throws UnsupportedOperationException if the config type does not support nesting
      */
-    public ConfigSection createSection(String path, Map<?, ?> map);
+    public ConfigSection createSection(String path, Map<String, Object> map);
 
     // Primitives
 
@@ -616,6 +619,7 @@ public interface ConfigSection {
      * @param path Path of the ConfigSection to get.
      * @return Requested ConfigSection.
      */
+    @Nullable
     public ConfigSection getConfigurationSection(String path);
 
     /**
@@ -633,17 +637,8 @@ public interface ConfigSection {
     public boolean isConfigurationSection(String path);
 
     /**
-     * Gets the equivalent {@link ConfigSection} from the default
-     * {@link ConfigLoader} defined in {@link #getRoot()}.
-     * <p>
-     * If the root contains no defaults, or the defaults doesn't contain a
-     * value for this path, or the value at this path is not a {@link
-     * ConfigSection} then this will return null.
-     *
-     * @return Equivalent section in root configuration
+     * @return whether the config supports a nested structure. That being a key can have a set of keys.
      */
-    public ConfigSection getDefaultSection();
-
     public boolean supportsNesting();
 }
     

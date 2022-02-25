@@ -319,4 +319,5 @@ public class BukkitPlugin extends JavaPlugin implements ApiPlugin {
                 ChatColor::stripColor
         );
     }
+
 }

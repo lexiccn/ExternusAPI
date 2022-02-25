@@ -1,33 +1,36 @@
-package me.deltaorion.common.config.properties;
+package me.deltaorion.common.config.memory;
 
 import com.google.common.base.MoreObjects;
 import me.deltaorion.common.config.ConfigOptions;
 import me.deltaorion.common.config.MemoryConfig;
 import org.jetbrains.annotations.NotNull;
 
-public class PropertiesOptions implements ConfigOptions {
+public class MemoryConfigOptions implements ConfigOptions {
 
     @NotNull private final MemoryConfig root;
     private boolean copyDefaults;
+    private char pathSeparator;
 
-    public PropertiesOptions(@NotNull MemoryConfig root) {
+    public MemoryConfigOptions(@NotNull MemoryConfig root) {
         this.root = root;
         this.copyDefaults = false;
+        this.pathSeparator = '.';
     }
 
     @Override
     public MemoryConfig configuration() {
-        return null;
+        return root;
     }
 
     @Override
     public char pathSeparator() {
-        throw new UnsupportedOperationException(".properties files do NOT supported a nested structure");
+        return pathSeparator;
     }
 
     @Override
     public ConfigOptions pathSeparator(char value) {
-        throw new UnsupportedOperationException(".properties files do NOT supported a nested structure");
+        this.pathSeparator = value;
+        return this;
     }
 
     @Override
@@ -44,6 +47,16 @@ public class PropertiesOptions implements ConfigOptions {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("copy-defaults",copyDefaults).toString();
+                .add("copy-defaults",copyDefaults)
+                .add("path-separator",pathSeparator)
+                .toString();
+    }
+
+    public boolean equals(Object o) {
+        if(!(o instanceof ConfigOptions))
+            return false;
+
+        ConfigOptions options = (ConfigOptions) o;
+        return options.copyDefaults() == this.copyDefaults() && options.pathSeparator() == this.pathSeparator();
     }
 }

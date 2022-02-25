@@ -1,5 +1,6 @@
 package me.deltaorion.bukkit;
 
+import me.deltaorion.bukkit.configuration.YamlAdapter;
 import me.deltaorion.bukkit.plugin.plugin.BukkitPlugin;
 import me.deltaorion.bukkit.test.command.*;
 import me.deltaorion.bukkit.test.command_old.*;
@@ -8,6 +9,7 @@ import me.deltaorion.common.test.command.*;
 import me.deltaorion.common.test.generic.AsyncFailTest;
 import me.deltaorion.common.test.generic.McTester;
 import me.deltaorion.common.test.unit.ArgTest;
+import me.deltaorion.common.test.unit.ConfigurationTest;
 import me.deltaorion.common.test.unit.LocaleTest;
 import me.deltaorion.common.test.unit.McTestTest;
 import org.bukkit.ChatColor;
@@ -64,6 +66,7 @@ public final class ExtAPI extends BukkitPlugin {
         tester.addTest(new EMaterialTest(this));
         tester.addTest(new PTest(this));
         tester.addTest(new ScoreboardingTest(this));
+        tester.addTest(new ConfigurationTest(new YamlAdapter()));
         tester.addAsyncTest(new ActionBarTest(this));
         tester.addAsyncTest(new AsyncFailTest());
     }

@@ -1,7 +1,8 @@
 package me.deltaorion.common.test.unit;
 
 import me.deltaorion.common.config.file.ConfigLoader;
-import me.deltaorion.common.config.properties.PropertiesConfigLoader;
+import me.deltaorion.common.config.file.FileConfigLoader;
+import me.deltaorion.common.config.properties.PropertiesAdapter;
 import me.deltaorion.common.plugin.plugin.ApiPlugin;
 import me.deltaorion.common.test.generic.McTest;
 import me.deltaorion.common.test.generic.MinecraftTest;
@@ -19,8 +20,8 @@ public class LocaleTest implements MinecraftTest {
     }
 
     private void pullTestLocales() {
-        ConfigLoader configFr = new PropertiesConfigLoader(getClass().getClassLoader(),plugin.getDataDirectory().resolve("translations").resolve("fr.properties"),"translations/fr.properties");
-        ConfigLoader configPT = new PropertiesConfigLoader(getClass().getClassLoader(),plugin.getDataDirectory().resolve("translations").resolve("en_PT.properties"),"translations/en_PT.properties");
+        ConfigLoader configFr = new FileConfigLoader(getClass().getClassLoader(),plugin.getDataDirectory().resolve("translations").resolve("fr.properties"),"translations/fr.properties",new PropertiesAdapter());
+        ConfigLoader configPT = new FileConfigLoader(getClass().getClassLoader(),plugin.getDataDirectory().resolve("translations").resolve("en_PT.properties"),"translations/en_PT.properties", new PropertiesAdapter());
         plugin.getTranslator().reload();
     }
 
