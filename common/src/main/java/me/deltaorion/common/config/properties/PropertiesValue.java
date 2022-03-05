@@ -2,6 +2,7 @@ package me.deltaorion.common.config.properties;
 
 import me.deltaorion.common.config.ConfigSection;
 import me.deltaorion.common.config.value.ConfigValue;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -77,7 +78,7 @@ public class PropertiesValue implements ConfigValue {
     @Override
     public boolean asBoolean() {
         try {
-            return parseBoolean();
+            return Boolean.parseBoolean(value);
         } catch (IllegalArgumentException e) {
             return false;
         }
@@ -86,8 +87,7 @@ public class PropertiesValue implements ConfigValue {
     @Override
     public boolean isBoolean() {
         try {
-            parseBoolean();
-            return true;
+            return Boolean.parseBoolean(value);
         } catch (IllegalArgumentException e) {
             return false;
         }
@@ -154,9 +154,9 @@ public class PropertiesValue implements ConfigValue {
         return null;
     }
 
-    @Override
+    @Override @Nullable
     public List<?> asList() {
-        return Collections.emptyList();
+        return null;
     }
 
     @Override
@@ -164,66 +164,64 @@ public class PropertiesValue implements ConfigValue {
         return false;
     }
 
+    @NotNull
     @Override
     public List<String> asStringList() {
         return Collections.emptyList();
     }
 
+    @NotNull
     @Override
     public List<Integer> asIntegerList() {
         return Collections.emptyList();
     }
 
+    @NotNull
     @Override
     public List<Boolean> asBooleanList() {
         return Collections.emptyList();
     }
 
+    @NotNull
     @Override
     public List<Double> asDoubleList() {
         return Collections.emptyList();
     }
 
+    @NotNull
     @Override
     public List<Character> asCharacterList() {
         return Collections.emptyList();
     }
 
+    @NotNull
     @Override
     public List<Byte> asByteList() {
         return Collections.emptyList();
     }
 
+    @NotNull
     @Override
     public List<Long> asLongList() {
-        return null;
+        return Collections.emptyList();
     }
 
+    @NotNull
     @Override
     public List<Float> asFloatList() {
-        return null;
+        return Collections.emptyList();
     }
 
+    @NotNull
     @Override
     public List<Short> asShortList() {
-        return null;
+        return Collections.emptyList();
     }
 
+    @NotNull
     @Override
     public List<Map<?, ?>> asMapList() {
-        return null;
+        return Collections.emptyList();
     }
 
-    private boolean parseBoolean() {
-        if(value==null)
-            throw new IllegalArgumentException("null");
-
-        if(value.equalsIgnoreCase("true"))
-            return true;
-
-        if(value.equalsIgnoreCase("false"))
-            return false;
-
-        throw new IllegalArgumentException("Not a boolean");
-    }
 }

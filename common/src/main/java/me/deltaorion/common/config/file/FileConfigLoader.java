@@ -1,9 +1,8 @@
 package me.deltaorion.common.config.file;
 
 import me.deltaorion.common.config.FileConfig;
+import me.deltaorion.common.config.InvalidConfigurationException;
 import me.deltaorion.common.config.adapter.AdapterFactory;
-import me.deltaorion.common.config.adapter.ConfigAdapter;
-import me.deltaorion.common.config.memory.MemoryFileConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,7 +57,7 @@ public class FileConfigLoader implements ConfigLoader {
     public void reloadConfig() {
         try {
             dataConfig = getFromFile(configFile);
-        } catch (IOException e) {
+        } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
             return;
         }
@@ -74,19 +73,19 @@ public class FileConfigLoader implements ConfigLoader {
                 FileConfig def = getFromStream(defaultConfig);
                 dataConfig.setDefaults(def);
                 defaultConfig.close();
-            } catch (IOException e) {
-                System.out.println("An Error occurred when loading " + defaultConfig);
+            } catch (IOException | InvalidConfigurationException e) {
+                e.printStackTrace();
             }
         }
     }
 
     @NotNull
-    public FileConfig getFromStream(@NotNull InputStream inputStream) throws IOException {
-        return MemoryFileConfig.loadConfiguration(adapter,inputStream);
+    public FileConfig getFromStream(@NotNull InputStream inputStream) throws IOException, InvalidConfigurationException {
+        return FileConfig.loadConfiguration(adapter,inputStream);
     }
 
-    public FileConfig getFromFile(@NotNull File file) throws IOException {
-        return MemoryFileConfig.loadConfiguration(adapter,file);
+    public FileConfig getFromFile(@NotNull File file) throws IOException, InvalidConfigurationException {
+        return FileConfig.loadConfiguration(adapter,file);
     }
 
     @Override

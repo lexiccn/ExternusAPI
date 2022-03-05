@@ -5,8 +5,10 @@ import me.deltaorion.common.config.MemoryConfig;
 import me.deltaorion.common.config.adapter.ConfigAdapter;
 import me.deltaorion.common.config.value.ConfigValue;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -16,9 +18,11 @@ public class PropertiesConfigAdapter implements ConfigAdapter {
     @NotNull private final Properties properties;
     @NotNull private final String FILE_EXTENSION = ".properties";
     private final String NO_NESTING_SUPPORT = FILE_EXTENSION+" does not support a nested config. The requested operation cannot be done";
+    @NotNull private final ConfigSection adapterFor;
 
-    public PropertiesConfigAdapter() {
+    public PropertiesConfigAdapter(@NotNull ConfigSection adapterFor) {
         this.properties = new Properties();
+        this.adapterFor = adapterFor;
     }
 
     @NotNull
@@ -29,7 +33,7 @@ public class PropertiesConfigAdapter implements ConfigAdapter {
 
     @NotNull
     @Override
-    public ConfigValue getValue(ConfigSection parent, @NotNull MemoryConfig root, @NotNull String path) {
+    public ConfigValue getValue(@NotNull String path) {
         return new PropertiesValue(properties.getProperty(path));
     }
 
@@ -45,13 +49,13 @@ public class PropertiesConfigAdapter implements ConfigAdapter {
 
     @NotNull
     @Override
-    public ConfigSection createSection(MemoryConfig root, ConfigSection parent , String path) {
+    public ConfigSection createSection(@NotNull String path) {
         throw new UnsupportedOperationException(NO_NESTING_SUPPORT);
     }
 
     @NotNull
     @Override
-    public ConfigSection createSection(MemoryConfig root, ConfigSection parent , String path, Map<String, Object> map) {
+    public ConfigSection createSection(@NotNull String path, Map<String ,Object> map) {
         throw new UnsupportedOperationException(NO_NESTING_SUPPORT);
     }
 
@@ -73,5 +77,30 @@ public class PropertiesConfigAdapter implements ConfigAdapter {
     @Override
     public void load(@NotNull Reader reader) throws IOException {
         properties.load(reader);
+    }
+
+    @Override
+    public boolean supportsCommentPreservation() {
+        return false;
+    }
+
+    @Override
+    public void setComments(String path, List<String> comments) {
+        throw new UnsupportedOperationException("Adapter does not support comments");
+    }
+
+    @Override
+    public void setInlineComments(String path, List<String> comments) {
+        throw new UnsupportedOperationException("Adapter does not support comments");
+    }
+
+    @Override
+    public List<String> getInlineComments(String path) {
+        throw new UnsupportedOperationException("Adapter does not support comments");
+    }
+
+    @Override
+    public List<String> getComments(String path) {
+        throw new UnsupportedOperationException("Adapter does not support comments");
     }
 }

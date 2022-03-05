@@ -1,14 +1,27 @@
 package me.deltaorion.common.config;
 
+import com.google.common.base.MoreObjects;
+import me.deltaorion.common.config.adapter.AdapterFactory;
 import me.deltaorion.common.config.file.ConfigLoader;
+import me.deltaorion.common.config.options.FileConfigOptions;
+import me.deltaorion.common.config.options.MemoryConfigOptions;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 
-/**
- * @author org.bukkit, DeltaOrion
- */
-public interface MemoryConfig extends ConfigSection {
+public class MemoryConfig extends ConfigSection {
+
+    @Nullable private MemoryConfig def;
+    @NotNull protected final FileConfigOptions options;
+    @NotNull private final AdapterFactory factory;
+
+    public MemoryConfig(@NotNull AdapterFactory factory) {
+        super(factory);
+        this.options = new FileConfigOptions(this);
+        this.factory = factory;
+    }
 
     /**
      * Sets the default value of the given path as provided.
@@ -24,7 +37,13 @@ public interface MemoryConfig extends ConfigSection {
      * @param value Value to set the default to.
      * @throws IllegalArgumentException Thrown if path is null.
      */
-    public void addDefault(String path, Object value);
+    
+    public void addDefault(@NotNull String path, Object value) {
+        if(def==null) {
+            def=new MemoryConfig(factory);
+        }
+        def.set(path,value);
+    }
 
     /**
      * Sets the default values of the given paths as provided.
@@ -36,7 +55,14 @@ public interface MemoryConfig extends ConfigSection {
      * @param defaults A map of Path{@literal ->}Values to add to defaults.
      * @throws IllegalArgumentException Thrown if defaults is null.
      */
-    public void addDefaults(Map<String, Object> defaults);
+    
+    public void addDefaults(@NotNull Map<String, Object> defaults) {
+        Objects.requireNonNull(defaults);
+
+        for(Map.Entry<String,Object> entry : defaults.entrySet()) {
+            addDefault(entry.getKey(),entry.getValue());
+        }
+    }
 
     /**
      * Sets the default values of the given paths as provided.
@@ -52,7 +78,11 @@ public interface MemoryConfig extends ConfigSection {
      * @param defaults A configuration holding a list of defaults to copy.
      * @throws IllegalArgumentException Thrown if defaults is null or this.
      */
-    public void addDefaults(MemoryConfig defaults);
+    
+    public void addDefaults(@NotNull MemoryConfig defaults) {
+        Objects.requireNonNull(defaults);
+        addDefaults(defaults.getValues(true));
+    }
 
     /**
      * Sets the source of all default values for this {@link ConfigLoader}.
@@ -63,7 +93,10 @@ public interface MemoryConfig extends ConfigSection {
      * @param defaults New source of default values for this configuration.
      * @throws IllegalArgumentException Thrown if defaults is null or this.
      */
-    public void setDefaults(MemoryConfig defaults);
+    
+    public void setDefaults(MemoryConfig defaults) {
+        this.def = defaults;
+    }
 
     /**
      * Gets the source {@link FileConfig} for this configuration.
@@ -74,13 +107,58 @@ public interface MemoryConfig extends ConfigSection {
      *
      * @return Configuration source for default values, or null if none exist.
      */
-    public MemoryConfig getDefaults();
+    
+    public MemoryConfig getDefaults() {
+        return def;
+    }
 
-    public ConfigOptions options();
+    @NotNull
+    
+    public MemoryConfigOptions options() {
+        return options;
+    }
 
     /**
      * Takes any default values that are not set and directly copies them into the
-     * regular values.
+     * regular values. If {@link #supportsCommentPreservation()} is true then all default comments will be merged.  
      */
-    public void mergeDefaults();
+    
+    public void mergeDefaults() {
+        MemoryConfig defaults = def;
+        if(defaults==null)
+            return;
+
+        boolean copyDef = this.options.copyDefaults();
+        this.options.copyDefaults(false);
+        for(String key : def.getKeys(true)) {
+            if(!isSet(key)) {
+                this.set(key,defaults.get(key));
+                if(this.supportsCommentPreservation() && defaults.supportsCommentPreservation()) {
+                    this.setComments(key,defaults.getComments(key));
+                    this.setInlineComments(key,defaults.getInlineComments(key));
+                }
+            }
+        }
+        this.options.copyDefaults(copyDef);
+    }
+
+    
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("base",adapter)
+                .add("def",def).toString();
+    }
+
+    
+    public boolean equals(Object o) {
+        if(!(o instanceof MemoryConfig))
+            return false;
+
+        MemoryConfig config = (MemoryConfig) o;
+        if(!config.options().equals(this.options()))
+            return false;
+
+        return config.getValues(true).equals(this.getValues(true));
+    }
+
 }

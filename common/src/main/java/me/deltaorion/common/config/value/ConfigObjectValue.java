@@ -11,11 +11,9 @@ import java.util.Map;
 
 public class ConfigObjectValue implements ConfigValue {
 
-    @NotNull private final String path;
     @Nullable private final Object value;
 
-    public ConfigObjectValue(@NotNull String path, @Nullable Object value) {
-        this.path = path;
+    public ConfigObjectValue(@Nullable Object value) {
         this.value = value;
     }
 
@@ -89,7 +87,7 @@ public class ConfigObjectValue implements ConfigValue {
         return value instanceof ConfigSection ? (ConfigSection) value : null;
     }
 
-    @Override
+    @Nullable @Override
     public List<?> asList() {
         return value instanceof List<?> ? (List<?>) value : null;
     }
@@ -99,6 +97,7 @@ public class ConfigObjectValue implements ConfigValue {
         return value instanceof List<?>;
     }
 
+    @NotNull
     @Override
     public List<String> asStringList() {
         List<?> list = asList();
@@ -125,6 +124,7 @@ public class ConfigObjectValue implements ConfigValue {
                 input instanceof Long || input instanceof Float;
     }
 
+    @NotNull
     @Override
     public List<Integer> asIntegerList() {
         List<?> list = asList();
@@ -153,6 +153,7 @@ public class ConfigObjectValue implements ConfigValue {
         return result;
     }
 
+    @NotNull
     @Override
     public List<Boolean> asBooleanList() {
         List<?> list = asList();
@@ -178,6 +179,7 @@ public class ConfigObjectValue implements ConfigValue {
         return result;
     }
 
+    @NotNull
     @Override
     public List<Double> asDoubleList() {
         List<?> list = asList();
@@ -206,6 +208,7 @@ public class ConfigObjectValue implements ConfigValue {
         return result;
     }
 
+    @NotNull
     @Override
     public List<Character> asCharacterList() {
         List<?> list = asList();
@@ -233,6 +236,7 @@ public class ConfigObjectValue implements ConfigValue {
         return result;
     }
 
+    @NotNull
     @Override
     public List<Byte> asByteList() {
         List<?> list = asList();
@@ -261,6 +265,7 @@ public class ConfigObjectValue implements ConfigValue {
         return result;
     }
 
+    @NotNull
     @Override
     public List<Long> asLongList() {
         List<?> list = asList();
@@ -289,6 +294,7 @@ public class ConfigObjectValue implements ConfigValue {
         return result;
     }
 
+    @NotNull
     @Override
     public List<Float> asFloatList() {
         List<?> list = asList();
@@ -317,6 +323,7 @@ public class ConfigObjectValue implements ConfigValue {
         return result;
     }
 
+    @NotNull
     @Override
     public List<Short> asShortList() {
         List<?> list = asList();
@@ -345,6 +352,7 @@ public class ConfigObjectValue implements ConfigValue {
         return result;
     }
 
+    @NotNull
     @Override
     public List<Map<?, ?>> asMapList() {
         List<?> list = asList();

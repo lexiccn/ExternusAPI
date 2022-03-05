@@ -1,5 +1,6 @@
 package me.deltaorion.common.test.shared;
 
+import com.google.common.collect.ImmutableList;
 import me.deltaorion.common.config.ConfigSection;
 import me.deltaorion.common.config.FileConfig;
 import me.deltaorion.common.config.MemoryConfig;
@@ -19,6 +20,43 @@ public class ConfigTest {
         if(config.supportsNesting()) {
             nestedTest(config,defaults);
         }
+        if(config.supportsCommentPreservation()) {
+            commentsTest(config, defaults);
+        }
+    }
+
+    private void commentsTest(FileConfig config, FileConfig defaults) {
+        assertTrue(config.getComments("a").size()>0);
+        assertTrue(config.options().getHeader().size()>0);
+        assertTrue(config.getInlineComments("d").size()>0);
+        assertTrue(config.getComments("d").size()>0);
+        assertTrue(config.getComments("nest").size()>0);
+        assertTrue(config.getInlineComments("nest").size()>0);
+        config.setDefaults(defaults);
+        config.mergeDefaults();
+        assertTrue(config.getComments("k").size()>0);
+
+        config.setComments("b", ImmutableList.of("b","","b"));
+        config.setInlineComments("b",ImmutableList.of("b"));
+
+        assertEquals(ImmutableList.of("b","","b"),config.getComments("b"));
+        assertEquals(ImmutableList.of("b"),config.getInlineComments("b"));
+
+        if(!config.supportsNesting())
+            return;
+
+        assertTrue(config.getComments("nest.i.j").size()>0);
+        assertTrue(config.getInlineComments("nest.i.j").size()>0);
+        assertTrue(config.getComments("nest.i.j.j4").size()>0);
+        assertEquals(0, config.getInlineComments("nest.i.j.j4").size());
+        assertTrue(config.getComments("nest.k").size()>0);
+        assertTrue(config.getInlineComments("nest.k").size()>0);
+
+        config.setComments("b", ImmutableList.of("b","","b"));
+        config.setInlineComments("b",ImmutableList.of("b"));
+
+        assertEquals(ImmutableList.of("b","","b"),config.getComments("b"));
+        assertEquals(ImmutableList.of("b"),config.getInlineComments("b"));
     }
 
     private void valuesTest(FileConfig config, FileConfig defaults) {
@@ -122,8 +160,17 @@ public class ConfigTest {
         config.options().copyDefaults(true);
         config.options().pathSeparator('.');
         assertTrue(config.isConfigurationSection("nest"));
+        assertEquals("nest.i.j",config.getConfigurationSection("nest.i.j").getCurrentPath());
 
         basicNestTest(config);
+        parentTest(config);
+    }
+
+    private void parentTest(FileConfig config) {
+        ConfigSection section = config.getConfigurationSection("nest.i.j");
+        ConfigSection parent = section.getParent();
+        assertEquals(config.get("nest.i"),parent);
+        assertEquals(section,parent.get("j"));
     }
 
     private void basicNestTest(FileConfig config) {
@@ -148,5 +195,6 @@ public class ConfigTest {
         created.set("n",5);
         assertEquals(created,get);
         assertEquals(get.get("m"),created.get("m"));
+        assertEquals(get.getRoot(),config);
     }
 }

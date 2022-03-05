@@ -1,10 +1,10 @@
 package me.deltaorion.bukkit;
 
-import me.deltaorion.bukkit.configuration.YamlAdapter;
 import me.deltaorion.bukkit.plugin.plugin.BukkitPlugin;
 import me.deltaorion.bukkit.test.command.*;
 import me.deltaorion.bukkit.test.command_old.*;
 import me.deltaorion.bukkit.test.unit.*;
+import me.deltaorion.common.config.nested.yaml.YamlAdapter;
 import me.deltaorion.common.test.command.*;
 import me.deltaorion.common.test.generic.AsyncFailTest;
 import me.deltaorion.common.test.generic.McTester;
@@ -12,8 +12,6 @@ import me.deltaorion.common.test.unit.ArgTest;
 import me.deltaorion.common.test.unit.ConfigurationTest;
 import me.deltaorion.common.test.unit.LocaleTest;
 import me.deltaorion.common.test.unit.McTestTest;
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
 
 public final class ExtAPI extends BukkitPlugin {
 

@@ -1,16 +1,34 @@
-package me.deltaorion.common.config;
+package me.deltaorion.common.config.options;
+
+import com.google.common.base.MoreObjects;
+import me.deltaorion.common.config.FileConfig;
+import me.deltaorion.common.config.MemoryConfig;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author org.bukkit, DeltaOrion
  */
-public interface ConfigOptions {
+public class ConfigSectionOptions {
+
+    @NotNull private final MemoryConfig root;
+    private boolean copyDefaults;
+    private char pathSeparator;
+
+    public ConfigSectionOptions(@NotNull MemoryConfig root) {
+        this.root = root;
+        this.copyDefaults = false;
+        this.pathSeparator = '.';
+    }
 
     /**
      * Returns the {@link FileConfig} that this object is responsible for.
      *
      * @return Parent configuration
      */
-    public MemoryConfig configuration();
+    
+    public MemoryConfig configuration() {
+        return root;
+    }
 
     /**
      * Gets the char that will be used to separate {@link
@@ -21,7 +39,10 @@ public interface ConfigOptions {
      *
      * @return Path separator
      */
-    public char pathSeparator();
+    
+    public char pathSeparator() {
+        return pathSeparator;
+    }
 
     /**
      * Sets the char that will be used to separate {@link
@@ -33,7 +54,11 @@ public interface ConfigOptions {
      * @param value Path separator
      * @return This object, for chaining
      */
-    public ConfigOptions pathSeparator(char value);
+    
+    public ConfigSectionOptions pathSeparator(char value) {
+        this.pathSeparator = value;
+        return this;
+    }
 
     /**
      * Checks if the {@link FileConfig} should copy values from its default
@@ -49,7 +74,10 @@ public interface ConfigOptions {
      *
      * @return Whether or not defaults are directly copied
      */
-    public boolean copyDefaults();
+    
+    public boolean copyDefaults() {
+        return copyDefaults;
+    }
 
     /**
      * Sets if the {@link FileConfig} should copy values from its default
@@ -66,6 +94,25 @@ public interface ConfigOptions {
      * @param value Whether or not defaults are directly copied
      * @return This object, for chaining
      */
-    public ConfigOptions copyDefaults(boolean value);
+    
+    public ConfigSectionOptions copyDefaults(boolean value) {
+        this.copyDefaults = value;
+        return this;
+    }
 
+    
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("copy-defaults",copyDefaults)
+                .add("path-separator",pathSeparator)
+                .toString();
+    }
+
+    public boolean equals(Object o) {
+        if(!(o instanceof ConfigSectionOptions))
+            return false;
+
+        ConfigSectionOptions options = (ConfigSectionOptions) o;
+        return options.copyDefaults() == this.copyDefaults() && options.pathSeparator() == this.pathSeparator();
+    }
 }

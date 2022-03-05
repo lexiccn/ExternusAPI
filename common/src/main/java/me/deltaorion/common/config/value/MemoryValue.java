@@ -154,6 +154,7 @@ public class MemoryValue implements ConfigValue {
         return def.asConfigSection();
     }
 
+    @NotNull
     @Override
     public List<?> asList() {
         if(value.isList())
@@ -174,6 +175,7 @@ public class MemoryValue implements ConfigValue {
         return false;
     }
 
+    @NotNull
     @Override
     public List<String> asStringList() {
         if(value.isList())
@@ -182,6 +184,7 @@ public class MemoryValue implements ConfigValue {
         return def.asStringList();
     }
 
+    @NotNull
     @Override
     public List<Integer> asIntegerList() {
         if(value.isList())
@@ -190,6 +193,7 @@ public class MemoryValue implements ConfigValue {
         return def.asIntegerList();
     }
 
+    @NotNull
     @Override
     public List<Boolean> asBooleanList() {
         if(value.isList())
@@ -198,6 +202,7 @@ public class MemoryValue implements ConfigValue {
         return def.asBooleanList();
     }
 
+    @NotNull
     @Override
     public List<Double> asDoubleList() {
         if(value.isList())
@@ -206,6 +211,7 @@ public class MemoryValue implements ConfigValue {
         return def.asDoubleList();
     }
 
+    @NotNull
     @Override
     public List<Character> asCharacterList() {
         if(value.isList())
@@ -214,6 +220,7 @@ public class MemoryValue implements ConfigValue {
         return def.asCharacterList();
     }
 
+    @NotNull
     @Override
     public List<Byte> asByteList() {
         if(value.isList())
@@ -222,6 +229,7 @@ public class MemoryValue implements ConfigValue {
         return def.asByteList();
     }
 
+    @NotNull
     @Override
     public List<Long> asLongList() {
         if(value.isList())
@@ -230,6 +238,7 @@ public class MemoryValue implements ConfigValue {
         return def.asLongList();
     }
 
+    @NotNull
     @Override
     public List<Float> asFloatList() {
         if(value.isList())
@@ -238,6 +247,7 @@ public class MemoryValue implements ConfigValue {
         return def.asFloatList();
     }
 
+    @NotNull
     @Override
     public List<Short> asShortList() {
         if(value.isList())
@@ -246,6 +256,7 @@ public class MemoryValue implements ConfigValue {
         return def.asShortList();
     }
 
+    @NotNull
     @Override
     public List<Map<?, ?>> asMapList() {
         if(value.isList())

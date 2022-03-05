@@ -1,8 +1,8 @@
 package me.deltaorion.common.test.unit;
 
 import me.deltaorion.common.config.FileConfig;
+import me.deltaorion.common.config.InvalidConfigurationException;
 import me.deltaorion.common.config.adapter.AdapterFactory;
-import me.deltaorion.common.config.memory.MemoryFileConfig;
 import me.deltaorion.common.test.generic.McTest;
 import me.deltaorion.common.test.generic.MinecraftTest;
 import me.deltaorion.common.test.shared.ConfigTest;
@@ -20,19 +20,13 @@ public class ConfigurationTest implements MinecraftTest {
     }
 
     @McTest
-    public void test() {
-        FileConfig config = null;
-        FileConfig defaults = null;
-        try {
-            config = MemoryFileConfig.loadConfiguration(factory, getClass().getClassLoader().getResourceAsStream("config.yml"));
-            defaults = MemoryFileConfig.loadConfiguration(factory, getClass().getClassLoader().getResourceAsStream("defaults.yml"));
+    public void test() throws IOException, InvalidConfigurationException {
+        FileConfig config = FileConfig.loadConfiguration(factory, getClass().getClassLoader().getResourceAsStream("config.yml"));
+        FileConfig defaults = FileConfig.loadConfiguration(factory, getClass().getClassLoader().getResourceAsStream("defaults.yml"));
 
-            ConfigTest test = new ConfigTest();
-            //test.test(config,defaults);
-            test.test(config,defaults);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ConfigTest test = new ConfigTest();
+        //test.test(config,defaults);
+        test.test(config,defaults);
     }
 
     @Override
