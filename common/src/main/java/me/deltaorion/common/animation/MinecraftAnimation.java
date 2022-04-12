@@ -2,7 +2,7 @@ package me.deltaorion.common.animation;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
 import net.jcip.annotations.GuardedBy;
 import org.jetbrains.annotations.NotNull;
 

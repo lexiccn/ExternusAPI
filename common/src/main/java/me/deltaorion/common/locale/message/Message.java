@@ -1,7 +1,7 @@
 package me.deltaorion.common.locale.message;
 
-import me.deltaorion.common.locale.ChatColor;
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.locale.IChatColor;
+import me.deltaorion.common.plugin.EServer;
 import net.jcip.annotations.GuardedBy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,7 +81,7 @@ public class Message {
             builder.append(component.toString(locale));
         }
 
-        return ChatColor.translateAlternateColorCodes(
+        return IChatColor.translateAlternateColorCodes(
                 '&',substitutePlaceHolders(builder.toString(),args));
     }
 
@@ -187,7 +187,7 @@ public class Message {
             return this;
         }
 
-        public Builder style(ChatColor chatColor) {
+        public Builder style(IChatColor chatColor) {
             this.components.add(new SimpleComponent(chatColor));
             this.components.add(new SimpleComponent(""));
             return this;

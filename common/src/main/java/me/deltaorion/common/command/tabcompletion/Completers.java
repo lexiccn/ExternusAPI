@@ -1,7 +1,7 @@
 package me.deltaorion.common.command.tabcompletion;
 
 import me.deltaorion.common.plugin.sender.Sender;
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.plugin.EServer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

@@ -7,7 +7,7 @@ import me.deltaorion.common.animation.RunningAnimation;
 import me.deltaorion.common.animation.running.ScheduleAsyncRunningAnimation;
 import me.deltaorion.common.animation.running.SleepAsyncRunningAnimation;
 import me.deltaorion.common.animation.running.SyncBukkitRunningAnimation;
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
 import org.jetbrains.annotations.NotNull;
 
 public class AnimationFactories {

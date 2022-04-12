@@ -1,6 +1,6 @@
 import me.deltaorion.common.config.FileConfig;
 import me.deltaorion.common.config.InvalidConfigurationException;
-import me.deltaorion.common.config.nested.yaml.YamlAdapter;
+import me.deltaorion.common.config.yaml.YamlAdapter;
 import me.deltaorion.common.config.properties.PropertiesAdapter;
 import me.deltaorion.common.test.shared.ConfigTest;
 import org.junit.Test;

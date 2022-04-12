@@ -1,6 +1,6 @@
 package me.deltaorion.common.plugin.sender;
 
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.plugin.EServer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,7 +1,7 @@
-package me.deltaorion.common.config.value;
+package me.deltaorion.common.config.nested;
 
 import me.deltaorion.common.config.ConfigSection;
-import me.deltaorion.common.config.adapter.ConfigAdapter;
+import me.deltaorion.common.config.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,10 +103,10 @@ public class ConfigObjectValue implements ConfigValue {
         List<?> list = asList();
 
         if (list == null) {
-            return new ArrayList<String>(0);
+            return new ArrayList<>(0);
         }
 
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         for (Object object : list) {
             if ((object instanceof String) || (isPrimitiveWrapper(object))) {

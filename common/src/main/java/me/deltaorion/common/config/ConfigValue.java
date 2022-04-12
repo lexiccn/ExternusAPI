@@ -1,4 +1,4 @@
-package me.deltaorion.common.config.value;
+package me.deltaorion.common.config;
 
 import me.deltaorion.common.config.ConfigSection;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +54,7 @@ public interface ConfigValue {
 
     /**
      * Returns a list representation of the value. If the value cannot be represented as a list then this will
-     * return an empty list.
+     * return null
      *
      * @return An empty list.
      */

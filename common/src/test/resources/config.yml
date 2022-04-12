@@ -1,4 +1,6 @@
 #epic header
+#epic header 2
+---
 
 #
 #a is good
@@ -16,10 +18,14 @@ f: 3
 g: 3.1
 h: 1111111111111111111
 i: a
+list:
+  - 'a'
+  - 'b'
+  - 'c'
+
 #nest is a good nest
 #nest 1
 #nest 3
-#
 nest: #isnt that right nest
   f: h
   i:

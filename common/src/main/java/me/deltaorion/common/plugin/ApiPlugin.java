@@ -1,4 +1,4 @@
-package me.deltaorion.common.plugin.plugin;
+package me.deltaorion.common.plugin;
 
 import me.deltaorion.common.command.Command;
 import org.jetbrains.annotations.NotNull;

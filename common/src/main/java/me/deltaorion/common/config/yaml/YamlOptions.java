@@ -1,4 +1,4 @@
-package me.deltaorion.common.config.nested.yaml;
+package me.deltaorion.common.config.yaml;
 
 import com.google.common.base.Preconditions;
 

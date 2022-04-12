@@ -2,7 +2,7 @@ package me.deltaorion.common.config.file;
 
 import me.deltaorion.common.config.FileConfig;
 import me.deltaorion.common.config.InvalidConfigurationException;
-import me.deltaorion.common.config.adapter.AdapterFactory;
+import me.deltaorion.common.config.AdapterFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

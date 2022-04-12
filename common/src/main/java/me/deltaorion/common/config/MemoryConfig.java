@@ -1,7 +1,6 @@
 package me.deltaorion.common.config;
 
 import com.google.common.base.MoreObjects;
-import me.deltaorion.common.config.adapter.AdapterFactory;
 import me.deltaorion.common.config.file.ConfigLoader;
 import me.deltaorion.common.config.options.FileConfigOptions;
 import me.deltaorion.common.config.options.MemoryConfigOptions;

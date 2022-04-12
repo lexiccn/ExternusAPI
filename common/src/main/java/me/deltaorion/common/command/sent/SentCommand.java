@@ -2,8 +2,8 @@ package me.deltaorion.common.command.sent;
 
 import com.google.common.base.MoreObjects;
 import me.deltaorion.common.command.CommandException;
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
-import me.deltaorion.common.plugin.plugin.EPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.EPlugin;
 import me.deltaorion.common.plugin.sender.Sender;
 import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;

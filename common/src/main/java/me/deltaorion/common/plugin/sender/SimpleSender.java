@@ -2,7 +2,7 @@ package me.deltaorion.common.plugin.sender;
 
 import com.google.common.base.MoreObjects;
 import me.deltaorion.common.locale.message.Message;
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.plugin.EServer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;

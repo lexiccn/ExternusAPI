@@ -4,7 +4,7 @@ import me.deltaorion.common.command.FunctionalCommand;
 import me.deltaorion.common.command.parser.ArgumentParser;
 import me.deltaorion.common.command.sent.CommandArg;
 import me.deltaorion.common.command.sent.SentCommand;
-import me.deltaorion.common.plugin.plugin.EPlugin;
+import me.deltaorion.common.plugin.EPlugin;
 import me.deltaorion.common.plugin.sender.Sender;
 import me.deltaorion.common.plugin.sender.TestSender;
 import me.deltaorion.common.test.command.MessageCommand;

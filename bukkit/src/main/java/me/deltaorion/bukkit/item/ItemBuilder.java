@@ -6,7 +6,7 @@ import com.mojang.authlib.properties.Property;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTItem;
 import me.deltaorion.bukkit.plugin.UnsupportedVersionException;
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.plugin.EServer;
 import me.deltaorion.bukkit.item.custom.CustomItem;
 import me.deltaorion.bukkit.item.potion.PotionBuilder;
 import me.deltaorion.bukkit.item.potion.PotionBuilderFactory;

@@ -2,13 +2,9 @@ package me.deltaorion.common.config;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Splitter;
-import me.deltaorion.common.config.adapter.AdapterFactory;
-import me.deltaorion.common.config.adapter.ConfigAdapter;
 import me.deltaorion.common.config.file.ConfigLoader;
 import me.deltaorion.common.config.options.ConfigSectionOptions;
-import me.deltaorion.common.config.value.ConfigObjectValue;
-import me.deltaorion.common.config.value.ConfigValue;
-import me.deltaorion.common.config.value.MemoryValue;
+import me.deltaorion.common.config.nested.ConfigObjectValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

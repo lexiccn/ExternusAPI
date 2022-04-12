@@ -1,7 +1,8 @@
 package me.deltaorion.common.plugin.depend;
 
 import com.google.common.base.MoreObjects;
-import me.deltaorion.common.plugin.plugin.EPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.EPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +22,7 @@ import java.util.Objects;
  * This class also automatically checks if the plugin jar is enabled or not and acts appropiately whether it is required or
  * not.
  *
- * To register a dependency use {@link me.deltaorion.common.plugin.plugin.ApiPlugin#registerDependency(String, boolean)} to use this class.
+ * To register a dependency use {@link ApiPlugin#registerDependency(String, boolean)} to use this class.
  *
  */
 

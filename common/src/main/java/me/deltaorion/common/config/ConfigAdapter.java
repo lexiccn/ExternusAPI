@@ -1,15 +1,12 @@
-package me.deltaorion.common.config.adapter;
+package me.deltaorion.common.config;
 
 import me.deltaorion.common.config.ConfigSection;
 import me.deltaorion.common.config.InvalidConfigurationException;
 import me.deltaorion.common.config.options.FileConfigOptions;
-import me.deltaorion.common.config.value.ConfigValue;
+import me.deltaorion.common.config.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +23,7 @@ import java.util.Set;
  * For nest configuration sections the config adapter should act as a config section, and not simply as the root config.
  *
  * Some subclasses are
- *   - {@link me.deltaorion.common.config.nested.yaml.YamlConfigAdapter}
+ *   - {@link me.deltaorion.common.config.yaml.YamlConfigAdapter}
  *   - {@link me.deltaorion.common.config.properties.PropertiesAdapter}
  */
 public interface ConfigAdapter {
@@ -125,11 +122,11 @@ public interface ConfigAdapter {
      * Loads the config from the specified reader. This should take the values and transform it into an appropiate format for reading. Comments may
      * or may not be parsed depending on the settings.
      *
-     * @param reader The reader to load from
+     * @param inputStream the inputstream to retrieve the config from
      * @throws IOException If an error occurs
      * @throws InvalidConfigurationException If a syntax error occurs while reading the config.
      */
-    void load(@NotNull Reader reader) throws IOException, InvalidConfigurationException;
+    void load(@NotNull InputStream inputStream) throws IOException, InvalidConfigurationException;
 
     /**
      * @return Whether the config adapter supports comment preservation

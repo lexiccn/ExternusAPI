@@ -2,6 +2,7 @@ package me.deltaorion.bukkit.display.actionbar;
 
 import me.deltaorion.bukkit.plugin.plugin.BukkitPlugin;
 import me.deltaorion.bukkit.display.bukkit.BukkitApiPlayer;
+import me.deltaorion.common.plugin.depend.MissingDependencyException;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +20,7 @@ public interface ActionBarFactory {
      * @param args Message arguments
      * @param manager The action bar manager displaying the running action bar
      * @return A new RunningActionBar Implementation
-     * @throws me.deltaorion.common.plugin.exception.MissingDependencyException if an implementation requires some kind of dependency
+     * @throws MissingDependencyException if an implementation requires some kind of dependency
      */
     @NotNull
     public RunningActionBar get(@NotNull ActionBar actionBar, @NotNull BukkitPlugin plugin, @NotNull BukkitApiPlayer player, Object[] args, @NotNull ActionBarManager manager, @NotNull Player bukkitPlayer);

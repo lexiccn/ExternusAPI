@@ -1,6 +1,7 @@
-package me.deltaorion.common.config.value;
+package me.deltaorion.common.config;
 
 import me.deltaorion.common.config.ConfigSection;
+import me.deltaorion.common.config.ConfigValue;
 import me.deltaorion.common.config.MemoryConfig;
 import org.jetbrains.annotations.NotNull;
 

@@ -72,13 +72,11 @@
             <scope>system</scope>
             <systemPath>${pom.basedir}/lib/TestDepend-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
-
         <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.30</version>
+            <groupId>com.amihaiemil.web</groupId>
+            <artifactId>eo-yaml</artifactId>
+            <version>6.0.1</version>
         </dependency>
-
     </dependencies>
 
 </project>

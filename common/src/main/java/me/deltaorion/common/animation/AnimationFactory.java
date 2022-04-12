@@ -1,6 +1,6 @@
 package me.deltaorion.common.animation;
 
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
 import org.jetbrains.annotations.NotNull;
 
 /**

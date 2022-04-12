@@ -1,7 +1,7 @@
 package me.deltaorion.bukkit.command;
 
 import me.deltaorion.common.command.sent.SentCommand;
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;

@@ -1,7 +1,7 @@
 package me.deltaorion.common.plugin.depend;
 
 import com.google.common.base.MoreObjects;
-import me.deltaorion.common.plugin.plugin.EPlugin;
+import me.deltaorion.common.plugin.EPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

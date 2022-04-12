@@ -1,9 +1,9 @@
 package me.deltaorion.common.test.command_old;
 
 import me.deltaorion.common.plugin.sender.Sender;
-import me.deltaorion.common.plugin.plugin.EPlugin;
+import me.deltaorion.common.plugin.EPlugin;
 import me.deltaorion.common.plugin.scheduler.SchedulerTask;
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.plugin.EServer;
 
 import java.util.concurrent.TimeUnit;
 

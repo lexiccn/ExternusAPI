@@ -1,7 +1,7 @@
 package me.deltaorion.bungee.command;
 
 import me.deltaorion.common.command.sent.SentCommand;
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;

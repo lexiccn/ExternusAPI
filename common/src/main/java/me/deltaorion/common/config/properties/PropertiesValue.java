@@ -1,7 +1,7 @@
 package me.deltaorion.common.config.properties;
 
 import me.deltaorion.common.config.ConfigSection;
-import me.deltaorion.common.config.value.ConfigValue;
+import me.deltaorion.common.config.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

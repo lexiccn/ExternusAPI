@@ -8,7 +8,7 @@ import me.deltaorion.common.animation.MinecraftFrame;
 import me.deltaorion.common.animation.factory.AnimationFactories;
 import me.deltaorion.common.command.CommandException;
 import me.deltaorion.common.command.sent.SentCommand;
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
 import me.deltaorion.common.test.command.AbstractAnimationTestCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

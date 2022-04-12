@@ -1,7 +1,7 @@
-package me.deltaorion.common.plugin.server;
+package me.deltaorion.common.plugin;
 
 import me.deltaorion.common.plugin.sender.Sender;
-import me.deltaorion.common.plugin.plugin.EPlugin;
+import me.deltaorion.common.plugin.EPlugin;
 import me.deltaorion.common.plugin.sender.SenderFactory;
 import me.deltaorion.common.plugin.version.MinecraftVersion;
 import org.jetbrains.annotations.NotNull;

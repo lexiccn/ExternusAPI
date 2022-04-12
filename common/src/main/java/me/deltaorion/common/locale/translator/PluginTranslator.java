@@ -1,7 +1,7 @@
 package me.deltaorion.common.locale.translator;
 
-import me.deltaorion.common.plugin.plugin.EPlugin;
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.plugin.EPlugin;
+import me.deltaorion.common.plugin.EServer;
 
 import java.util.Locale;
 

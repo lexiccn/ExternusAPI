@@ -1,7 +1,6 @@
 package me.deltaorion.common.config;
 
 import com.google.common.base.MoreObjects;
-import me.deltaorion.common.config.adapter.AdapterFactory;
 import me.deltaorion.common.config.file.ConfigLoader;
 import me.deltaorion.common.config.options.FileConfigOptions;
 import org.jetbrains.annotations.NotNull;
@@ -56,14 +55,14 @@ public class FileConfig extends MemoryConfig {
      *    - Should load comments in {@link #supportsCommentPreservation()} is true
      *    - Should load all nested structures if {@link #supportsNesting()} is true
      *
-     * @param reader the reader to load from
+     * @param inputStream the reader to load from
      * @throws IOException If an error occurs while reading the IOStream
      * @throws InvalidConfigurationException if there is a syntax error in the configuration
      */
     
-    public void load(@NotNull Reader reader) throws IOException, InvalidConfigurationException {
-        Objects.requireNonNull(reader);
-        adapter.load(reader);
+    public void load(@NotNull InputStream inputStream) throws IOException, InvalidConfigurationException {
+        Objects.requireNonNull(inputStream);
+        adapter.load(inputStream);
     }
 
     /**
@@ -83,21 +82,14 @@ public class FileConfig extends MemoryConfig {
     @NotNull
     public static FileConfig loadConfiguration(@NotNull AdapterFactory adapter, @NotNull InputStream stream) throws IOException, InvalidConfigurationException {
         FileConfig config = new FileConfig(adapter);
-        config.load(new InputStreamReader(stream));
-        return config;
-    }
-
-    @NotNull
-    public static FileConfig loadConfiguration(@NotNull AdapterFactory adapter, @NotNull Reader reader) throws IOException, InvalidConfigurationException {
-        FileConfig config = new FileConfig(adapter);
-        config.load(reader);
+        config.load(stream);
         return config;
     }
 
     @NotNull
     public static FileConfig loadConfiguration(@NotNull AdapterFactory adapter, @NotNull File file) throws IOException, InvalidConfigurationException {
         FileConfig config = new FileConfig(adapter);
-        config.load(new FileReader(file));
+        config.load(new FileInputStream(file));
         return config;
     }
 

@@ -1,7 +1,7 @@
 package me.deltaorion.bukkit.item.custom;
 
 import com.google.common.base.MoreObjects;
-import me.deltaorion.common.plugin.exception.MissingDependencyException;
+import me.deltaorion.common.plugin.depend.MissingDependencyException;
 import me.deltaorion.bukkit.plugin.plugin.BukkitAPIDepends;
 import me.deltaorion.bukkit.plugin.plugin.BukkitPlugin;
 import me.deltaorion.bukkit.item.predicate.EventPredicates;

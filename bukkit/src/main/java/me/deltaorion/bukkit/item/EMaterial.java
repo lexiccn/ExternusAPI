@@ -3,7 +3,6 @@ package me.deltaorion.bukkit.item;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import de.tr7zw.nbtapi.NbtApiException;
 import me.deltaorion.bukkit.plugin.UnsupportedVersionException;
 import me.deltaorion.common.plugin.version.MinecraftVersion;
 import net.jcip.annotations.Immutable;
@@ -1756,7 +1755,7 @@ public enum EMaterial {
                     new ItemBuilder(material)
                             .addTag("gamer", "gamer").build();
                     material.noNBT = false;
-                } catch (NbtApiException e) {
+                } catch (Exception e) {
                     material.noNBT = true;
                 }
             }

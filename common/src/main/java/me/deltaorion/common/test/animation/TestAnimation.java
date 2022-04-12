@@ -1,7 +1,7 @@
 package me.deltaorion.common.test.animation;
 
 import me.deltaorion.common.animation.*;
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -5,8 +5,8 @@ import me.deltaorion.common.animation.MinecraftFrame;
 import me.deltaorion.common.animation.factory.AnimationFactories;
 import me.deltaorion.common.command.CommandException;
 import me.deltaorion.common.command.sent.SentCommand;
-import me.deltaorion.common.locale.ChatColor;
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
+import me.deltaorion.common.locale.IChatColor;
+import me.deltaorion.common.plugin.ApiPlugin;
 import me.deltaorion.common.plugin.sender.Sender;
 import me.deltaorion.common.test.animation.ChatAnimation;
 
@@ -28,7 +28,7 @@ public class ChatAnimationTestCommand extends AbstractAnimationTestCommand<Strin
             for(int j=0;j<9;j++) {
                 animation.addFrame(new MinecraftFrame<>("",0));
             }
-            animation.addFrame(new MinecraftFrame<>(ChatColor.GOLD + "" + ChatColor.BOLD + str.charAt(i),time));
+            animation.addFrame(new MinecraftFrame<>(IChatColor.GOLD + "" + IChatColor.BOLD + str.charAt(i),time));
         }
         for(int j=0;j<9;j++) {
             animation.addFrame(new MinecraftFrame<>("",0));

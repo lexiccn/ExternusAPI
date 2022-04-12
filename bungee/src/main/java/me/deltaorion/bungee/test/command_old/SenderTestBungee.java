@@ -2,9 +2,9 @@ package me.deltaorion.bungee.test.command_old;
 
 import me.deltaorion.common.APIPermissions;
 import me.deltaorion.common.command.sent.MessageErrors;
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
 import me.deltaorion.common.plugin.sender.Sender;
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.plugin.EServer;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;

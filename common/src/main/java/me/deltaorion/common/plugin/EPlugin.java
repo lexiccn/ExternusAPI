@@ -1,8 +1,7 @@
-package me.deltaorion.common.plugin.plugin;
+package me.deltaorion.common.plugin;
 
 import me.deltaorion.common.plugin.logger.PluginLogger;
 import me.deltaorion.common.plugin.scheduler.SchedulerAdapter;
-import me.deltaorion.common.plugin.server.EServer;
 import net.jcip.annotations.NotThreadSafe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

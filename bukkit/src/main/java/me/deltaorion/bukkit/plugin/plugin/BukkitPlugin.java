@@ -6,17 +6,19 @@ import me.deltaorion.bukkit.display.bukkit.BukkitPlayerManager;
 import me.deltaorion.bukkit.display.bukkit.SimpleBukkitPlayerManager;
 import me.deltaorion.common.command.Command;
 import me.deltaorion.common.command.parser.ArgumentParser;
-import me.deltaorion.common.command.parser.ArgumentParsers;
 import me.deltaorion.bukkit.command.AsyncBukkitCommand;
 import me.deltaorion.bukkit.command.BukkitCommandMap;
 import me.deltaorion.bukkit.command.SyncBukkitCommand;
+import me.deltaorion.common.locale.IChatColor;
+import me.deltaorion.common.plugin.PackageLoader;
 import me.deltaorion.common.plugin.depend.Dependency;
+import me.deltaorion.common.plugin.depend.MissingDependencyException;
 import me.deltaorion.common.plugin.logger.PluginLogger;
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
-import me.deltaorion.common.plugin.plugin.SharedApiPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.SharedApiPlugin;
 import me.deltaorion.common.plugin.scheduler.SchedulerAdapter;
-import me.deltaorion.common.plugin.server.EServer;
-import me.deltaorion.common.plugin.thread.ErrorReportingThreadPool;
+import me.deltaorion.common.plugin.EServer;
+import me.deltaorion.common.plugin.scheduler.ErrorReportingThreadPool;
 import me.deltaorion.bukkit.display.bukkit.WrappedPlayerManager;
 import me.deltaorion.bukkit.item.EMaterial;
 import me.deltaorion.bukkit.item.custom.CustomItemManager;
@@ -310,11 +312,11 @@ public class BukkitPlugin extends JavaPlugin implements ApiPlugin {
 
     private void initialiseChatColors() {
         for(ChatColor color : ChatColor.values())  {
-            me.deltaorion.common.locale.ChatColor c = me.deltaorion.common.locale.ChatColor.valueOf(color.name());
+            IChatColor c = IChatColor.valueOf(color.name());
             c.initialise(color.getChar(),color.isFormat(),color.toString());
         }
 
-        me.deltaorion.common.locale.ChatColor.initialise(
+        IChatColor.initialise(
                 ChatColor::translateAlternateColorCodes,
                 ChatColor::stripColor
         );

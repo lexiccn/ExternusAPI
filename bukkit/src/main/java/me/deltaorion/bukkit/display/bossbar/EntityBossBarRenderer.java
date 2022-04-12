@@ -1,6 +1,6 @@
 package me.deltaorion.bukkit.display.bossbar;
 
-import me.deltaorion.common.plugin.exception.MissingDependencyException;
+import me.deltaorion.common.plugin.depend.MissingDependencyException;
 import me.deltaorion.bukkit.plugin.UnsupportedVersionException;
 import me.deltaorion.bukkit.plugin.plugin.BukkitAPIDepends;
 import me.deltaorion.bukkit.plugin.plugin.BukkitPlugin;

@@ -2,7 +2,7 @@ package me.deltaorion.bungee.plugin.sender;
 
 import com.google.common.base.MoreObjects;
 import me.deltaorion.common.plugin.sender.SenderInfo;
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.plugin.EServer;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;

@@ -1,6 +1,6 @@
 package me.deltaorion.common.test.shared;
 
-import me.deltaorion.common.locale.ChatColor;
+import me.deltaorion.common.locale.IChatColor;
 import me.deltaorion.common.locale.message.Message;
 import me.deltaorion.common.locale.translator.Translator;
 
@@ -71,7 +71,7 @@ public class LocalizationTest {
         Message everything = Message.valueOfBuilder(builder -> {
             builder.appendTranslatable("hello")
                     .append(" &e %s %s %s ")
-                    .style(ChatColor.BLACK)
+                    .style(IChatColor.BLACK)
                     .append(" Gamer");
         });
 

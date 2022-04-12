@@ -1,8 +1,8 @@
-package me.deltaorion.common.config.nested.yaml;
+package me.deltaorion.common.config.yaml;
 
 import me.deltaorion.common.config.ConfigSection;
-import me.deltaorion.common.config.adapter.AdapterFactory;
-import me.deltaorion.common.config.adapter.ConfigAdapter;
+import me.deltaorion.common.config.AdapterFactory;
+import me.deltaorion.common.config.ConfigAdapter;
 import org.jetbrains.annotations.NotNull;
 
 public class YamlAdapter implements AdapterFactory {

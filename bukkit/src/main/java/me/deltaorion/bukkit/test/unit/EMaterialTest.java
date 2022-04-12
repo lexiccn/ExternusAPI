@@ -1,11 +1,10 @@
 package me.deltaorion.bukkit.test.unit;
 
-import de.tr7zw.nbtapi.NbtApiException;
-import me.deltaorion.bukkit.plugin.plugin.BukkitPlugin;
-import me.deltaorion.common.plugin.version.MinecraftVersion;
 import me.deltaorion.bukkit.item.EMaterial;
 import me.deltaorion.bukkit.item.ItemBuilder;
 import me.deltaorion.bukkit.plugin.UnsupportedVersionException;
+import me.deltaorion.bukkit.plugin.plugin.BukkitPlugin;
+import me.deltaorion.common.plugin.version.MinecraftVersion;
 import me.deltaorion.common.test.generic.McTest;
 import me.deltaorion.common.test.generic.MinecraftTest;
 import org.bukkit.Bukkit;
@@ -76,7 +75,7 @@ public class EMaterialTest implements MinecraftTest {
             try {
                  builder = new ItemBuilder(material)
                         .addTag("Gamer", "Gamer");
-            } catch (NbtApiException e) {
+            } catch (Exception e) {
                 if (!material.noNBT()) {
                     notNoNBTButFailed.add(material);
                 }

@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static me.deltaorion.common.plugin.server.EServer.DEFAULT_LOCALE;
+import static me.deltaorion.common.plugin.EServer.DEFAULT_LOCALE;
 
 @ThreadSafe
 public class Translator {

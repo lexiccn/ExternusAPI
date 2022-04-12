@@ -1,12 +1,12 @@
 package me.deltaorion.common.test.mock;
 
 import com.google.common.collect.ImmutableList;
-import me.deltaorion.common.locale.ChatColor;
-import me.deltaorion.common.plugin.plugin.EPlugin;
+import me.deltaorion.common.locale.IChatColor;
+import me.deltaorion.common.plugin.EPlugin;
 import me.deltaorion.common.plugin.sender.Sender;
 import me.deltaorion.common.plugin.sender.SenderFactory;
 import me.deltaorion.common.plugin.sender.TestSender;
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.plugin.EServer;
 import me.deltaorion.common.plugin.version.MinecraftVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static me.deltaorion.common.locale.ChatColor.COLOR_CHAR;
+import static me.deltaorion.common.locale.IChatColor.COLOR_CHAR;
 
 public class TestServer implements EServer {
 
@@ -39,13 +39,13 @@ public class TestServer implements EServer {
 
     private void initChatColor() {
 
-        if(ChatColor.isInitialised())
+        if(IChatColor.isInitialised())
             return;
-        for(ChatColor chatColor : ChatColor.values()) {
+        for(IChatColor chatColor : IChatColor.values()) {
             chatColor.initialise(chatColor.getChar(), chatColor.isFormat(),chatColor.toString());
         }
 
-        ChatColor.initialise((altColorChar, textToTranslate) -> {
+        IChatColor.initialise((altColorChar, textToTranslate) -> {
             char[] b = textToTranslate.toCharArray();
             for (int i = 0; i < b.length - 1; i++) {
                 if (b[i] == altColorChar && "0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[i + 1]) > -1) {
@@ -139,7 +139,7 @@ public class TestServer implements EServer {
 
     @Override
     public String translateColorCodes(@NotNull String textToTranslate) {
-        return ChatColor.translateAlternateColorCodes('&',textToTranslate);
+        return IChatColor.translateAlternateColorCodes('&',textToTranslate);
     }
 
     @Override

@@ -1,11 +1,9 @@
 package me.deltaorion.common.config.properties;
 
 import me.deltaorion.common.config.ConfigSection;
-import me.deltaorion.common.config.MemoryConfig;
-import me.deltaorion.common.config.adapter.ConfigAdapter;
-import me.deltaorion.common.config.value.ConfigValue;
+import me.deltaorion.common.config.ConfigAdapter;
+import me.deltaorion.common.config.ConfigValue;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.List;
@@ -75,7 +73,7 @@ public class PropertiesConfigAdapter implements ConfigAdapter {
     }
 
     @Override
-    public void load(@NotNull Reader reader) throws IOException {
+    public void load(@NotNull InputStream reader) throws IOException {
         properties.load(reader);
     }
 

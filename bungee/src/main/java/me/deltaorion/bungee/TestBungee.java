@@ -5,7 +5,7 @@ import me.deltaorion.bungee.test.command_old.BungeeDependencyTest;
 import me.deltaorion.bungee.test.command_old.BungeeVersionTest;
 import me.deltaorion.bungee.test.command_old.SenderTestBungee;
 import me.deltaorion.bungee.test.command_old.ServerTestBungee;
-import me.deltaorion.common.config.nested.yaml.YamlAdapter;
+import me.deltaorion.common.config.yaml.YamlAdapter;
 import me.deltaorion.common.test.command.*;
 import me.deltaorion.common.test.generic.McTester;
 import me.deltaorion.common.test.unit.ArgTest;

@@ -3,7 +3,7 @@ package me.deltaorion.common.command.parser;
 import me.deltaorion.common.command.CommandException;
 import me.deltaorion.common.command.sent.MessageErrors;
 import me.deltaorion.common.plugin.sender.Sender;
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.plugin.EServer;
 import me.deltaorion.common.test.mock.TestEnum;
 
 import java.util.Locale;

@@ -1,7 +1,7 @@
 package me.deltaorion.bukkit.plugin.sender;
 import com.google.common.base.MoreObjects;
 import me.deltaorion.common.plugin.sender.SenderInfo;
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.plugin.EServer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;

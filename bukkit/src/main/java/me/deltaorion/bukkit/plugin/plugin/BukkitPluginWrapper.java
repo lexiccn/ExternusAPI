@@ -2,11 +2,11 @@ package me.deltaorion.bukkit.plugin.plugin;
 
 import me.deltaorion.common.plugin.logger.JavaPluginLogger;
 import me.deltaorion.common.plugin.logger.PluginLogger;
-import me.deltaorion.common.plugin.plugin.EPlugin;
+import me.deltaorion.common.plugin.EPlugin;
 import me.deltaorion.bukkit.plugin.scheduler.BukkitSchedulerAdapter;
 import me.deltaorion.common.plugin.scheduler.SchedulerAdapter;
 import me.deltaorion.bukkit.plugin.server.BukkitServer;
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.plugin.EServer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;

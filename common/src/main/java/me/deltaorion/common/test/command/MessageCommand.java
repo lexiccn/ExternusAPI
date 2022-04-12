@@ -5,7 +5,7 @@ import me.deltaorion.common.command.CommandException;
 import me.deltaorion.common.command.FunctionalCommand;
 import me.deltaorion.common.command.sent.SentCommand;
 import me.deltaorion.common.command.tabcompletion.Completers;
-import me.deltaorion.common.plugin.plugin.EPlugin;
+import me.deltaorion.common.plugin.EPlugin;
 import me.deltaorion.common.plugin.sender.Sender;
 import me.deltaorion.common.locale.message.Message;
 

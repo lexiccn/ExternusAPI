@@ -1,4 +1,4 @@
-package me.deltaorion.common.plugin.thread;
+package me.deltaorion.common.plugin.scheduler;
 
 import java.util.concurrent.*;
 

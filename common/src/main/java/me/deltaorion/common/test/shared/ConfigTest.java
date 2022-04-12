@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.deltaorion.common.config.ConfigSection;
 import me.deltaorion.common.config.FileConfig;
 import me.deltaorion.common.config.MemoryConfig;
-import me.deltaorion.common.config.value.ConfigValue;
+import me.deltaorion.common.config.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -31,7 +31,6 @@ public class ConfigTest {
         assertTrue(config.getInlineComments("d").size()>0);
         assertTrue(config.getComments("d").size()>0);
         assertTrue(config.getComments("nest").size()>0);
-        assertTrue(config.getInlineComments("nest").size()>0);
         config.setDefaults(defaults);
         config.mergeDefaults();
         assertTrue(config.getComments("k").size()>0);
@@ -46,7 +45,6 @@ public class ConfigTest {
             return;
 
         assertTrue(config.getComments("nest.i.j").size()>0);
-        assertTrue(config.getInlineComments("nest.i.j").size()>0);
         assertTrue(config.getComments("nest.i.j.j4").size()>0);
         assertEquals(0, config.getInlineComments("nest.i.j.j4").size());
         assertTrue(config.getComments("nest.k").size()>0);

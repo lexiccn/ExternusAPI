@@ -4,12 +4,13 @@ import me.deltaorion.common.animation.RunningAnimation;
 import me.deltaorion.common.command.Command;
 import me.deltaorion.common.command.parser.ArgumentParser;
 import me.deltaorion.bungee.command.BungeeCommand;
+import me.deltaorion.common.locale.IChatColor;
 import me.deltaorion.common.plugin.depend.Dependency;
 import me.deltaorion.common.plugin.logger.PluginLogger;
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
-import me.deltaorion.common.plugin.plugin.SharedApiPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.SharedApiPlugin;
 import me.deltaorion.common.plugin.scheduler.SchedulerAdapter;
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.plugin.EServer;
 import me.deltaorion.common.locale.translator.PluginTranslator;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -162,7 +163,7 @@ public class BungeePlugin extends Plugin implements ApiPlugin {
 
     private void initialiseChatColors() {
         //we arent given a way to initialise this properly
-        me.deltaorion.common.locale.ChatColor.initialise(
+        IChatColor.initialise(
                 ChatColor::translateAlternateColorCodes,
                 ChatColor::stripColor
         );

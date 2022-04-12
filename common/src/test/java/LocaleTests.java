@@ -1,14 +1,11 @@
-import me.deltaorion.common.locale.ChatColor;
 import me.deltaorion.common.locale.message.Message;
 import me.deltaorion.common.locale.translator.TranslationManager;
-import me.deltaorion.common.locale.translator.Translator;
 import me.deltaorion.common.test.shared.LocalizationTest;
 import org.junit.Test;
 
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.Locale;
 
 import static org.junit.Assert.*;
 

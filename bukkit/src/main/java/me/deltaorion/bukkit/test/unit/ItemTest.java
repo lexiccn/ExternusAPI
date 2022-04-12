@@ -1,7 +1,7 @@
 package me.deltaorion.bukkit.test.unit;
 
 import com.google.common.collect.ImmutableList;
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
 import me.deltaorion.bukkit.plugin.plugin.BukkitAPIDepends;
 import me.deltaorion.bukkit.item.EMaterial;
 import me.deltaorion.bukkit.item.ItemBuilder;

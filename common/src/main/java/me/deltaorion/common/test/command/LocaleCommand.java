@@ -4,7 +4,7 @@ import me.deltaorion.common.APIPermissions;
 import me.deltaorion.common.command.CommandException;
 import me.deltaorion.common.command.FunctionalCommand;
 import me.deltaorion.common.command.sent.SentCommand;
-import me.deltaorion.common.locale.ChatColor;
+import me.deltaorion.common.locale.IChatColor;
 import me.deltaorion.common.locale.message.Message;
 import me.deltaorion.common.locale.translator.Translator;
 import me.deltaorion.common.plugin.sender.Sender;
@@ -39,7 +39,7 @@ public class LocaleCommand extends FunctionalCommand {
         Message everything = Message.valueOfBuilder(builder -> {
             builder.appendTranslatable("hello")
                     .append(" &e %s %s %s ")
-                    .style(ChatColor.BLACK)
+                    .style(IChatColor.BLACK)
                     .append(" Gamer");
         });
 

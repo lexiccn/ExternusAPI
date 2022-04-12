@@ -4,7 +4,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AtomicDouble;
 import me.deltaorion.common.animation.*;
-import me.deltaorion.common.plugin.plugin.EPlugin;
+import me.deltaorion.common.plugin.EPlugin;
 import me.deltaorion.common.plugin.scheduler.SchedulerTask;
 import net.jcip.annotations.GuardedBy;
 import org.jetbrains.annotations.NotNull;

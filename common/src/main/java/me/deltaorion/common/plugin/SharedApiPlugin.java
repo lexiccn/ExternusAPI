@@ -1,4 +1,4 @@
-package me.deltaorion.common.plugin.plugin;
+package me.deltaorion.common.plugin;
 
 import me.deltaorion.common.animation.RunningAnimation;
 import me.deltaorion.common.command.parser.ArgumentParser;
@@ -6,11 +6,11 @@ import me.deltaorion.common.command.parser.ArgumentParsers;
 import me.deltaorion.common.command.parser.ParserRegistry;
 import me.deltaorion.common.command.parser.SimpleParserRegistry;
 import me.deltaorion.common.plugin.depend.Dependency;
+import me.deltaorion.common.plugin.depend.MissingDependencyException;
 import me.deltaorion.common.plugin.depend.SimpleDependencyManager;
 import me.deltaorion.common.plugin.logger.PluginLogger;
 import me.deltaorion.common.plugin.scheduler.SchedulerAdapter;
 import me.deltaorion.common.plugin.sender.Sender;
-import me.deltaorion.common.plugin.server.EServer;
 import me.deltaorion.common.locale.translator.PluginTranslator;
 import me.deltaorion.common.test.mock.TestEnum;
 import org.jetbrains.annotations.NotNull;
@@ -31,9 +31,6 @@ public class SharedApiPlugin implements BaseApiPlugin {
     @Nullable private PluginTranslator translator;
     @NotNull private final ConcurrentMap<RunningAnimation<?>,Object> animationCache;
 
-    private final String ERR_MSG = "Attempting to access abstraction API methods before the plugin has been enabled. Are you" +
-            "overriding onEnable? instead of onPluginEnable";
-
     public SharedApiPlugin(@NotNull EPlugin plugin) {
         this.plugin = Objects.requireNonNull(plugin);
         this.registry = new SimpleParserRegistry();
@@ -45,7 +42,6 @@ public class SharedApiPlugin implements BaseApiPlugin {
     private void registerDefaults() {
         registry.registerParser(TestEnum.class, ArgumentParsers.TEST_PARSER());
         registry.registerParser(Sender.class,ArgumentParsers.SENDER_PARSER(plugin.getEServer()));
-
     }
 
     /**
@@ -96,7 +92,7 @@ public class SharedApiPlugin implements BaseApiPlugin {
     @NotNull
     public PluginTranslator getTranslator() {
         if(this.translator==null)
-            throw new IllegalStateException(ERR_MSG);
+            throw new IllegalStateException();
 
         return this.translator;
     }

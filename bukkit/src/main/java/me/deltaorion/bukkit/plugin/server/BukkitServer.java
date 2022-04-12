@@ -6,10 +6,10 @@ import me.deltaorion.common.plugin.sender.SenderFactory;
 import me.deltaorion.bukkit.plugin.sender.BukkitSenderInfo;
 import me.deltaorion.common.plugin.sender.Sender;
 import me.deltaorion.common.plugin.sender.SimpleSender;
-import me.deltaorion.common.plugin.plugin.EPlugin;
+import me.deltaorion.common.plugin.EPlugin;
 import me.deltaorion.bukkit.plugin.sender.BukkitSenderInfo_12;
 import me.deltaorion.bukkit.plugin.sender.BukkitSenderInfo_8_11;
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.plugin.EServer;
 import me.deltaorion.common.plugin.version.MinecraftVersion;
 import me.deltaorion.common.plugin.version.VersionFactory;
 import org.apache.commons.lang.Validate;
@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.temporal.TemporalUnit;
 import java.util.*;
-import java.util.function.Function;
 
 public class BukkitServer implements EServer {
 

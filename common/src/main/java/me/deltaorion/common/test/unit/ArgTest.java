@@ -2,7 +2,7 @@ package me.deltaorion.common.test.unit;
 
 import me.deltaorion.common.command.CommandException;
 import me.deltaorion.common.command.sent.CommandArg;
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
 import me.deltaorion.common.test.command.FailCommand;
 import me.deltaorion.common.test.generic.McTest;
 import me.deltaorion.common.test.generic.MinecraftTest;

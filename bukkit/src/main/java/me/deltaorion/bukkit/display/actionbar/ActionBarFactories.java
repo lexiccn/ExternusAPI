@@ -4,7 +4,7 @@ import me.deltaorion.bukkit.display.actionbar.renderer.PacketActionBarRenderer;
 import me.deltaorion.bukkit.display.actionbar.renderer.WrapperActionBarRenderer;
 import me.deltaorion.bukkit.display.actionbar.running.ScheduleRunningActionBar;
 import me.deltaorion.bukkit.plugin.plugin.BukkitAPIDepends;
-import me.deltaorion.common.plugin.exception.MissingDependencyException;
+import me.deltaorion.common.plugin.depend.MissingDependencyException;
 import org.jetbrains.annotations.NotNull;
 
 public class ActionBarFactories {

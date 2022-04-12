@@ -3,7 +3,7 @@ package me.deltaorion.bukkit.test.animation;
 import me.deltaorion.common.animation.AnimationRenderer;
 import me.deltaorion.common.animation.MinecraftFrame;
 import me.deltaorion.common.animation.RunningAnimation;
-import me.deltaorion.common.plugin.plugin.EPlugin;
+import me.deltaorion.common.plugin.EPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

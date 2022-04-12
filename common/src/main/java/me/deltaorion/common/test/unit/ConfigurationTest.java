@@ -2,7 +2,7 @@ package me.deltaorion.common.test.unit;
 
 import me.deltaorion.common.config.FileConfig;
 import me.deltaorion.common.config.InvalidConfigurationException;
-import me.deltaorion.common.config.adapter.AdapterFactory;
+import me.deltaorion.common.config.AdapterFactory;
 import me.deltaorion.common.test.generic.McTest;
 import me.deltaorion.common.test.generic.MinecraftTest;
 import me.deltaorion.common.test.shared.ConfigTest;

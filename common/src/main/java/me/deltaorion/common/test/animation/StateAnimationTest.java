@@ -5,7 +5,7 @@ import me.deltaorion.common.animation.MinecraftAnimation;
 import me.deltaorion.common.animation.MinecraftFrame;
 import me.deltaorion.common.animation.RunningAnimation;
 import me.deltaorion.common.animation.factory.AnimationFactories;
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.function.Function;
 
-public enum ChatColor {
+public enum IChatColor {
 
     BLACK('0', 0x00),
     /**
@@ -95,8 +95,6 @@ public enum ChatColor {
     RESET('r', 0x15)
     ;
 
-
-    private int intCode;
     private char code;
     private boolean isFormat;
     @Nullable private  String toString;
@@ -105,13 +103,12 @@ public enum ChatColor {
     @Nullable private static TranslateFunction translateFunction;
     @Nullable private static Function<String,String> stripFunction;
 
-    private ChatColor(char code, int intCode) {
+    private IChatColor(char code, int intCode) {
         this(code, intCode, false);
     }
 
-    private ChatColor(char code, int intCode, boolean isFormat) {
+    private IChatColor(char code, int intCode, boolean isFormat) {
         this.code = code;
-        this.intCode = intCode;
         this.isFormat = isFormat;
         this.toString = new String(new char[] {COLOR_CHAR, code});
     }
@@ -126,7 +123,6 @@ public enum ChatColor {
         Objects.requireNonNull(toString);
         this.toString = toString;
         this.isFormat = isFormat;
-        this.intCode =code;
         this.code = code;
     }
 
@@ -164,14 +160,14 @@ public enum ChatColor {
 
 
     public static boolean isInitialised() {
-        return ChatColor.translateFunction!=null;
+        return IChatColor.translateFunction!=null;
     }
 
     public static void initialise(@NotNull TranslateFunction function, @NotNull Function<String,String> stripFunction) {
         if(isInitialised())
             throw new IllegalStateException("Translate function has already been initialised");
-        ChatColor.translateFunction = Objects.requireNonNull(function);
-        ChatColor.stripFunction = Objects.requireNonNull(stripFunction);
+        IChatColor.translateFunction = Objects.requireNonNull(function);
+        IChatColor.stripFunction = Objects.requireNonNull(stripFunction);
     }
 
     public static String translateAlternateColorCodes(char altColorChar, String textToTranslate) {

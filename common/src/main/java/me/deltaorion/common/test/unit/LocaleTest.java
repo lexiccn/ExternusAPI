@@ -3,7 +3,7 @@ package me.deltaorion.common.test.unit;
 import me.deltaorion.common.config.file.ConfigLoader;
 import me.deltaorion.common.config.file.FileConfigLoader;
 import me.deltaorion.common.config.properties.PropertiesAdapter;
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
 import me.deltaorion.common.test.generic.McTest;
 import me.deltaorion.common.test.generic.MinecraftTest;
 import me.deltaorion.common.test.shared.LocalizationTest;

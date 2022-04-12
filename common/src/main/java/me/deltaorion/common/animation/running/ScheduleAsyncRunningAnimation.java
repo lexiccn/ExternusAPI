@@ -7,7 +7,7 @@ import me.deltaorion.common.animation.AnimationException;
 import me.deltaorion.common.animation.AnimationRenderer;
 import me.deltaorion.common.animation.MinecraftAnimation;
 import me.deltaorion.common.animation.MinecraftFrame;
-import me.deltaorion.common.plugin.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.ApiPlugin;
 import me.deltaorion.common.plugin.scheduler.SchedulerTask;
 import net.jcip.annotations.GuardedBy;
 import org.jetbrains.annotations.NotNull;

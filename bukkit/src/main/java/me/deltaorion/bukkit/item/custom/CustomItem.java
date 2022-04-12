@@ -3,7 +3,7 @@ package me.deltaorion.bukkit.item.custom;
 import com.google.common.base.MoreObjects;
 import de.tr7zw.nbtapi.NBTCompound;
 import me.deltaorion.bukkit.plugin.plugin.BukkitPlugin;
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.plugin.EServer;
 import me.deltaorion.bukkit.item.EMaterial;
 import me.deltaorion.bukkit.item.ItemBuilder;
 import me.deltaorion.bukkit.item.predicate.EventPredicate;

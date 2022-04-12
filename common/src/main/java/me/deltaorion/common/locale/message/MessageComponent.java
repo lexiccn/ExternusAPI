@@ -1,6 +1,6 @@
 package me.deltaorion.common.locale.message;
 
-import me.deltaorion.common.plugin.server.EServer;
+import me.deltaorion.common.plugin.EServer;
 import net.jcip.annotations.Immutable;
 
 import java.util.Locale;

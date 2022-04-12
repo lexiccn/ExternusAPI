@@ -1,4 +1,4 @@
-package me.deltaorion.common.plugin.exception;
+package me.deltaorion.common.plugin.depend;
 
 /**
  * Thrown when the relevant dependency is not loaded on the server.

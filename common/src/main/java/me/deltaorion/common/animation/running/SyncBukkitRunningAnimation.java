@@ -4,7 +4,7 @@ import com.google.common.base.MoreObjects;
 import me.deltaorion.common.animation.AnimationException;
 import me.deltaorion.common.animation.AnimationRenderer;
 import me.deltaorion.common.animation.MinecraftFrame;
-import me.deltaorion.common.plugin.plugin.EPlugin;
+import me.deltaorion.common.plugin.EPlugin;
 import me.deltaorion.common.plugin.scheduler.SchedulerTask;
 import net.jcip.annotations.NotThreadSafe;
 import org.jetbrains.annotations.NotNull;

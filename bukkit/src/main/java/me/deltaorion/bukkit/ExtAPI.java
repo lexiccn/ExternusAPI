@@ -4,7 +4,7 @@ import me.deltaorion.bukkit.plugin.plugin.BukkitPlugin;
 import me.deltaorion.bukkit.test.command.*;
 import me.deltaorion.bukkit.test.command_old.*;
 import me.deltaorion.bukkit.test.unit.*;
-import me.deltaorion.common.config.nested.yaml.YamlAdapter;
+import me.deltaorion.common.config.yaml.YamlAdapter;
 import me.deltaorion.common.test.command.*;
 import me.deltaorion.common.test.generic.AsyncFailTest;
 import me.deltaorion.common.test.generic.McTester;
@@ -12,6 +12,7 @@ import me.deltaorion.common.test.unit.ArgTest;
 import me.deltaorion.common.test.unit.ConfigurationTest;
 import me.deltaorion.common.test.unit.LocaleTest;
 import me.deltaorion.common.test.unit.McTestTest;
+import org.bukkit.plugin.java.JavaPluginLoader;
 
 public final class ExtAPI extends BukkitPlugin {
 
@@ -45,6 +46,7 @@ public final class ExtAPI extends BukkitPlugin {
         registerCommand(new LocaleCommand(),"localetest");
         registerCommand(new EMaterialCommand(this),"materialtest");
         registerCommand(new SlotNumberTest(this),"slotnumbertest");
+
     }
 
     private void registerOldCommands() {
