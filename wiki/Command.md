@@ -203,7 +203,7 @@ public void commandLogic(SentCommand sentCommand) throws CommandException {
 
     //this will get the player from the sender.
     Player playerSender = Bukkit.getPlayer(sentCommand.getSender().getUniqueId());
-
+    
     //this will return the player from the argument. So if they typed in "/label DeltaOrion" this will get DeltaOrion
     Player playerArgument = sentCommand.getArgOrFail(0).parse(Player.class);
 }
