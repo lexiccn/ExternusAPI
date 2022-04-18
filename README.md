@@ -52,7 +52,7 @@ To include the ExtAPI into your pom.xml do the following steps
 
 ## Usage
 
-To learn how to use the API simply follow the wiki. There are also examples avaliable in the bukkit-test-plugin and bungee-test-plugin modules respectively
+To learn how to use the API simply follow the wiki which is located in the "wiki" folder in the source. There are also examples avaliable in the bukkit-test-plugin and bungee-test-plugin modules respectively
 
 ---
 
