@@ -110,7 +110,7 @@ public void onPluginEnable(){
 }
 ```
 
-The dependency can then be manipulated as follows.
+The dependency is manipulated as follows.
 ```java
 //The following returns true if
 //  - the dependency plugin is on the server
