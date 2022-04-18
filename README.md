@@ -56,6 +56,6 @@ To learn how to use the API simply follow the wiki. There are also examples aval
 
 ---
 
-##Licensing 
+## Licensing 
 
 Add something here if this is being released to public, preferably the GNU license or some kind of source avaliable license 
