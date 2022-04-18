@@ -115,13 +115,16 @@ To do things with the dependency is done as follows
 //  - the dependency plugin is on the server
 //  - the dependency plugin is enabled
 System.out.println("Dependency Active: " + getDependency("NBTAPI").isActive());
+
 //The following returns the actual an instance of the plugin. This will return a java.lang.Object
 //you can now cast this to the original plugin object!
 System.out.println("Dependency Plugin Object: "+getDependency("NBTAPI").getDependency());
+
 //The following returns an API Plugin wrapper of the plugin instance, allowing you to quickly access
 //common features such as if it is enabled, or its logger. This cannot be cast to the original plugin object
 System.out.println("Plugin Wrapper: "+getDependency("NBTAPI").getDependEPlugin());
 ```
+
 
 
 
