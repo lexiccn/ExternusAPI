@@ -6,7 +6,7 @@ import me.deltaorion.common.command.sent.CommandArg;
 import me.deltaorion.common.command.sent.SentCommand;
 import me.deltaorion.common.plugin.EPlugin;
 import me.deltaorion.common.plugin.sender.Sender;
-import me.deltaorion.common.plugin.sender.TestSender;
+import me.deltaorion.common.test.mock.TestSender;
 import me.deltaorion.common.test.command.MessageCommand;
 import me.deltaorion.common.test.command.TestCommand;
 import me.deltaorion.common.test.mock.TestEnum;

@@ -6,7 +6,6 @@ import me.deltaorion.common.plugin.EPlugin;
 import me.deltaorion.common.plugin.EServer;
 import me.deltaorion.common.plugin.sender.Sender;
 import me.deltaorion.common.plugin.sender.SenderFactory;
-import me.deltaorion.common.plugin.sender.TestSender;
 import me.deltaorion.common.plugin.version.MinecraftVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

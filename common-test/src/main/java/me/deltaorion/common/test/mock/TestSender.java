@@ -1,6 +1,7 @@
-package me.deltaorion.common.plugin.sender;
+package me.deltaorion.common.test.mock;
 
 import me.deltaorion.common.locale.message.Message;
+import me.deltaorion.common.plugin.sender.Sender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

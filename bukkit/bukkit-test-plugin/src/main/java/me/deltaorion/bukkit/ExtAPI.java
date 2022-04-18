@@ -5,7 +5,6 @@ import me.deltaorion.bukkit.test.command.*;
 import me.deltaorion.bukkit.test.command_old.*;
 import me.deltaorion.bukkit.test.unit.*;
 import me.deltaorion.common.TestArgumentParsers;
-import me.deltaorion.common.command.parser.ArgumentParsers;
 import me.deltaorion.common.config.yaml.YamlAdapter;
 import me.deltaorion.common.test.command.*;
 import me.deltaorion.common.test.generic.AsyncFailTest;
