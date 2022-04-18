@@ -2,6 +2,8 @@ package me.deltaorion.common.plugin;
 
 import me.deltaorion.common.animation.RunningAnimation;
 import me.deltaorion.common.command.parser.ParserRegistry;
+import me.deltaorion.common.locale.translator.TranslationManager;
+import me.deltaorion.common.locale.translator.Translator;
 import me.deltaorion.common.plugin.depend.DependencyManager;
 import me.deltaorion.common.locale.translator.PluginTranslator;
 import org.jetbrains.annotations.NotNull;
@@ -11,8 +13,14 @@ import java.util.Collection;
 //shared api functions
 public interface BaseApiPlugin extends EPlugin, DependencyManager, ParserRegistry {
 
-    PluginTranslator getTranslator();
+    TranslationManager getTranslator();
 
+    /**
+     * Changes the translation manager for the one shown.
+     *
+     * @param manager the new translation manager
+     */
+    void setTranslator(TranslationManager manager);
 
     /**
      * Plugin Disable Logic. This should be overiden by the plugin and any disable logic should be defined. This will be called on reloads

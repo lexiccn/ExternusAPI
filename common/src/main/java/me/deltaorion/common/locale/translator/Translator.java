@@ -6,9 +6,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.BiFunction;
 
 import static me.deltaorion.common.plugin.EServer.DEFAULT_LOCALE;
 
@@ -93,6 +95,22 @@ public class Translator {
     public void addTranslation(Locale locale, String location, String result) {
         ConcurrentMap<String, String> translationFile = translationLibrary.computeIfAbsent(locale, k -> new ConcurrentHashMap<>());
         translationFile.put(location,result);
+    }
+
+    public void removeTranslation(Locale locale, String location) {
+        Map<String,String> translationFile = translationLibrary.get(locale);
+        if(translationFile==null)
+            return;
+
+        translationFile.remove(location);
+    }
+
+    public void clearTranslations(Locale locale) {
+        translationLibrary.remove(locale);
+    }
+
+    public void clearAllTranslations() {
+        translationLibrary.clear();
     }
 
     @Nullable

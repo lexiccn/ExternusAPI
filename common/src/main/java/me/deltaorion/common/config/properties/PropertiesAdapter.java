@@ -11,4 +11,9 @@ public class PropertiesAdapter implements AdapterFactory {
     public ConfigAdapter getNew(@NotNull ConfigSection adapterFor) {
         return new PropertiesConfigAdapter(adapterFor);
     }
+
+    @Override
+    public String getFileExtension() {
+        return "properties";
+    }
 }

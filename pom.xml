@@ -13,6 +13,7 @@
         <module>common</module>
         <module>bukkit</module>
         <module>bungee</module>
+        <module>common-test</module>
     </modules>
 
     <name>ExtAPI</name>
@@ -42,12 +43,13 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>31.0.1-jre</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.10</version>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>

@@ -13,4 +13,6 @@ import org.jetbrains.annotations.NotNull;
 public interface AdapterFactory {
 
     public ConfigAdapter getNew(@NotNull ConfigSection adapterFor);
+
+    public String getFileExtension();
 }

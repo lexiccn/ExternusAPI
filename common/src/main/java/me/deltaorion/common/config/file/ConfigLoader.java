@@ -1,9 +1,11 @@
 package me.deltaorion.common.config.file;
 
 import me.deltaorion.common.config.FileConfig;
+import me.deltaorion.common.config.InvalidConfigurationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -21,7 +23,7 @@ public interface ConfigLoader {
      * Reads the config file from file system and loads all values into memory. If a default config has been specified then it will attempt
      * to load defaults from that.
      */
-    public void reloadConfig();
+    public void reloadConfig() throws InvalidConfigurationException, IOException;
 
     /**
      * Retrieves an object representing the configuration. If the config has not been loaded yet, then it will load it from the file system/default config
@@ -37,12 +39,6 @@ public interface ConfigLoader {
 
     public void saveConfig();
 
-    @Nullable
-    default InputStream getResourceStream(@Nullable ClassLoader loader,@NotNull String path) {
-        if(loader == null) {
-            return Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
-        } else {
-            return loader.getResourceAsStream(path);
-        }
-    }
+    public void saveDefaultConfig();
+
 }

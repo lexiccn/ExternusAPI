@@ -5,14 +5,14 @@ import me.deltaorion.common.command.parser.ArgumentParser;
 import me.deltaorion.common.command.parser.ArgumentParsers;
 import me.deltaorion.common.command.parser.ParserRegistry;
 import me.deltaorion.common.command.parser.SimpleParserRegistry;
+import me.deltaorion.common.config.properties.PropertiesAdapter;
+import me.deltaorion.common.locale.translator.PluginTranslator;
+import me.deltaorion.common.locale.translator.TranslationManager;
 import me.deltaorion.common.plugin.depend.Dependency;
-import me.deltaorion.common.plugin.depend.MissingDependencyException;
 import me.deltaorion.common.plugin.depend.SimpleDependencyManager;
 import me.deltaorion.common.plugin.logger.PluginLogger;
 import me.deltaorion.common.plugin.scheduler.SchedulerAdapter;
 import me.deltaorion.common.plugin.sender.Sender;
-import me.deltaorion.common.locale.translator.PluginTranslator;
-import me.deltaorion.common.test.mock.TestEnum;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +28,7 @@ public class SharedApiPlugin implements BaseApiPlugin {
     private final EPlugin plugin;
     @NotNull private final ParserRegistry registry;
     @NotNull private final SimpleDependencyManager dependencies;
-    @Nullable private PluginTranslator translator;
+    @Nullable private TranslationManager translator;
     @NotNull private final ConcurrentMap<RunningAnimation<?>,Object> animationCache;
 
     public SharedApiPlugin(@NotNull EPlugin plugin) {
@@ -40,7 +40,6 @@ public class SharedApiPlugin implements BaseApiPlugin {
     }
 
     private void registerDefaults() {
-        registry.registerParser(TestEnum.class, ArgumentParsers.TEST_PARSER());
         registry.registerParser(Sender.class,ArgumentParsers.SENDER_PARSER(plugin.getEServer()));
     }
 
@@ -69,7 +68,10 @@ public class SharedApiPlugin implements BaseApiPlugin {
 
     @Override
     public void onPluginEnable() {
-        this.translator = new PluginTranslator(plugin,"en.properties");
+        if(this.translator==null)
+            this.translator = new PluginTranslator(plugin,"en.properties","translations",new PropertiesAdapter(),EServer.DEFAULT_LOCALE);
+
+        this.translator.reload();
     }
 
     @Override
@@ -90,12 +92,18 @@ public class SharedApiPlugin implements BaseApiPlugin {
 
 
     @NotNull
-    public PluginTranslator getTranslator() {
+    public TranslationManager getTranslator() {
         if(this.translator==null)
             throw new IllegalStateException();
 
         return this.translator;
     }
+
+    @Override
+    public void setTranslator(TranslationManager manager) {
+        this.translator = manager;
+    }
+
 
     @Override
     public <T> void registerParser(@NotNull Class<T> clazz, @NotNull ArgumentParser<T> parser) {

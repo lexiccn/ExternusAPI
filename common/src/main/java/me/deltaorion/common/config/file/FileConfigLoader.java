@@ -1,10 +1,9 @@
 package me.deltaorion.common.config.file;
 
+import me.deltaorion.common.config.AdapterFactory;
 import me.deltaorion.common.config.FileConfig;
 import me.deltaorion.common.config.InvalidConfigurationException;
-import me.deltaorion.common.config.AdapterFactory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,38 +24,26 @@ public class FileConfigLoader implements ConfigLoader {
     @NotNull private final Path configurationPath;
     private FileConfig dataConfig;
     private final File configFile;
-    @Nullable private final String defaultPath;
-    @Nullable private final ClassLoader classLoader;
+    @NotNull private final String defaultPath;
+    @NotNull private final ClassLoader classLoader;
     @NotNull private final AdapterFactory adapter;
 
 
-    public FileConfigLoader(@Nullable ClassLoader classLoader, @NotNull Path configurationPath, @Nullable String defaultPath, @NotNull AdapterFactory adapter) {
-        Objects.requireNonNull(configurationPath);
+    public FileConfigLoader(@NotNull AdapterFactory adapter, @NotNull ClassLoader classLoader, @NotNull Path configurationDirectory, @NotNull String configName) {
+        Objects.requireNonNull(configurationDirectory);
         Objects.requireNonNull(adapter);
 
-        this.configurationPath = configurationPath;
-        this.configFile = configurationPath.toFile();
-        this.defaultPath = defaultPath;
+        this.configurationPath = configurationDirectory;
+        this.configFile = configurationDirectory.resolve(configName).toFile();
+        this.defaultPath = configName;
         this.classLoader = classLoader;
         this.adapter = adapter;
-
-        if(this.defaultPath!=null)
-            saveDefaultConfig();
     }
-
-    public FileConfigLoader(@Nullable ClassLoader classLoader, @NotNull Path configurationPath, AdapterFactory adapter) {
-        this(classLoader,configurationPath,null, adapter);
-    }
-
-    public FileConfigLoader(@NotNull Path configurationPath, AdapterFactory adapter) {
-        this(null,configurationPath, adapter);
-    }
-
 
     @Override
-    public void reloadConfig() {
+    public void reloadConfig() throws InvalidConfigurationException,IOException {
         try {
-            dataConfig = getFromFile(configFile);
+            dataConfig = FileConfig.loadConfiguration(adapter,configFile);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
             return;
@@ -64,39 +51,29 @@ public class FileConfigLoader implements ConfigLoader {
 
         InputStream defaultConfig = null;
 
-        if(this.defaultPath!=null)
-           defaultConfig = getResourceStream(classLoader, defaultPath);
+        defaultConfig = classLoader.getResourceAsStream(defaultPath);
 
+        if(defaultConfig==null)
+            throw new IllegalStateException("Cannot load the config as the default config does not exist");
 
-        if(defaultConfig!=null) {
-            try {
-                FileConfig def = getFromStream(defaultConfig);
-                dataConfig.setDefaults(def);
-                defaultConfig.close();
-            } catch (IOException | InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
-        }
+        FileConfig def = FileConfig.loadConfiguration(adapter,defaultConfig);
+        dataConfig.setDefaults(def);
+        defaultConfig.close();
     }
 
-    @NotNull
-    public FileConfig getFromStream(@NotNull InputStream inputStream) throws IOException, InvalidConfigurationException {
-        return FileConfig.loadConfiguration(adapter,inputStream);
-    }
-
-    public FileConfig getFromFile(@NotNull File file) throws IOException, InvalidConfigurationException {
-        return FileConfig.loadConfiguration(adapter,file);
-    }
 
     @Override
     public FileConfig getConfig() {
         if(dataConfig==null) {
-            reloadConfig();
+            try {
+                reloadConfig();
+            } catch (InvalidConfigurationException | IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         return dataConfig;
     }
 
-    @Override
     public void saveConfig() {
         if(dataConfig==null || configFile == null) {
             return;
@@ -108,9 +85,8 @@ public class FileConfigLoader implements ConfigLoader {
         }
     }
 
-
-
-    private void saveDefaultConfig() {
+    @Override
+    public void saveDefaultConfig() {
 
         if(!configFile.getParentFile().exists()) {
             configFile.getParentFile().mkdirs();
@@ -123,7 +99,7 @@ public class FileConfigLoader implements ConfigLoader {
 
     private void saveResource(String resourceName) {
 
-        InputStream defaultStream = getResourceStream(classLoader,resourceName);
+        InputStream defaultStream = classLoader.getResourceAsStream(resourceName);
 
         if(defaultStream==null)
             throw new IllegalArgumentException("Cannot save '"+configurationPath.toAbsolutePath().toString()+"' as the default config '" + resourceName + "' does not exist!");

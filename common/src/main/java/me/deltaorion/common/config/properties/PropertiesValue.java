@@ -1,10 +1,13 @@
 package me.deltaorion.common.config.properties;
 
+import com.amihaiemil.eoyaml.Node;
 import me.deltaorion.common.config.ConfigSection;
 import me.deltaorion.common.config.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -19,19 +22,30 @@ public class PropertiesValue implements ConfigValue {
 
     @Nullable @Override
     public Object asObject() {
-        if(isDouble())
-            return asDouble();
-
-        if(isLong())
-            return asLong();
-
-        if(isInt())
-            return asInt();
+        if(isNumber())
+            return asNumber();
 
         if(isBoolean())
             return asBoolean();
 
         return value;
+    }
+
+    private boolean isNumber() {
+        try {
+            Number num = NumberFormat.getInstance().parse(value);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
+    private Number asNumber() {
+        try {
+            return NumberFormat.getInstance().parse(value);
+        } catch (ParseException e) {
+            return DEFAULT_NUMBER;
+        }
     }
 
     @Override

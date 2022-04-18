@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * @author org.bukkit, deltaorion
@@ -19,7 +18,7 @@ import java.util.regex.Pattern;
 public class YamlConfigAdapter implements ConfigAdapter {
 
     private final ConfigSection adapterFor;
-    private NestedObjectSection root;
+    private final NestedObjectSection root;
 
     public YamlConfigAdapter(@NotNull ConfigSection adapterFor) {
         this.root = new NestedObjectSection(adapterFor);
@@ -96,6 +95,70 @@ public class YamlConfigAdapter implements ConfigAdapter {
             throw new IllegalStateException("Cannot save a non-root config!");
 
         FileConfig config = (FileConfig) adapterFor;
+        YamlMappingBuilder mapping = Yaml.createYamlMappingBuilder();
+        mapping = saveMapping(config,mapping,root);
+        YamlMapping complete = mapping.build(config.options().getHeader());
+        YamlPrinter printer = Yaml.createYamlPrinter(writer);
+        printer.print(complete);
+    }
+
+    private YamlMappingBuilder saveMapping(FileConfig config, YamlMappingBuilder mapping, NestedObjectSection root) {
+        for(String key : root.getKeys()) {
+            Object value = root.get(key);
+            if(value instanceof NestedObjectSection) {
+                NestedObjectSection next = (NestedObjectSection) value;
+                YamlMappingBuilder node = Yaml.createYamlMappingBuilder();
+                node = saveMapping(config,node,next);
+                YamlNode built;
+                if(config.options().parseComments()) {
+                    built = node.build(root.getComments(key));
+                } else {
+                    built = node.build();
+                }
+                mapping = mapping.add(key,built);
+            } else if(value instanceof List<?>) {
+                mapping = saveSequence(config,mapping,root,key);
+            } else {
+                 mapping =saveScalar(config,mapping,root,key);
+            }
+        }
+        return mapping;
+    }
+
+    private YamlMappingBuilder saveScalar(FileConfig config, YamlMappingBuilder root, NestedObjectSection section, String key) {
+        YamlScalarBuilder builder = Yaml.createYamlScalarBuilder();
+        Object value = section.get(key);
+        builder = builder.addLine(String.valueOf(value));
+        YamlNode build;
+        if(config.options().parseComments()) {
+            StringBuilder commentMerged = new StringBuilder();
+            section.getInlineComments(key).forEach(commentMerged::append);
+            build = builder.buildPlainScalar(section.getComments(key),commentMerged.toString());
+        } else {
+            build = builder.buildPlainScalar();
+        }
+        return root.add(key,build);
+    }
+
+    private YamlMappingBuilder saveSequence(FileConfig config, YamlMappingBuilder root, NestedObjectSection section , String key) {
+        YamlSequenceBuilder sequence = Yaml.createYamlSequenceBuilder();
+        Object value = section.get(key);
+        if(!(value instanceof List<?>))
+            throw new IllegalArgumentException("Cannot make a sequence of a non-list");
+
+        List<?> val = (List<?>) value;
+        for(Object o : val) {
+            sequence = sequence.add(String.valueOf(o));
+        }
+
+        YamlNode build;
+        if(config.options().parseComments()) {
+            build = sequence.build(section.getComments(key));
+        } else {
+            build = sequence.build();
+        }
+
+        return root.add(key,sequence.build());
     }
 
 
@@ -142,7 +205,9 @@ public class YamlConfigAdapter implements ConfigAdapter {
             YamlNode value = mapping.value(key);
             if(value.type() == Node.MAPPING) {
                 NestedObjectSection sect = root.createSection(key.asScalar().value());
-                root.setComments(key.asScalar().value(),parseComments(value.comment().value()));
+                if(config.options().parseComments()) {
+                    root.setComments(key.asScalar().value(), parseComments(value.comment().value()));
+                }
                 readFromNode(config,sect,value.asMapping());
             } else {
                 processNode(root,key,value,config.options().parseComments());

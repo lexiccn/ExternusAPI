@@ -9,6 +9,8 @@ import me.deltaorion.common.config.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,17 +26,8 @@ public class EOYamlValue implements ConfigValue {
 
     @Nullable @Override
     public Object asObject() {
-        if(isDouble())
-            return asDouble();
-
-        if(isLong())
-            return asLong();
-
-        if(isInt())
-            return asInt();
-
-        if(isBoolean())
-            return asBoolean();
+        if(isNumber())
+            return asNumber();
 
         if(isString())
             return asString();
@@ -46,6 +39,31 @@ public class EOYamlValue implements ConfigValue {
             return asList();
 
         return null;
+    }
+
+    private boolean isNumber() {
+        if(node.type() != Node.SCALAR)
+            return false;
+
+        String value = node.asScalar().value();
+        try {
+            Number num = NumberFormat.getInstance().parse(value);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
+    private Number asNumber() {
+        if(node.type() != Node.SCALAR)
+            return DEFAULT_NUMBER;
+
+        String value = node.asScalar().value();
+        try {
+            return NumberFormat.getInstance().parse(value);
+        } catch (ParseException e) {
+            return DEFAULT_NUMBER;
+        }
     }
 
     @Override
