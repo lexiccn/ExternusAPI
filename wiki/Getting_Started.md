@@ -88,7 +88,7 @@ There are also plenty of other features that I have ommited from the above list.
 
 ## Dependencies
 
-Another useful feature of the API is dependency management. This allows you to quickly check and retrieve a dependency plugin instance if it exists. To register a dependency do the following
+Another useful feature of the API is dependency management. This allows you to quickly check and retrieve a dependency plugin instance exists. This is especially useful for soft-depends
 
 To use the enhanced dependency API first add to the plugin yml
 
@@ -96,20 +96,21 @@ To use the enhanced dependency API first add to the plugin yml
 softdepend: [ NBTAPI ]
 ```
 
-To register your dependency do so as follows.
+To register your dependency do so as follows. Note when you register a dependency it will run checks to see if it is enabled, this it is most appropriate to do so once the plugin has enabled. 
 
 ```java
-//APIPlugin is simply the common interface between any plugin whether it be bukkit or bungee.
-APIPlugin plugin = this;
-//The following should be set to
-//  - true: if the dependency is needed for the plugin to run
-//  - false: if the plugin can run without the dependency, i.e. it is a soft-depend
-boolean isDependencyRequiredToRun = false;
-plugin.registerDependency("NBTAPI",isDependencyRequiredToRun);
+public void onPluginEnable(){
+    //APIPlugin is simply the common interface between any plugin whether it be bukkit or bungee.
+    APIPlugin plugin=this;
+    //The following should be set to
+    //  - true: if the dependency is needed for the plugin to run
+    //  - false: if the plugin can run without the dependency, i.e. it is a soft-depend
+    boolean isDependencyRequiredToRun=false;
+    plugin.registerDependency("NBTAPI",isDependencyRequiredToRun);
+}
 ```
 
-To do things with the dependency is done as follows
-
+The dependency can then be manipulated as follows.
 ```java
 //The following returns true if
 //  - the dependency plugin is on the server
