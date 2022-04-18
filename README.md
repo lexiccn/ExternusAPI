@@ -12,7 +12,7 @@ If you would like to build the Externus API it should be done so using <a href="
 
 <ul>
   <li>Open the source directory in your favourite terminal/console</li>
-  <li>Run the command `mvn clean install`</li>
+  <li>Run the command ```mvn clean install```</li>
 </ul>
 
 ---
@@ -52,10 +52,10 @@ To include the ExtAPI into your pom.xml do the following steps
 
 ## Usage
 
-To learn how to use the API simply follow the wiki located inside of the wiki folder in the source directories. There are also examples avaliable in the bukkit-test-plugin and bungee-test-plugin modules respectively
+To learn how to use the API simply follow the wiki. There are also examples avaliable in the bukkit-test-plugin and bungee-test-plugin modules respectively
 
 ---
 
-## Licensing
+## Licensing 
 
 Add something here if this is being released to public, preferably the GNU license or some kind of source avaliable license 
