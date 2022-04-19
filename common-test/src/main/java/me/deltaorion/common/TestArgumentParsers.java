@@ -13,7 +13,7 @@ public class TestArgumentParsers {
     }
 
     public static ArgumentParser<TestEnum> TEST_PARSER() {
-        return arg -> {
+        return (sender, arg) -> {
             try {
                 return TestEnum.valueOf(arg.toUpperCase(Locale.ROOT));
             } catch (IllegalArgumentException e) {

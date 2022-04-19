@@ -18,12 +18,12 @@ public class ArgumentParsers {
      * Takes a string, checks if there is a player sender online with that username (ignoring case).
      */
     public static ArgumentParser<Sender> SENDER_PARSER(EServer server) {
-        return arg -> {
-            Sender sender  = server.getSenderExact(arg);
+        return (sender, arg) -> {
+            Sender senderFromArg  = server.getSenderExact(arg);
             if(sender==null) {
                 throw new CommandException(MessageErrors.NOT_ONLINE_PLAYER().toString(arg));
             }
-            return sender;
+            return senderFromArg;
         };
     }
 }

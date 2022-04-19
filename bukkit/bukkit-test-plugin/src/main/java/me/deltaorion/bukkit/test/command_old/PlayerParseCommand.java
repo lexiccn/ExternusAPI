@@ -1,11 +1,14 @@
 package me.deltaorion.bukkit.test.command_old;
 
+import me.deltaorion.bukkit.item.EMaterial;
 import me.deltaorion.common.APIPermissions;
 import me.deltaorion.common.command.CommandException;
 import me.deltaorion.common.command.sent.CommandArg;
 import me.deltaorion.common.command.sent.MessageErrors;
 import me.deltaorion.common.plugin.ApiPlugin;
 import me.deltaorion.common.test.mock.TestEnum;
+import me.deltaorion.common.test.mock.TestSender;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -26,10 +29,10 @@ public class PlayerParseCommand implements CommandExecutor {
             return true;
         }
         String arg = args.length == 0 ? "DeltaOrion" : args[0];
-        CommandArg cArg = new CommandArg(plugin,arg,0);
+        CommandArg cArg = new CommandArg(new TestSender(),plugin,arg,0);
         sender.sendMessage("Parsed: "+cArg.parseOrDefault(Player.class,null));
         sender.sendMessage("Parse Fails");
-        CommandArg failArg = new CommandArg(plugin,arg,0);
+        CommandArg failArg = new CommandArg(new TestSender() ,plugin,arg,0);
         try {
             sender.sendMessage("Result: "+failArg.asInt());
         } catch (CommandException e) {
@@ -69,6 +72,24 @@ public class PlayerParseCommand implements CommandExecutor {
 
         try {
             sender.sendMessage("Result: "+failArg.parse(TestEnum.class));
+        } catch (CommandException e) {
+            sender.sendMessage(e.getMessage());
+        }
+
+        try {
+            sender.sendMessage("Result: "+failArg.parse(EMaterial.class));
+        } catch (CommandException e) {
+            sender.sendMessage(e.getMessage());
+        }
+
+        try {
+            sender.sendMessage("Result: "+failArg.parse(Material.class));
+        } catch (CommandException e) {
+            sender.sendMessage(e.getMessage());
+        }
+
+        try {
+            sender.sendMessage("Result: "+failArg.parse(Player.class));
         } catch (CommandException e) {
             sender.sendMessage(e.getMessage());
         }

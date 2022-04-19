@@ -37,7 +37,7 @@ public class CommandTests {
     @Test
     public void basicArgTest() {
 
-        CommandArg arg = new CommandArg(plugin,"hEllo",0);
+        CommandArg arg = new CommandArg(new TestSender(),plugin,"hEllo",0);
         try {
             arg.asBoolean();
             fail();
@@ -63,10 +63,10 @@ public class CommandTests {
         assertEquals("hEllo",arg.asString());
         assertEquals("hEllo",arg.toString());
 
-        CommandArg argBool = new CommandArg(plugin,"trUe",0);
-        CommandArg argBool1 = new CommandArg(plugin,"falSe",0);
-        CommandArg argBool3 = new CommandArg(plugin,"yEs",0);
-        CommandArg argBool4 = new CommandArg(plugin,"nO",0);
+        CommandArg argBool = new CommandArg(new TestSender(),plugin,"trUe",0);
+        CommandArg argBool1 = new CommandArg(new TestSender(),plugin,"falSe",0);
+        CommandArg argBool3 = new CommandArg(new TestSender(),plugin,"yEs",0);
+        CommandArg argBool4 = new CommandArg(new TestSender(),plugin,"nO",0);
 
         try {
             assertEquals(argBool.asString(),argBool.toString());
@@ -84,7 +84,7 @@ public class CommandTests {
             fail();
         }
 
-        CommandArg arg3 = new CommandArg(plugin,"1",0);
+        CommandArg arg3 = new CommandArg(new TestSender(),plugin,"1",0);
         try {
             assertEquals(1,arg3.asInt());
             assertEquals(1.0f,arg3.asFloat(),0.001);
@@ -93,14 +93,14 @@ public class CommandTests {
             fail();
         }
 
-        CommandArg arg4 = new CommandArg(plugin,"HeLlO",0);
+        CommandArg arg4 = new CommandArg(new TestSender(),plugin,"HeLlO",0);
         try {
             Assert.assertEquals(TestEnum.HELLO,arg4.asEnum(TestEnum.class,"Test Enum"));
         } catch (Exception e) {
             fail();
         }
 
-        CommandArg arg5 = new CommandArg(plugin,"7d",0);
+        CommandArg arg5 = new CommandArg(new TestSender(),plugin,"7d",0);
         try {
             assertEquals(Duration.of(7,ChronoUnit.DAYS),arg5.asDuration());
         } catch (Exception e) {
@@ -110,13 +110,13 @@ public class CommandTests {
 
     @Test
     public void parserTest() {
-        CommandArg pass = new CommandArg(plugin,"HELLO",0);
-        CommandArg fail = new CommandArg(plugin,"DeltaOrion",1);
-        CommandArg plug = new CommandArg(plugin,"abc",2);
+        CommandArg pass = new CommandArg(new TestSender(),plugin,"HELLO",0);
+        CommandArg fail = new CommandArg(new TestSender(),plugin,"DeltaOrion",1);
+        CommandArg plug = new CommandArg(new TestSender(),plugin,"abc",2);
 
         plugin.registerParser(TestEnum.class, new ArgumentParser<TestEnum>() {
             @Override
-            public TestEnum parse(String arg) throws CommandException {
+            public TestEnum parse(Sender sender,String arg) throws CommandException {
                 try {
                     return TestEnum.valueOf(arg);
                 } catch (IllegalArgumentException e) {
@@ -127,7 +127,7 @@ public class CommandTests {
 
         plugin.registerParser(TestPlugin.class, new ArgumentParser<TestPlugin>() {
             @Override
-            public TestPlugin parse(String arg) throws CommandException {
+            public TestPlugin parse(Sender sender,String arg) throws CommandException {
                 TestServer server = new TestServer();
                 TestPlugin plugin = new TestPlugin(server);
                 server.addPlugin(arg,plugin);
@@ -141,7 +141,7 @@ public class CommandTests {
         assertNull(testEnum2);
         plugin.registerParser(TestEnum.class, new ArgumentParser<TestEnum>() {
             @Override
-            public TestEnum parse(String arg) throws CommandException {
+            public TestEnum parse(Sender sender ,String arg) throws CommandException {
                 try {
                     return TestEnum.valueOf(arg.toUpperCase());
                 } catch (IllegalArgumentException e) {

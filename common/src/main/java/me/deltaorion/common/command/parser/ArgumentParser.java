@@ -1,6 +1,7 @@
 package me.deltaorion.common.command.parser;
 
 import me.deltaorion.common.command.CommandException;
+import me.deltaorion.common.plugin.sender.Sender;
 
 /**
  * An argument parser is a functional interface which takes a string, and transforms it into another Object of the targeted
@@ -20,5 +21,5 @@ public interface ArgumentParser<T> {
      * @return An object representation of that string
      * @throws CommandException if the parse failed, usually due to the string being in the wrong format.
      */
-    public T parse(String arg) throws CommandException;
+    public T parse(Sender sender, String arg) throws CommandException;
 }

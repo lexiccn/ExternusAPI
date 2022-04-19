@@ -1391,6 +1391,7 @@ public enum EMaterial {
     private volatile static MinecraftVersion version;
     //can be accessed concurrently as although the state is shared, it is effectively immutable
     private static Map<String,EMaterial> byName;
+    private static Map<String,EMaterial> byNameThisVersion;
     private static Map<Integer,EMaterial> byId;
     private static Map<Integer, Collection<EMaterial>> versionMap;
 
@@ -1411,6 +1412,7 @@ public enum EMaterial {
             EMaterial.version = version;
             doInitialise(version,stream);
             isInitialised = true;
+            mapThisVersion();
         }
     }
 
@@ -1451,6 +1453,14 @@ public enum EMaterial {
 
     @Nullable
     public static EMaterial matchMaterial(@NotNull String name) {
+        if(!isInitialised)
+            handleNonInitialised();
+
+        return byNameThisVersion.get(name.toUpperCase(Locale.ROOT));
+    }
+
+    @Nullable
+    public static EMaterial matchMaterialAnyVersion(@NotNull String name) {
         if(!isInitialised)
             handleNonInitialised();
 
@@ -1544,6 +1554,13 @@ public enum EMaterial {
         versionMap();
         findDuraDependent();
         findDuplicates();
+    }
+
+    private static void mapThisVersion() {
+        byNameThisVersion = new HashMap<>();
+        for(EMaterial material : valuesThisVersion()) {
+            byNameThisVersion.put(material.name(),material);
+        }
     }
 
     private static void findDuplicates() {

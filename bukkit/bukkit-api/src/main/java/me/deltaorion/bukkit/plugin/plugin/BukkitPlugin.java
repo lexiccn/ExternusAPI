@@ -22,6 +22,7 @@ import me.deltaorion.common.plugin.logger.PluginLogger;
 import me.deltaorion.common.plugin.scheduler.ErrorReportingThreadPool;
 import me.deltaorion.common.plugin.scheduler.SchedulerAdapter;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -72,6 +73,7 @@ public abstract class BukkitPlugin extends JavaPlugin implements ApiPlugin {
             );
         } catch (Throwable e) {
             getPluginLogger().severe("An error occurred while initialising EMaterial. Are you reloading the server?",e);
+            throw e;
         }
     }
 
@@ -82,6 +84,8 @@ public abstract class BukkitPlugin extends JavaPlugin implements ApiPlugin {
 
     private void registerDefaultParsers() {
         plugin.registerParser(Player.class, ArgumentParsersBukkit.BUKKIT_PLAYER_PARSER(this));
+        plugin.registerParser(Material.class, ArgumentParsersBukkit.MATERIAL_PARSER());
+        plugin.registerParser(EMaterial.class,ArgumentParsersBukkit.EMATERIAL_PARSER());
     }
 
     @Override

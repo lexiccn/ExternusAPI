@@ -7,6 +7,7 @@ import me.deltaorion.common.test.command.FailCommand;
 import me.deltaorion.common.test.generic.McTest;
 import me.deltaorion.common.test.generic.MinecraftTest;
 import me.deltaorion.common.test.mock.TestEnum;
+import me.deltaorion.common.test.mock.TestSender;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -21,7 +22,7 @@ public class ArgTest implements MinecraftTest {
 
     @McTest
     public void basicTest() {
-        CommandArg arg = new CommandArg(plugin,"123",0);
+        CommandArg arg = new CommandArg(new TestSender(),plugin,"123",0);
         try {
             arg.asBoolean();
             fail();
@@ -34,7 +35,7 @@ public class ArgTest implements MinecraftTest {
             fail();
         }
 
-        CommandArg arg2 = new CommandArg(plugin,"hello",0);
+        CommandArg arg2 = new CommandArg(new TestSender(),plugin,"hello",0);
         try {
             assertEquals(arg2.parse(TestEnum.class),TestEnum.HELLO);
         } catch (CommandException e) {

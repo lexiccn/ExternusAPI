@@ -4,7 +4,9 @@ The command API focuses around the creation of large nested tree commands and th
 
 A command is broken into two logic units. First a `SentCommand` which represents a command sent by a user (what the user typed) and a `FunctionalCommand` which is a class that tells the server what to do with the command that was sent. 
 
-When a user sends a command it will have arguments `/command arg1 arg2`. In a `SentCommand` an argument is just a string however in a `FunctionalCommand` an argument can either represent a piece of logic that needs to be run or a whole other command. 
+When a user sends a command it will have arguments `/command arg1 arg2`. In a `SentCommand` an argument is just a string. Each `SentCommand` will have many `CommandArg` which is a convenient way to represent an argument not just as a string but other types such as a player or an integer. CommandArgs can be retrieved
+
+A `FunctionalCommand` has many Functional Arguments. A functional argument is a piece of logic that should be run when a user types in an argument for a command. A functional argument is always another command with its own logic, permissions, description tabcompletion etc.
 
 ```text
 Note- this is not YAML or anything it is just to show the structure of our command!
@@ -24,14 +26,14 @@ Lastly
   - if TestCommand is run without a valid argument we want to show a help menu
 ```
 
-To begin making a command make a class as follows
+To begin making a command, make a class as follows. The class below represents a FunctionalCommand which executes logic  depending on the content of the `SentCommand`. A `Functional Command` has n functional arguments. A functional argument is logic that should occur when a specific argument is typed. 
 ```java
 public class TestCommand extends FunctionalCommand {
     protected TestCommand() {
         super("MyPlugin.TestCommand","/TestCommand ?", Message.valueOf("Does some stuff!"));
     }
     
-    @Override
+    @Override //SentCommand simply has a bunch of methods such as getArg() or getArgs() to retrieve what the user sent
     public void commandLogic(SentCommand sentCommand) throws CommandException {
         //I will be run if the user types /TestCommand [argument that is not registered]
         //For example 
@@ -41,7 +43,7 @@ public class TestCommand extends FunctionalCommand {
 }
 ```
 
-Now we want to begin registering arguments. For our example the argument `a` represents a sub-command because it has its own arguments, a1 and a2. The command b however simply represents some logic. Every time you register an argument it will also register tab completion for that argument!
+Now we want to begin registering functional arguments. For our example the argument `a` represents a sub-command because it has its own arguments, a1 and a2. The command b however simply represents some logic. Every time you register an argument it will also register tab completion for that argument!
 
 ```java
 import me.deltaorion.common.command.CommandException;
@@ -86,7 +88,7 @@ public class TestCommand extends FunctionalCommand {
 }
 ```
 
-Now we can begin filling in the logic
+Now we can begin filling in the logic based on what we want the command to do.
 
 ```java
 import me.deltaorion.common.command.Command;
@@ -98,7 +100,7 @@ import me.deltaorion.common.locale.message.Message;
 import java.util.Map;
 
 public class TestCommand extends FunctionalCommand {
-    protected TestCommand() {
+    public TestCommand() {
         super("MyPlugin.TestCommand","/TestCommand ?", Message.valueOf("Does some stuff!"));
         registerArguments();
     }
@@ -130,7 +132,7 @@ public class TestCommand extends FunctionalCommand {
     }
 
     public static class ACommand extends FunctionalCommand {
-        protected ACommand() {
+        public ACommand() {
             super("MyPlugin.Command.A");
             registerArgument("a1",c -> {
                 c.getSender().sendMessage("a1");
@@ -175,7 +177,7 @@ Command exception is a handy exception that should be thrown if the predicates f
 
 ```java
 public class TestCommand extends FunctionalCommand {
-    protected TestCommand() {
+    public TestCommand() {
         super("MyPlugin.TestCommand","/TestCommand ?", Message.valueOf("Does some stuff!"));
     }
     
@@ -211,13 +213,147 @@ public void commandLogic(SentCommand sentCommand) throws CommandException {
 
 ### Tab Completion
 
-As noted earlier argument tab completion is already done for you!. However for more
-advanced tab completion you will still need to tell the server what to do. 
+As noted earlier argument tab completion of arguments is automatically done for you. However for more complex commands or subcommands additional tab completion will need to be done 
+
 
 ```java
+/**
+ * This command should do the following tab completion where (...) is what is being typed
+ *   - /TestCommand (...)
+ *     air, wood, stone, granite etc etc.
+ *     
+ *  - /TestCommand [material] (...)
+ *     true, false
+ *     
+ * Basically the first argument we want to tab complete materials and the second argument we want to tab complete true or false.
+ */
+public class TestCommand extends FunctionalCommand {
+    public TestCommand() {
+        super("MyPlugin.TestCommand","/TestCommand ?", Message.valueOf("Does some stuff!"));
+        registerCompleters();
+    }
 
+    private void registerCompleters() {
+        //This will register for the first argument entered.
+        registerCompleter(1, sentCommand -> {
+            List<String> materialCompletions = new ArrayList<>();
+            for(Material mat : Material.values()) {
+                //make a string list of all materials.
+                materialCompletions.add(mat.toString());
+            }
+            return materialCompletions;
+        });
+        
+        //This will register for the second argument entered.
+        registerCompleter(2,sentCommand -> {
+            List<String> completions = new ArrayList<>();
+            completions.add("true");
+            completions.add("false");
+            return completions;
+        });
+    }
+
+    @Override
+    public void commandLogic(SentCommand sentCommand) throws CommandException {
+        //send the material they typed in. 
+        if(sentCommand.getArgOrFail(0).asBoolean())
+            sentCommand.getSender().sendMessage(sentCommand.getArgOrFail(0).parse(Material.class));
+    }
+}
 ```
 
+Now suppose we want to add tab completion to a functional argument. We can easily do so by simply registering more tab completers for the functional arguments subcommand!
+
+```java
+/**
+ * This command should do the following tab completion where (...) is what is being typed
+ *  - /TestCommand (...)
+ *    a,air,wood,stone,granite .... 
+ *  - /TestCommand [material] (...)
+ *    true, false
+ *  - /TestCommand a (...)
+ *   abc,bca,xyz
+ */
+public class TestCommand extends FunctionalCommand {
+    public TestCommand() {
+        super("MyPlugin.TestCommand","/TestCommand ?", Message.valueOf("Does some stuff!"));
+        registerCompleters();
+        registerArguments();
+    }
+
+    private void registerCompleters() {
+        //This will register for the first argument entered.
+        registerCompleter(1, sentCommand -> {
+            List<String> materialCompletions = new ArrayList<>();
+            for(Material mat : Material.values()) {
+                materialCompletions.add(mat.toString());
+            }
+            return materialCompletions;
+        });
+
+        registerCompleter(2,sentCommand -> {
+            List<String> completions = new ArrayList<>();
+            completions.add("true");
+            completions.add("false");
+            return completions;
+        });
+    }
+    
+    private void registerArguments() {
+        //this automatically registers the tab completion for this functional argument a on the first argument begin typed
+        registerArgument("a",new ACommand());
+    }
+
+    @Override
+    public void commandLogic(SentCommand sentCommand) throws CommandException {
+        //send the material they typed in. 
+        sentCommand.getSender().sendMessage(sentCommand.getArgOrFail(0).parse(Material.class));
+    }
+
+    public static class ACommand extends FunctionalCommand {
+        protected ACommand() {
+            super("MyPlugin.Command.A");
+            //register a completer for "TestCommand a" that returns abc, bca and xyz. 
+            registerCompleter(1,c -> ImmutableList.of("abc","bca","xyz"));
+        }
+        
+        @Override
+        public void commandLogic(SentCommand sentCommand) throws CommandException {
+            //do "/TestCommand a" logic 
+        }
+    }
+}
+```
+
+### Completers Lib
+
+As you could imagine we are going to get a lot of boilerplate code and fast by writing out tab completers for material or player over and over. Some of these tab completers have already been supplied for you!
+
+```java
+private void registerCompleters() {
+    //This will register for the first argument entered.
+    registerCompleter(1,CompletersBukkit.MATERIAL());
+    //this will register for the second argument entered
+    registerCompleter(2, Completers.BOOLEANS());
+}
+```
+
+## Custom Parsers
+
+You might have noticed the following code 
+```java
+sentCommand.getSender().sendMessage(sentCommand.getArgOrFail(0).parse(Material.class));
+```
+
+This parses the argument to a material. However lets say you have a lot of custom object and you want to make your own parser. You can easily do so with the following code
+
+```java
+@Override
+public void onPluginEnable(){
+    APIPlugin plugin=this;
+    plugin.registerParser(MyClass.class,new MyClassArgumentParser());
+}
+```
 
 
 

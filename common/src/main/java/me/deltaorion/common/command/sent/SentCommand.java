@@ -48,7 +48,7 @@ public class SentCommand implements Iterable<CommandArg> {
         List<CommandArg> argList = new ArrayList<>();
         for(int i=0;i< args.length;i++) {
             String arg = args[i];
-            argList.add(new CommandArg(plugin,arg,i));
+            argList.add(new CommandArg(sender,plugin,arg,i));
         }
         this.args = Collections.unmodifiableList(argList);
         this.label = Objects.requireNonNull(label);
@@ -136,7 +136,7 @@ public class SentCommand implements Iterable<CommandArg> {
     public CommandArg getArgOrDefault(int index, @NotNull String def) {
         Objects.requireNonNull(def);
         if(!argExists(index))
-            return new CommandArg(plugin,def,index);
+            return new CommandArg(sender,plugin,def,index);
 
         return args.get(index);
     }

@@ -119,4 +119,9 @@ public class MessageErrors {
     public static Message INTERNAL_ERROR_TAB_COMPLETION() {
         return Message.valueOfTranslatable("command.internalErrorTab");
     }
+
+    public static Message NOT_MATERIAL() {
+        return Message.valueOfTranslatable("command.notMaterial");
+    }
+
 }

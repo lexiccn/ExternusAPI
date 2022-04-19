@@ -61,8 +61,8 @@ public class EMaterialTest implements MinecraftTest {
 
         assertEquals(compatible,material.isCompatible(thisVersion));
 
-        assertEquals(EMaterial.matchMaterial(material.name()),material);
-        assertNull(EMaterial.matchMaterial("reiojgreoi"));
+        assertEquals(EMaterial.matchMaterialAnyVersion(material.name()),material);
+        assertNull(EMaterial.matchMaterialAnyVersion("reiojgreoi"));
         assertEquals(EMaterial.matchMaterial(material.getId()),material);
         assertEquals(EMaterial.matchMaterial(new ItemBuilder(material).build()),material);
     }
@@ -121,7 +121,7 @@ public class EMaterialTest implements MinecraftTest {
 
     public void testMatching2() {
         for(EMaterial material : EMaterial.values()) {
-            assertEquals(material,EMaterial.matchMaterial(material.name()));
+            assertEquals(material,EMaterial.matchMaterialAnyVersion(material.name()));
         }
     }
 

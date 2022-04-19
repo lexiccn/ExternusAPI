@@ -15,6 +15,10 @@ public class TestSender implements Sender {
     private final Locale locale;
     private final Set<String> permissions;
 
+    public TestSender() {
+        this("",UUID.randomUUID(),false,false,Locale.ENGLISH);
+    }
+
     public TestSender(String name, UUID uuid, boolean isConsole, boolean isOp, Locale locale, String... perms) {
         this.name = name;
         this.uuid = uuid;

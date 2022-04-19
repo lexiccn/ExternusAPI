@@ -3,6 +3,7 @@ package me.deltaorion.common.command.sent;
 import me.deltaorion.common.command.CommandException;
 import me.deltaorion.common.command.parser.ArgumentParser;
 import me.deltaorion.common.plugin.ApiPlugin;
+import me.deltaorion.common.plugin.sender.Sender;
 import me.deltaorion.common.util.DurationParser;
 import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
@@ -31,9 +32,10 @@ public class CommandArg {
 
     @NotNull private final ApiPlugin plugin;
     @NotNull private final String arg;
+    @NotNull private final Sender sender;
     private final int index;
 
-    public CommandArg(@NotNull ApiPlugin plugin, @NotNull String arg, int index) {
+    public CommandArg(@NotNull Sender sender, @NotNull ApiPlugin plugin, @NotNull String arg, int index) {
 
         Objects.requireNonNull(arg);
         Objects.requireNonNull(plugin);
@@ -43,13 +45,14 @@ public class CommandArg {
         this.plugin = plugin;
         this.arg = arg;
         this.index = index;
+        this.sender = sender;
     }
 
     public int asInt() throws CommandException {
         try {
             return Integer.parseInt(arg);
         } catch (NumberFormatException e) {
-            throw new CommandException(MessageErrors.NOT_INTEGER().toString(arg));
+            throw new CommandException(MessageErrors.NOT_INTEGER().toString(sender.getLocale(),arg));
         }
     }
 
@@ -74,7 +77,7 @@ public class CommandArg {
         try {
             return Float.parseFloat(arg);
         } catch (NumberFormatException e) {
-            throw new CommandException(MessageErrors.NOT_NUMBER().toString(arg));
+            throw new CommandException(MessageErrors.NOT_NUMBER().toString(sender.getLocale(),arg));
         }
     }
 
@@ -99,7 +102,7 @@ public class CommandArg {
         try {
             return Double.parseDouble(arg);
         } catch (NumberFormatException e) {
-            throw new CommandException(MessageErrors.NOT_NUMBER().toString(arg));
+            throw new CommandException(MessageErrors.NOT_NUMBER().toString(sender.getLocale(),arg));
         }
     }
 
@@ -124,7 +127,7 @@ public class CommandArg {
         try {
             return parseBoolean(arg);
         } catch (IllegalArgumentException e) {
-            throw new CommandException(MessageErrors.NOT_BOOLEAN().toString(arg));
+            throw new CommandException(MessageErrors.NOT_BOOLEAN().toString(sender.getLocale(),arg));
         }
     }
 
@@ -151,7 +154,7 @@ public class CommandArg {
         try {
             return Enum.valueOf(type, arg.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new CommandException(MessageErrors.NOT_ENUM().toString(arg,name));
+            throw new CommandException(MessageErrors.NOT_ENUM().toString(sender.getLocale(),arg,name));
         }
     }
 
@@ -168,7 +171,7 @@ public class CommandArg {
         try {
             return DurationParser.parseDuration(arg);
         } catch (IllegalArgumentException e) {
-            throw new CommandException(MessageErrors.NOT_DURATION().toString(arg));
+            throw new CommandException(MessageErrors.NOT_DURATION().toString(sender.getLocale(),arg));
         }
     }
 
@@ -198,6 +201,7 @@ public class CommandArg {
      * @param <T> The class type that will be returned
      * @return The parsed value
      * @throws CommandException if there was an error performing the parse
+     * @throws NullPointerException if the class entered is null
      */
     public <T> T parse(@NotNull Class<T> to) throws CommandException {
         return parseArg(Objects.requireNonNull(to));
@@ -247,7 +251,7 @@ public class CommandArg {
         Collection<ArgumentParser<T>> parsers = plugin.getParser(to);
         for(ArgumentParser<T> parser : parsers) {
             try {
-                T obj = parser.parse(arg);
+                T obj = parser.parse(sender,arg);
                 if(obj!=null)
                     return obj;
 
@@ -260,11 +264,7 @@ public class CommandArg {
         if(recent!=null)
             throw recent;
 
-        throw new CommandException(MessageErrors.BAD_ARGUMENT().toString(arg));
-    }
-
-    public boolean matches(String string) {
-        return this.arg.equalsIgnoreCase(string);
+        throw new CommandException(MessageErrors.BAD_ARGUMENT().toString(sender.getLocale(),arg));
     }
 
     @Override
