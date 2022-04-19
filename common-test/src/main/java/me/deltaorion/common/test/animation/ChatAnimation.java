@@ -17,7 +17,7 @@ public class ChatAnimation implements AnimationRenderer<String,Sender> {
 
     @NotNull
     @Override
-    public AnimationRenderer<String, Sender> copy() {
+    public AnimationRenderer<String, Sender> getNewRenderer() {
         return new ChatAnimation();
     }
 

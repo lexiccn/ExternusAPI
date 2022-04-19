@@ -30,7 +30,7 @@ public class LoggingAnimation extends MinecraftAnimation<String, PluginLogger> {
 
         @NotNull
         @Override
-        public AnimationRenderer<String, PluginLogger> copy() {
+        public AnimationRenderer<String, PluginLogger> getNewRenderer() {
             return new LoggingRenderer();
         }
     }

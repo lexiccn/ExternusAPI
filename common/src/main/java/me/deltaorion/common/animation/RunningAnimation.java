@@ -1,5 +1,6 @@
 package me.deltaorion.common.animation;
 
+import me.deltaorion.common.animation.running.SyncRunningAnimation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +23,7 @@ import java.util.function.Supplier;
  * Current Implementations
  *  - {@link me.deltaorion.common.animation.running.ScheduleAsyncRunningAnimation}
  *  - {@link me.deltaorion.common.animation.running.SleepAsyncRunningAnimation}
- *  - {@link me.deltaorion.common.animation.running.SyncBukkitRunningAnimation}
+ *  - {@link SyncRunningAnimation}
  *
  * @param <S> The screen's type
  */

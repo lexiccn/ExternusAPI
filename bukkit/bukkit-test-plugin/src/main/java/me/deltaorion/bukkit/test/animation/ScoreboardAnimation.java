@@ -46,7 +46,7 @@ public class ScoreboardAnimation implements AnimationRenderer<String, Player> {
 
     @NotNull
     @Override
-    public AnimationRenderer<String, Player> copy() {
+    public AnimationRenderer<String, Player> getNewRenderer() {
         return new ScoreboardAnimation(scoreboardName,plugin);
     }
 

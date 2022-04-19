@@ -187,7 +187,7 @@ public class MinecraftAnimation<T,S> {
 
     private RunningAnimation<S> getFresh() {
         RunningAnimation<S> animation;
-        animation = factory.get(this,plugin,renderer.copy(),animationCount.getAndIncrement());
+        animation = factory.get(this,plugin,renderer.getNewRenderer(),animationCount.getAndIncrement());
         //cannot add a running animation is some other manipulation is being executed
         synchronized (this.runningAnimations) {
             this.runningAnimations.add(animation);

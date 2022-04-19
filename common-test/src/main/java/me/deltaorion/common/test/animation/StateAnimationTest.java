@@ -42,7 +42,7 @@ public class StateAnimationTest extends MinecraftAnimation<String, List<String>>
 
         @NotNull
         @Override
-        public AnimationRenderer<String, List<String>> copy() {
+        public AnimationRenderer<String, List<String>> getNewRenderer() {
             return new StateAnimationRenderer(finishLatch);
         }
 

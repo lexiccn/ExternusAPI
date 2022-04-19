@@ -6,7 +6,7 @@ import me.deltaorion.common.animation.MinecraftAnimation;
 import me.deltaorion.common.animation.RunningAnimation;
 import me.deltaorion.common.animation.running.ScheduleAsyncRunningAnimation;
 import me.deltaorion.common.animation.running.SleepAsyncRunningAnimation;
-import me.deltaorion.common.animation.running.SyncBukkitRunningAnimation;
+import me.deltaorion.common.animation.running.SyncRunningAnimation;
 import me.deltaorion.common.plugin.ApiPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +48,7 @@ public class AnimationFactories {
     }
 
     /**
-     * Creates an animation factory that returns {@link SyncBukkitRunningAnimation}. This animation type uses the bukkit scheduler to create
+     * Creates an animation factory that returns {@link SyncRunningAnimation}. This animation type uses the bukkit scheduler to create
      * completely sync animations. None of the timing or control is done asynchronously. The frame render is done fully synchronously with
      * the server.
      *
@@ -58,7 +58,7 @@ public class AnimationFactories {
         return new AnimationFactory() {
             @Override
             public <T, S> RunningAnimation<S> get(@NotNull MinecraftAnimation<T, S> animation, @NotNull ApiPlugin plugin, @NotNull AnimationRenderer<T, S> renderer, long taskID) {
-                return new SyncBukkitRunningAnimation<>(animation,plugin,renderer,taskID,millisPerTick);
+                return new SyncRunningAnimation<>(animation,plugin,renderer,taskID,millisPerTick);
             }
         };
     }

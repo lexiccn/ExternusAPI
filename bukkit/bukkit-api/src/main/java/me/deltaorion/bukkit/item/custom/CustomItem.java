@@ -64,6 +64,10 @@ public class CustomItem implements Listener {
         }
     }
 
+    protected CustomItem(@NotNull String name) {
+        this(name,null);
+    }
+
     /**
      * Checks whether the itemstack can be made custom or not. Air, water or lava cannot be made custom due to
      * restrictions on the NBT system and due to the fact that it is hard to call them 'custom' sometimes.

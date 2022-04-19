@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  * @param <S> The screen to render the information to
  */
 @NotThreadSafe
-public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S> {
+public class SyncRunningAnimation<T,S> extends ScreenedRunningAnimation<S> {
 
     private boolean running = false;
     @NotNull private final MinecraftAnimation<T,S> animation;
@@ -46,7 +46,7 @@ public class SyncBukkitRunningAnimation<T,S> extends ScreenedRunningAnimation<S>
 
     private final long MILLIS_PER_TICK;
 
-    public SyncBukkitRunningAnimation(@NotNull MinecraftAnimation<T, S> animation, @NotNull EPlugin plugin, @NotNull AnimationRenderer<T, S> renderer, long taskId, long millisPerTick) {
+    public SyncRunningAnimation(@NotNull MinecraftAnimation<T, S> animation, @NotNull EPlugin plugin, @NotNull AnimationRenderer<T, S> renderer, long taskId, long millisPerTick) {
         this.animation = animation;
         this.frameIterator = animation.getFrames();
         this.plugin = plugin;

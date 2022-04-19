@@ -96,7 +96,7 @@ public class TestAnimation extends MinecraftAnimation<String, List<String>> {
 
         @NotNull
         @Override
-        public AnimationRenderer<String, List<String>> copy() {
+        public AnimationRenderer<String, List<String>> getNewRenderer() {
             TestAnimationRender render = new TestAnimationRender(repeat);
             render.animation = animation;
             return render;

@@ -104,7 +104,7 @@ public class CobbleLineAnimation implements AnimationRenderer<PolarVector, Locat
 
     @NotNull
     @Override
-    public AnimationRenderer<PolarVector, Location> copy() {
+    public AnimationRenderer<PolarVector, Location> getNewRenderer() {
         return new CobbleLineAnimation(plugin);
     }
 

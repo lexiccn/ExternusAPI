@@ -35,7 +35,7 @@ public interface AnimationRenderer<T,S> {
      * @return A new and fresh copy of this renderer
      */
     @NotNull
-    AnimationRenderer<T,S> copy();
+    AnimationRenderer<T,S> getNewRenderer();
 
     /**
      * Logic to be run before the animation is fully complete.

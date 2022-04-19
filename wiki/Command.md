@@ -26,6 +26,8 @@ Lastly
   - if TestCommand is run without a valid argument we want to show a help menu
 ```
 
+### Creating a Command
+
 To begin making a command, make a class as follows. The class below represents a FunctionalCommand which executes logic  depending on the content of the `SentCommand`. A `Functional Command` has n functional arguments. A functional argument is logic that should occur when a specific argument is typed. 
 ```java
 public class TestCommand extends FunctionalCommand {
@@ -42,6 +44,8 @@ public class TestCommand extends FunctionalCommand {
     }
 }
 ```
+
+### Creating Functional Arguments
 
 Now we want to begin registering functional arguments. For our example the argument `a` represents a sub-command because it has its own arguments, a1 and a2. The command b however simply represents some logic. Every time you register an argument it will also register tab completion for that argument!
 
@@ -161,6 +165,8 @@ public class TestCommand extends FunctionalCommand {
     }
 }
 ```
+
+### Registering the Command 
 
 Lastly you MUST register the command! Do NOT bother with any plugin.yml's 
 

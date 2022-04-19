@@ -12,6 +12,7 @@ import me.deltaorion.bukkit.item.potion.PotionBuilder;
 import me.deltaorion.bukkit.item.potion.PotionBuilderFactory;
 import me.deltaorion.common.locale.message.Message;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.enchantments.Enchantment;
@@ -446,7 +447,6 @@ public class ItemBuilder {
     }
 
     public static class SkullBuilder {
-        @Nullable private Plugin plugin;
         @Nullable private UUID playerUUID;
         @Nullable private String url;
         private boolean isTexture;
@@ -480,9 +480,8 @@ public class ItemBuilder {
             return this;
         }
 
-        public SkullBuilder setPlayer(@NotNull Plugin plugin, @NotNull UUID player) {
+        public SkullBuilder setPlayer(@NotNull UUID player) {
             this.playerUUID = Objects.requireNonNull(player);
-            this.plugin = Objects.requireNonNull(plugin);
             this.isTexture = false;
             return this;
         }
@@ -510,7 +509,7 @@ public class ItemBuilder {
             skull.setItemMeta(builder.itemStack.getItemMeta());
 
             SkullMeta meta = (SkullMeta) skull.getItemMeta();
-            meta.setOwner(Objects.requireNonNull(plugin).getServer().getOfflinePlayer(playerUUID).getName());
+            meta.setOwner(Bukkit.getServer().getOfflinePlayer(playerUUID).getName());
             skull.setItemMeta(meta);
         }
 
