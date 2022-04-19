@@ -5,7 +5,7 @@ import me.deltaorion.bukkit.plugin.plugin.BukkitPlugin;
 import me.deltaorion.bukkit.display.actionbar.ActionBar;
 import me.deltaorion.bukkit.display.actionbar.ActionBarManager;
 import me.deltaorion.bukkit.display.actionbar.RejectionPolicy;
-import me.deltaorion.bukkit.display.bossbar.BossBar;
+import me.deltaorion.bukkit.display.bossbar.EBossBar;
 import me.deltaorion.bukkit.display.bossbar.BossBarRendererFactory;
 import me.deltaorion.bukkit.display.bossbar.SimpleBossBar;
 import me.deltaorion.bukkit.display.scoreboard.EScoreboard;
@@ -39,7 +39,7 @@ public class EApiPlayer implements BukkitApiPlayer {
     @NotNull private final Player player;
     @Nullable private EScoreboard scoreboard;
     @NotNull private final ActionBarManager actionBarManager;
-    @Nullable private BossBar bossBar;
+    @Nullable private EBossBar bossBar;
     @NotNull private final Sender sender;
 
     @NotNull private final ScoreboardFactory scoreboardFactory;
@@ -169,28 +169,28 @@ public class EApiPlayer implements BukkitApiPlayer {
      * @return The currently rendered boss bar. If the player has no viewed boss bar then this will return null.
      */
     @Override @Nullable
-    public BossBar getBossBar() {
+    public EBossBar getBossBar() {
         return bossBar;
     }
 
     @Override @Nullable
-    public BossBar setBossBar(@NotNull String name) {
+    public EBossBar setBossBar(@NotNull String name) {
         if(disconnected)
             return null;
-        BossBar bossBar = new SimpleBossBar(plugin,player,name, bossBarFactory.get(plugin,player,plugin.getEServer().getServerVersion()));
+        EBossBar bossBar = new SimpleBossBar(plugin,player,name, bossBarFactory.get(plugin,player,plugin.getEServer().getServerVersion()));
         return setBossBar(bossBar);
     }
 
     @Override @Nullable
-    public BossBar setBossBar(@NotNull String name, @NotNull Message message) {
+    public EBossBar setBossBar(@NotNull String name, @NotNull Message message) {
         if(disconnected)
             return null;
-        BossBar bossBar = new SimpleBossBar(plugin,player,name,message,bossBarFactory.get(plugin,player,plugin.getEServer().getServerVersion()));
+        EBossBar bossBar = new SimpleBossBar(plugin,player,name,message,bossBarFactory.get(plugin,player,plugin.getEServer().getServerVersion()));
         return setBossBar(bossBar);
     }
 
     @NotNull
-    private BossBar setBossBar(@NotNull BossBar bossBar) {
+    private EBossBar setBossBar(@NotNull EBossBar bossBar) {
         removeBossBar();
         this.bossBar = bossBar;
         return bossBar;

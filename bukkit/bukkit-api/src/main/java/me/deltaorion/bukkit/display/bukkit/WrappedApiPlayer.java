@@ -2,7 +2,7 @@ package me.deltaorion.bukkit.display.bukkit;
 
 import com.google.common.base.MoreObjects;
 import me.deltaorion.bukkit.display.actionbar.ActionBarManager;
-import me.deltaorion.bukkit.display.bossbar.BossBar;
+import me.deltaorion.bukkit.display.bossbar.EBossBar;
 import me.deltaorion.bukkit.display.scoreboard.EScoreboard;
 import me.deltaorion.common.locale.message.Message;
 import org.jetbrains.annotations.NotNull;
@@ -67,19 +67,19 @@ public class WrappedApiPlayer implements BukkitApiPlayer {
 
     @Nullable
     @Override
-    public BossBar getBossBar() {
+    public EBossBar getBossBar() {
         return player.getBossBar();
     }
 
     @Nullable
     @Override
-    public BossBar setBossBar(@NotNull String name) {
+    public EBossBar setBossBar(@NotNull String name) {
         return player.setBossBar(name);
     }
 
     @Nullable
     @Override
-    public BossBar setBossBar(@NotNull String name, @NotNull Message message) {
+    public EBossBar setBossBar(@NotNull String name, @NotNull Message message) {
         return player.setBossBar(name,message);
     }
 

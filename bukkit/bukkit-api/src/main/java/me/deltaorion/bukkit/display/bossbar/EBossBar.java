@@ -19,7 +19,7 @@ import java.util.Collection;
  *   A BossBar is tied to the player it is given to. Once given to a player this instance cannot be given to another
  *   player.
  */
-public interface BossBar extends TiedDisplayItem, DisplayLine {
+public interface EBossBar extends TiedDisplayItem, DisplayLine {
 
     /**
      * @return the name of the bossbar.

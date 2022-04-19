@@ -3,7 +3,7 @@ package me.deltaorion.bukkit.display.bukkit;
 import me.deltaorion.bukkit.display.actionbar.ActionBar;
 import me.deltaorion.bukkit.display.actionbar.ActionBarManager;
 import me.deltaorion.bukkit.display.actionbar.RejectionPolicy;
-import me.deltaorion.bukkit.display.bossbar.BossBar;
+import me.deltaorion.bukkit.display.bossbar.EBossBar;
 import me.deltaorion.bukkit.display.scoreboard.EScoreboard;
 import me.deltaorion.common.locale.message.Message;
 import org.jetbrains.annotations.NotNull;
@@ -77,10 +77,10 @@ public interface BukkitApiPlayer {
      * @return The currently rendered boss bar. If the player has no viewed boss bar then this will return null.
      */
     @Nullable
-    BossBar getBossBar();
+    EBossBar getBossBar();
 
     /**
-     * Creates a new {@link BossBar} and sets the players current BossBar to this BossBar. It will then return the players new BossBar.
+     * Creates a new {@link EBossBar} and sets the players current BossBar to this BossBar. It will then return the players new BossBar.
      * If the player has disconnected this will return Null. Although a player can 'technically' have more than one BossBar the API limits
      * this to effectively 1.
      *
@@ -88,10 +88,10 @@ public interface BukkitApiPlayer {
      * @return The new BossBar, or null if the player has been disconnected
      */
     @Nullable
-    BossBar setBossBar(@NotNull String name);
+    EBossBar setBossBar(@NotNull String name);
 
     /**
-     * Creates a new {@link BossBar} and sets the players current BossBar to this BossBar. It will then return the players new BossBar.
+     * Creates a new {@link EBossBar} and sets the players current BossBar to this BossBar. It will then return the players new BossBar.
      * If the player has disconnected this will return Null. Although a player can 'technically' have more than one BossBar the API limits
      * to effectively 1.
      *
@@ -100,7 +100,7 @@ public interface BukkitApiPlayer {
      * @return The new BossBar, or null if the player has been disconnected
      */
     @Nullable
-    BossBar setBossBar(@NotNull String name, @NotNull Message message);
+    EBossBar setBossBar(@NotNull String name, @NotNull Message message);
 
     /**
      * Removes the players current BossBar.

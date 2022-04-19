@@ -22,7 +22,7 @@ import java.util.*;
  *   A bossbar is tied to the player it is given to. Once given to a player this instance cannot be given to another
  *   player.
  */
-public class SimpleBossBar implements BossBar {
+public class SimpleBossBar implements EBossBar {
 
     @NotNull private final BukkitPlugin plugin;
 

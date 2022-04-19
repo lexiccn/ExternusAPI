@@ -3,7 +3,7 @@ package me.deltaorion.bukkit.test.command;
 import me.deltaorion.bukkit.display.bossbar.BarColor;
 import me.deltaorion.bukkit.display.bossbar.BarFlag;
 import me.deltaorion.bukkit.display.bossbar.BarStyle;
-import me.deltaorion.bukkit.display.bossbar.BossBar;
+import me.deltaorion.bukkit.display.bossbar.EBossBar;
 import me.deltaorion.bukkit.display.bukkit.BukkitApiPlayer;
 import me.deltaorion.bukkit.plugin.plugin.BukkitPlugin;
 import me.deltaorion.common.APIPermissions;
@@ -24,7 +24,7 @@ public class BossBarTest extends FunctionalCommand {
         this.plugin = plugin;
         registerArgument("message",command -> {
             Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
-            BossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
+            EBossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
             if(bossBar==null)
                 return;
 
@@ -33,7 +33,7 @@ public class BossBarTest extends FunctionalCommand {
 
         registerArgument("translatable",command -> {
             Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
-            BossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
+            EBossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
             if(bossBar==null)
                 return;
 
@@ -42,7 +42,7 @@ public class BossBarTest extends FunctionalCommand {
 
         registerArgument("visible",command -> {
             Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
-            BossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
+            EBossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
             if(bossBar==null)
                 return;
 
@@ -51,7 +51,7 @@ public class BossBarTest extends FunctionalCommand {
 
         registerArgument("progress",command -> {
             Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
-            BossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
+            EBossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
             if(bossBar==null)
                 return;
 
@@ -65,7 +65,7 @@ public class BossBarTest extends FunctionalCommand {
 
         registerArgument("args",command -> {
             Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
-            BossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
+            EBossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
             if(bossBar==null)
                 return;
             List<String> args = new ArrayList<>(command.getRawArgs());
@@ -74,7 +74,7 @@ public class BossBarTest extends FunctionalCommand {
 
         registerArgument("color", command -> {
             Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
-            BossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
+            EBossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
             if(bossBar==null)
                 return;
             BarColor color = command.getArgOrBlank(0).asEnumOrDefault(BarColor.class,BarColor.PINK);
@@ -83,7 +83,7 @@ public class BossBarTest extends FunctionalCommand {
 
         registerArgument("style", command -> {
             Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
-            BossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
+            EBossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
             if(bossBar==null)
                 return;
             BarStyle color = command.getArgOrBlank(0).asEnumOrDefault(BarStyle.class, BarStyle.PROGRESS);
@@ -92,7 +92,7 @@ public class BossBarTest extends FunctionalCommand {
 
         registerArgument("flags",command -> {
             Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
-            BossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
+            EBossBar bossBar = plugin.getBukkitPlayerManager().getPlayer(player).getBossBar();
             if(bossBar==null)
                 return;
             boolean add = command.getArgOrBlank(0).asBooleanOrDefault(true);
@@ -117,7 +117,7 @@ public class BossBarTest extends FunctionalCommand {
         String name = command.getArgOrDefault(0,"Gamer").asString();
         float progress = command.getArgOrBlank(1).asFloatOrDefault(1f);
         BukkitApiPlayer p = plugin.getBukkitPlayerManager().getPlayer(player);
-        BossBar bossBar = p.setBossBar("bb-1");
+        EBossBar bossBar = p.setBossBar("bb-1");
         bossBar.setMessage(name);
         bossBar.setProgress(progress);
     }
