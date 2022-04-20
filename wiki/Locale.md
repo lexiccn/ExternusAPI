@@ -68,5 +68,75 @@ Message message = Message.valueOf("Gamer");
 String gamer = message.toString();
 ```
 
-### PlaceHolders
+### Message Builder
 
+There may also be times where you might want to combine many translations and simple messages together. In this case the MessageBuilder should be used. 
+
+```java
+//this makes a message with the greeting translatable surrounded by brackets.
+Message message = Message.valueOfBuilder(builder -> {
+    builder.append("[")
+        .appendTranslatable("greeting")
+        .append("]");
+});
+//For the english translation this would return "[Hello]"
+System.out.println(message.toString());
+```
+
+## Placeholders
+
+With messages sent to players it is an extremely common task to put values such as names or numbers in the middle of them. For example a message that might display the players hearts might be "The player DeltaOrion has 4/10 health". In this case the number 4 will change depending on their health and the playername depending on the player. To represent this we use Placeholders. 
+
+### Adding Placeholders
+
+Placeholders are represented as a {num} where num is the number of the placeholder. For example, {0} represents the first argument entered, {1} the second, {2} the third etc etc. The syntax for adding a placeholder is the same for the java and the language properties files. 
+
+#### Java
+
+```java
+Message playerHealth = Message.valueOf("The player {0} has {1}/{2} health");
+```
+
+#### Properties
+
+```properties
+player-health=The player {0} has {1}/{2} health
+```
+
+### Rendering placeholders
+
+To render in the actual values of the placeholders simply do the following inside of your java code. 
+
+```java
+//You can always use a translatable as well!
+Message playerHealth = Message.valueOf("The player {0} has {1}/{2} health");
+                                 //{0}                  {1}                   {2}
+String render = message.toString(Locale.ENGLISH,player.getName(),player.getHealth(),player.getMaxHealth());
+```
+
+### Repeated Placeholders
+
+In your properties file or java code you may repeat placeholders as many times as you wish. 
+
+```properties
+key=I like repeating myself {0} and again {0} and again {0}
+```
+The first argument entered in the `toString()` will be substituted into all 3 `{0}`
+
+### Escaping Placeholders
+
+If for whatever reason you want to display a placeholder instead of having a value substituted into it you can escape it as follows
+
+```properties
+explain-placeholder=Placeholders can be added into a message using {num} where \\{0} is the first argument entered \\{1} is the second...
+```
+
+When rendered by as follows
+
+```java
+Message message = Message.valueOfTranslatable("explain-placeholder");
+//this will output
+//Placeholders can be added into a message using {num} where {0} is the first argument entered {1} is the second...
+//because the placeholders are escaped.  
+System.out.println(message.toString("hack","put me in!"));
+```

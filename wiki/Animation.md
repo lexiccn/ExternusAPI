@@ -118,7 +118,7 @@ runningAnimation.setPlaySpeed(2.0f); //sets the animation to double speed
 
 ## Self-Repeating Animation
 
-Once an animation has played all of its frames it will normally temrinate. This can be prevented however by overriding the onComplete method in the AnimationRenderer. If the animation is cancelled using RunningAnimation#cancel() it wil not restart even if true is returned. 
+Once an animation has played all of its frames it will normally temrinate. This can be prevented however by overriding the onComplete method in the AnimationRenderer. If BeforeCompletion returns true then the animation will restart instead of terminating. If an animation is cancelled using `RunningAnimation#cancel()` it will not be restarted even if beforeCompletion returns true. 
 ```java
 int counter = 0;
 //The animation will repeat 3 times before being canceled.
