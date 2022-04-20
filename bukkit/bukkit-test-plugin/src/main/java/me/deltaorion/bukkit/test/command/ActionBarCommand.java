@@ -106,7 +106,7 @@ public class ActionBarCommand extends FunctionalCommand {
             Player player = plugin.getServer().getPlayer(command.getSender().getUniqueId());
             BukkitApiPlayer apiPlayer = plugin.getBukkitPlayerManager().getPlayer(player);
 
-            apiPlayer.getActionBarManager().send(new ActionBar(Message.valueOf("&eTPS: &f%s"),Duration.of(100,ChronoUnit.DAYS),"TPSBar"));
+            apiPlayer.getActionBarManager().send(new ActionBar(Message.valueOf("&eTPS: &f{0}"),Duration.of(100,ChronoUnit.DAYS),"TPSBar"));
 
             if(task!=null)
                 task.cancel();

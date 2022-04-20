@@ -39,7 +39,7 @@ public class ScoreboardingTest implements MinecraftTest {
 
         scoreboard.setLine("Gamer",0);
         scoreboard.setLine("Gamer",1,"Hallo");
-        scoreboard.setLine(Message.valueOf("Gamer %s"),2,3);
+        scoreboard.setLine(Message.valueOf("Gamer {0}"),2,3);
         scoreboard.setLine(Message.valueOf("Hello World"),3,"Gamer");
         try {
             scoreboard.setLine("Gamer",4,"Gamer");
@@ -58,7 +58,7 @@ public class ScoreboardingTest implements MinecraftTest {
         assertEquals("Gamer",scoreboard.getLineFromName("Hallo").toString());
         assertEquals("",scoreboard.getLineAt(9).toString());
         assertEquals("Gamer",scoreboard.getLineAt(1).toString());
-        assertEquals("Gamer %s",scoreboard.getLineAt(2).toString());
+        assertEquals("Gamer {0}",scoreboard.getLineAt(2).toString());
         assertEquals("Gamer 3",scoreboard.getDisplayedAt(2));
         assertNull(scoreboard.getLineFromName("rrerpok"));
         assertEquals("Hello World",scoreboard.getLineFromName("Gamer").toString());
@@ -69,8 +69,8 @@ public class ScoreboardingTest implements MinecraftTest {
         assertEquals("Hallo",scoreboard.getLineFromName("Hallo").toString());
         assertEquals("Gamer",scoreboard.getLineFromName("Gamer").toString());
 
-        scoreboard.setLineByName(Message.valueOf("Gamer %s"),"Hallo");
-        scoreboard.setLineByName(Message.valueOf("Gamer %s"),"Gamer");
+        scoreboard.setLineByName(Message.valueOf("Gamer {0}"),"Hallo");
+        scoreboard.setLineByName(Message.valueOf("Gamer {0}"),"Gamer");
 
         scoreboard.setLineArgs(3,"3");
         scoreboard.setLineArgs("Hallo",3);

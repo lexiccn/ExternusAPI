@@ -119,6 +119,6 @@ public class ScoreboardTest extends FunctionalCommand {
         } catch(NoSuchMethodError e) {
             tps = Math.random();
         }
-        scoreboard.setLine(Message.valueOf(ChatColor.GOLD + "TPS: " + ChatColor.WHITE + "%s"), 3, "TPS", tps);
+        scoreboard.setLine(Message.valueOf(ChatColor.GOLD + "TPS: " + ChatColor.WHITE + "{0}"), 3, "TPS", tps);
     }
 }

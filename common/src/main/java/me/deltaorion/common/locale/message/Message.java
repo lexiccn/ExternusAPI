@@ -1,5 +1,6 @@
 package me.deltaorion.common.locale.message;
 
+import com.google.common.math.IntMath;
 import me.deltaorion.common.locale.IChatColor;
 import me.deltaorion.common.plugin.EServer;
 import net.jcip.annotations.GuardedBy;
@@ -11,7 +12,9 @@ import java.util.function.Consumer;
 
 public class Message {
 
-    public final static String PLACEHOLDER = "%s";
+    public final static char PLACEHOLDER_START = '{';
+    public final static char PLACEHOLDER_STOP = '}';
+    public final static char ESCAPE = '\\';
     private final List<MessageComponent> composition;
     @Nullable @GuardedBy("this") private String[] defaultArgs;
 
@@ -81,8 +84,8 @@ public class Message {
             builder.append(component.toString(locale));
         }
 
-        return IChatColor.translateAlternateColorCodes(
-                '&',substitutePlaceHolders(builder.toString(),args));
+        return IChatColor.translateAlternateColorCodes('&',
+                substitutePlaceHolders(builder.toString(),args));
     }
 
     public synchronized void setDefaults(@Nullable Object... defaultArgs) {
@@ -96,6 +99,77 @@ public class Message {
         }
     }
 
+    private String substitutePlaceHolders(@NotNull String rendered, Object... args) {
+        StringBuilder finished = new StringBuilder();
+        if(args==null)
+            args = new Object[0];
+        String[] defArgs;
+        synchronized (this) {
+            defArgs = defaultArgs;
+        }
+
+        int i = 0;
+        while(i<rendered.length()) {
+            //look for place holder
+            char character = rendered.charAt(i);
+            if(character==ESCAPE) {
+                PlaceHolder placeHolder = getPlaceholderIndex(rendered,i+1);
+                if(placeHolder!=null) {
+                    finished.append(PLACEHOLDER_START);
+                    i+=2;
+                    continue;
+                }
+            }
+            PlaceHolder placeholder = getPlaceholderIndex(rendered,i);
+            if(placeholder == null) {
+                finished.append(character);
+                i++;
+            } else {
+                String arg = getArg(placeholder.index,args,defArgs);
+                if(arg==null) {
+                    finished.append(character);
+                    i++;
+                } else {
+                    finished.append(arg);
+                    i+= placeholder.len;
+                }
+            }
+        }
+        return finished.toString();
+    }
+
+    private PlaceHolder getPlaceholderIndex(String rendered, int position) {
+        if(rendered.charAt(position)!=PLACEHOLDER_START)
+            return null;
+
+        int len = 1;
+        int j = position;
+        StringBuilder intString = new StringBuilder();
+        //begin searching for the placeholder
+        while (true) {
+            j++;
+            if(j>=rendered.length()) {
+                return null;
+            }
+
+            char placeChar = rendered.charAt(j);
+            if(!(placeChar<='9' && placeChar>='0')) {
+                if(placeChar!=PLACEHOLDER_STOP)
+                    return null;
+
+                break;
+            }
+
+            intString.append(placeChar);
+        }
+        String num = intString.toString();
+        if(num.length()==0)
+            return null;
+        return new PlaceHolder(Integer.parseInt(num),num.length()+2);
+    }
+
+
+    /*
     private String substitutePlaceHolders(@NotNull String rendered, Object... args) {
         StringBuilder fin = new StringBuilder();
         int i = 0;
@@ -129,6 +203,7 @@ public class Message {
         }
         return fin.toString();
     }
+     */
 
     private String getArg(int objCount, Object[] args, String[] defaultArgs) {
         if (objCount < args.length) {
@@ -143,6 +218,7 @@ public class Message {
         return null;
     }
 
+    /*
     private boolean isPlaceHolder(String rendered, String placeholder, int i) {
         for(int j=0;j<placeholder.length();j++) {
             char placeHolder = placeholder.charAt(j);
@@ -153,6 +229,8 @@ public class Message {
         }
         return true;
     }
+
+     */
 
     @Override
     public boolean equals(Object o) {
@@ -233,6 +311,16 @@ public class Message {
             return this;
         }
 
+    }
+
+    private final class PlaceHolder {
+        private final int index;
+        private final int len;
+
+        private PlaceHolder(int index, int len) {
+            this.index = index;
+            this.len = len;
+        }
     }
 }
 

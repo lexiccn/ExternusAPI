@@ -46,9 +46,9 @@ Scoreboard lines fully support the locale library
 
 ```java
 //ALTERNATIVELY it can be done as this for easier updating!
-//make line 1 Health %s, remember %s is a placeholder as shown in the Locale Library
-scoreboard.setLine("Health %s",1,"health line");
-//change the content of the %s to the players health
+//make line 1 Health {0}, remember {0} is a placeholder as shown in the Locale Library
+scoreboard.setLine("Health {0}",1,"health line");
+//change the content of the {0} to the players health
 scoreboard.setLineArgs("health line",player.getHealth());
 ```
 
@@ -70,7 +70,7 @@ The bossbar API functions extremely similary to the bukkit bossbar API. However 
 BukkitApiPlayer player = plugin.getBukkitPlayerManager().getPlayer(bukkitPlayer);
 EBossBar bossBar = player.setBossBar("healthBar");
 bossBar.setColor(BarColor.BLUE);
-bossBar.setMessage("Health %s");
+bossBar.setMessage("Health {0}");
 bossBar.setArgs(bukkitPlayer.getHealth());
 ```
 

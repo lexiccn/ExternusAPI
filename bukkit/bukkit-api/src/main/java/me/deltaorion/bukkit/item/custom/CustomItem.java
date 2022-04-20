@@ -101,7 +101,7 @@ public class CustomItem implements Listener {
 
     /**
      * Sets the default localised lore. To give a localised custom item use {@link #newCustomItem(Locale)}. Note, this will
-     * not support any Message Parameters (%s). To furthur customise the opening of the custom item override {@link #afterApply(ItemStack)}
+     * not support any Message Parameters ({0}). To furthur customise the opening of the custom item override {@link #afterApply(ItemStack)}
      *
      * @param defaultLore The default lore to set
      */

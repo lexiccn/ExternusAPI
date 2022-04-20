@@ -22,13 +22,13 @@ public class LocaleCommand extends FunctionalCommand {
         sender.sendMessage(Translator.getInstance().translate("hello", Translator.parseLocale("en_PT")));
         sender.sendMessage(Translator.getInstance().translate("world.hello",Translator.parseLocale("en_PT")));
 
-        Message middle = Message.valueOf("Gam%srs Unite!");
+        Message middle = Message.valueOf("Gam{0}rs Unite!");
         sender.sendMessage(middle.toString("e"));
 
-        Message end = Message.valueOf("Gamer%s");
+        Message end = Message.valueOf("Gamer{0}");
         sender.sendMessage(end.toString("s"));
 
-        Message start = Message.valueOf("%s Unite!");
+        Message start = Message.valueOf("{0} Unite!");
         sender.sendMessage(start.toString("Gamers"));
 
         Message translatable = Message.valueOfTranslatable("hello");
@@ -38,17 +38,17 @@ public class LocaleCommand extends FunctionalCommand {
 
         Message everything = Message.valueOfBuilder(builder -> {
             builder.appendTranslatable("hello")
-                    .append(" &e %s %s %s ")
+                    .append(" &e {0} {1} {2} ")
                     .style(IChatColor.BLACK)
                     .append(" Gamer");
         });
 
-        sender.sendMessage(everything.toString("gamer %s",true,6.5));
+        sender.sendMessage(everything.toString("gamer {0}",true,6.5));
         sender.sendMessage(everything.toString("abc"));
 
         Message defArgs = Message.valueOfBuilder( builder -> {
             builder.append("hello ")
-                    .append("%s")
+                    .append("{0}")
                     .defArg("world");
         });
 

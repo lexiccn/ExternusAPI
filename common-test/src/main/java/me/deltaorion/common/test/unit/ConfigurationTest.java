@@ -21,8 +21,8 @@ public class ConfigurationTest implements MinecraftTest {
 
     @McTest
     public void test() throws IOException, InvalidConfigurationException {
-        FileConfig config = FileConfig.loadConfiguration(factory, getClass().getClassLoader().getResourceAsStream("config.yml"));
-        FileConfig defaults = FileConfig.loadConfiguration(factory, getClass().getClassLoader().getResourceAsStream("defaults.yml"));
+        FileConfig config = FileConfig.loadConfiguration(factory, getClass().getClassLoader().getResourceAsStream("me.deltaorion.extapi/config.yml"));
+        FileConfig defaults = FileConfig.loadConfiguration(factory, getClass().getClassLoader().getResourceAsStream("me.deltaorion.extapi/defaults.yml"));
 
         ConfigTest test = new ConfigTest();
         //test.test(config,defaults);
