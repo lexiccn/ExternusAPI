@@ -23,11 +23,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface EScoreboard extends TiedDisplayItem {
 
-    /**
-     * TODO
-     *  - Add Scoreboard Builder
-     */
-
     int LINE_LIMIT = 16; //the amount of lines that can be displayed
 
     /**
