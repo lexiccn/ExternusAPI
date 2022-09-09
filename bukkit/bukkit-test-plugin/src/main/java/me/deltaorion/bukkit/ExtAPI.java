@@ -69,7 +69,7 @@ public final class ExtAPI extends BukkitPlugin {
     private void registerTests() {
         tester.addTest(new McTestTest());
         tester.addTest(new ArgTest(this));
-        tester.addTest(new LocaleTest(this));
+        //tester.addTest(new LocaleTest(this));
         tester.addTest(new ItemTest(this));
         tester.addTest(new CustomItemTest(this));
         tester.addTest(new EMaterialTest(this));
