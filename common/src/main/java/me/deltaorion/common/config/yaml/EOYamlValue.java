@@ -29,6 +29,9 @@ public class EOYamlValue implements ConfigValue {
         if(isNumber())
             return asNumber();
 
+        if(isBoolean())
+            return asBoolean();
+
         if(isString())
             return asString();
 
