@@ -58,4 +58,4 @@ To learn how to use the API simply follow the wiki which is located in the "wiki
 
 ## Licensing 
 
-Add something here if this is being released to public, preferably the GNU license or some kind of source avaliable license 
+This library is licensed under the MIT license. Furthur details can be found in the License.md file
